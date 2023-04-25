@@ -6,9 +6,11 @@
 
 # BlueJ files
 *.ctxt
+*.so
 
 # Mobile Tools for Java (J2ME)
-.mtj.tmp/
+.mtj.tmp/ 
+./build
 
 # Package Files #
 *.jar
