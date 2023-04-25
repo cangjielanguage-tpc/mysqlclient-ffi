@@ -36,7 +36,6 @@ main(){
   for(i in 0..rows){
     let row:CPointer<CString> = cj_mysql_fetch_row(result)
     for(j in 0..columns){
-       //let p = unsafe{ row.read(Int64(j))}
        let p = cj_mysql_fetch_field(row,j)
        print(p); print("   ")   
     }
