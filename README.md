@@ -5,7 +5,7 @@
 
 #### 安装教程
 
-1.  ubuntu 安装 sudo apt-get install libmysqlclient-dev 或 使用lib下面的libmysqlclient.so
+1.  ubuntu 安装 sudo apt-get install libmysqlclient-dev 或 使用lib下面已编译好的libmysqlclient.so
 2.  cpm build
 3.  ./build/bin/main 测试数据库连接
 
