@@ -8,6 +8,8 @@ foreign func mysql_errno(mysql: CPointer<Unit>): UInt32
 
 foreign func mysql_error(mysql: CPointer<Unit>): CString
 
+foreign func mysql_dump_debug_info(mysql: CPointer<Unit>): Unit
+
 public func cj_mysql_get_client_info(): CString{
    let s : CString
    unsafe {
@@ -40,3 +42,10 @@ public func cj_mysql_error(mysql: CPointer<Unit>): CString{
   }
   return ret;
 }
+
+public func cj_mysql_dump_debug_info(mysql: CPointer<Unit>): Unit{
+  unsafe {
+     mysql_dump_debug_info(mysql)
+  }
+}
+
