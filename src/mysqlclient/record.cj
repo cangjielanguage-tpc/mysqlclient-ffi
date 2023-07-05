@@ -1,4 +1,3 @@
-
 package mysqlclient
 
 foreign func mysql_query(mysql: CPointer<Unit>, q:CString): Int32
@@ -6,6 +5,8 @@ foreign func mysql_query(mysql: CPointer<Unit>, q:CString): Int32
 foreign func mysql_store_result(mysql: CPointer<Unit>): CPointer<Unit>
 
 foreign func mysql_num_fields(result: CPointer<Unit>): Int32
+
+foreign func mysql_eof(result: CPointer<Unit>): Bool
 
 foreign func mysql_num_rows(result: CPointer<Unit>): Int32
 
@@ -15,6 +16,7 @@ foreign func mysql_free_result(result: CPointer<Unit>): Unit
 
 foreign func mysql_affected_rows(mysql: CPointer<Unit>): UInt64
 
+foreign func mysql_insert_id(mysql: CPointer<Unit>): UInt64
 
 public func cj_mysql_query(mysql: CPointer<Unit>, q:CString): Int32{
   let ret: Int32
@@ -38,6 +40,12 @@ public func cj_mysql_num_fields(result: CPointer<Unit>): Int32{
     ret = mysql_num_fields(result)
   }
   return ret;
+}
+
+public func cj_mysql_eof(result: CPointer<Unit>): Bool{
+  unsafe{
+     mysql_eof(result)
+  }
 }
 
 public func cj_mysql_num_rows(result: CPointer<Unit>): Int32{
@@ -75,3 +83,8 @@ public func cj_mysql_affected_rows(mysql: CPointer<Unit>): UInt64 {
   return ret;
 }
 
+public func cj_mysql_insert_id(mysql: CPointer<Unit>): UInt64 {
+  unsafe {
+    mysql_insert_id(mysql)
+  }
+}

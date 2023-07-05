@@ -1,11 +1,17 @@
 package mysqlclient
 
+foreign func mysql_server_init(argc: Int32, argv: CPointer<CString>, groups: CPointer<CString>): Int32
+
+foreign func mysql_server_end() : Unit
+
 foreign func mysql_init(mysql: CPointer<Unit>) : CPointer<Unit>
 
 foreign func mysql_real_connect(mysql:CPointer<Unit>, host: CString, user: CString, passwd : CString,
                                   db: CString, port: UInt32, unix_socket: CString, clientflag: UInt32):  CPointer<Unit>
 
 foreign func mysql_close(mysql: CPointer<Unit>): Unit
+
+foreign func mysql_change_user(mysql:CPointer<Unit>, user: CString, passwd : CString, db: CString): Bool
 
 
 public func cj_mysql_init(mysql: CPointer<Unit>): CPointer<Unit>{
@@ -25,8 +31,28 @@ public func cj_mysql_real_connect(mysql:CPointer<Unit>, host: CString, user: CSt
   return ret;
 }
 
+public func cj_mysql_change_user(mysql:CPointer<Unit>, user: CString, passwd : CString,db: CString): Bool{
+  unsafe {
+    mysql_change_user(mysql,user,passwd,db);
+  }
+}
+
 public func cj_mysql_close(mysql: CPointer<Unit>): Unit{
   unsafe {
    mysql_close(mysql)
   }
+}
+
+public func cj_mysql_server_init(argc: Int32, argv: CPointer<CString>, groups: CPointer<CString>): Int32{
+  var ret: Int32 = 0
+  unsafe{
+    ret = mysql_server_init(argc,argv,groups)
+  }
+  return ret
+}
+
+public func cj_mysql_server_end() : Unit{
+   unsafe{
+       mysql_server_end()
+   }
 }
