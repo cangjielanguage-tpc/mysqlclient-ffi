@@ -1,8 +1,6 @@
 package mysqlclient
 
-foreign func mysql_server_init(argc: Int32, argv: CPointer<CString>, groups: CPointer<CString>): Int32
 
-foreign func mysql_server_end() : Unit
 
 foreign func mysql_init(mysql: CPointer<Unit>) : CPointer<Unit>
 
@@ -13,6 +11,7 @@ foreign func mysql_close(mysql: CPointer<Unit>): Unit
 
 foreign func mysql_change_user(mysql:CPointer<Unit>, user: CString, passwd : CString, db: CString): Bool
 
+foreign func mysql_select_db(mysql:CPointer<Unit>, db: CString): Int32
 
 public func cj_mysql_init(mysql: CPointer<Unit>): CPointer<Unit>{
   let ret :  CPointer<Unit>
@@ -43,16 +42,10 @@ public func cj_mysql_close(mysql: CPointer<Unit>): Unit{
   }
 }
 
-public func cj_mysql_server_init(argc: Int32, argv: CPointer<CString>, groups: CPointer<CString>): Int32{
-  var ret: Int32 = 0
-  unsafe{
-    ret = mysql_server_init(argc,argv,groups)
-  }
-  return ret
-}
 
-public func cj_mysql_server_end() : Unit{
+
+public func cj_mysql_select_db(mysql:CPointer<Unit>, db: CString): Int32{
    unsafe{
-       mysql_server_end()
+       mysql_select_db(mysql,db)
    }
 }

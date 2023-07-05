@@ -2,6 +2,10 @@ package mysqlclient
 
 foreign func mysql_query(mysql: CPointer<Unit>, q:CString): Int32
 
+foreign func mysql_send_query(mysql: CPointer<Unit>, q:CString, length: UInt32): Int32
+
+foreign func mysql_real_query(mysql: CPointer<Unit>, q:CString, length: UInt32): Int32
+
 foreign func mysql_store_result(mysql: CPointer<Unit>): CPointer<Unit>
 
 foreign func mysql_num_fields(result: CPointer<Unit>): Int32
@@ -22,6 +26,22 @@ public func cj_mysql_query(mysql: CPointer<Unit>, q:CString): Int32{
   let ret: Int32
   unsafe{
     ret = mysql_query(mysql,q)
+  }
+  return ret;
+}
+
+public func cj_mysql_send_query(mysql: CPointer<Unit>, q:CString,length:UInt32): Int32{
+  let ret: Int32
+  unsafe{
+    ret = mysql_send_query(mysql,q,length)
+  }
+  return ret;
+}
+
+public func cj_mysql_real_query(mysql: CPointer<Unit>, q:CString, length:UInt32): Int32{
+  let ret: Int32
+  unsafe{
+    ret = mysql_real_query(mysql,q,length)
   }
   return ret;
 }
