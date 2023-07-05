@@ -8,3 +8,7 @@ public func cj_mysql_thread_id(mysql: CPointer<Unit>): UInt32{
   }
 }
 
+/*
+bool STDCALL mysql_thread_init(void);
+void STDCALL mysql_thread_end(void);
+*/
