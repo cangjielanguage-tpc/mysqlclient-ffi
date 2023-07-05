@@ -22,6 +22,8 @@ foreign func mysql_affected_rows(mysql: CPointer<Unit>): UInt64
 
 foreign func mysql_insert_id(mysql: CPointer<Unit>): UInt64
 
+// public func cj_mysql_fetch_field(row: CPointer<CString>, i: Int32): CString
+
 public func cj_mysql_query(mysql: CPointer<Unit>, q:CString): Int32{
   let ret: Int32
   unsafe{
