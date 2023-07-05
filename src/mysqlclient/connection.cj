@@ -1,13 +1,14 @@
 package mysqlclient
 
 
-
 foreign func mysql_init(mysql: CPointer<Unit>) : CPointer<Unit>
 
 foreign func mysql_real_connect(mysql:CPointer<Unit>, host: CString, user: CString, passwd : CString,
                                   db: CString, port: UInt32, unix_socket: CString, clientflag: UInt32):  CPointer<Unit>
 
 foreign func mysql_close(mysql: CPointer<Unit>): Unit
+
+foreign func mysql_reset_connection(mysql: CPointer<Unit>): Int32
 
 foreign func mysql_change_user(mysql:CPointer<Unit>, user: CString, passwd : CString, db: CString): Bool
 
@@ -47,5 +48,11 @@ public func cj_mysql_close(mysql: CPointer<Unit>): Unit{
 public func cj_mysql_select_db(mysql:CPointer<Unit>, db: CString): Int32{
    unsafe{
        mysql_select_db(mysql,db)
+   }
+}
+
+public func cj_mysql_reset_connection(mysql: CPointer<Unit>): Int32{
+   unsafe{
+       mysql_reset_connection(mysql)
    }
 }
