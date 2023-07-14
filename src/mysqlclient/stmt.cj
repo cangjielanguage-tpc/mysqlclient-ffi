@@ -1,6 +1,7 @@
 package mysqlclient
 
 /*
+
 MYSQL_STMT *STDCALL mysql_stmt_init(MYSQL *mysql);
 int STDCALL mysql_stmt_prepare(MYSQL_STMT *stmt, const char *query,
                                unsigned long length);
@@ -20,4 +21,5 @@ uint64_t STDCALL mysql_stmt_num_rows(MYSQL_STMT *stmt);
 uint64_t STDCALL mysql_stmt_affected_rows(MYSQL_STMT *stmt);
 uint64_t STDCALL mysql_stmt_insert_id(MYSQL_STMT *stmt);
 unsigned int STDCALL mysql_stmt_field_count(MYSQL_STMT *stmt);
+
 */
