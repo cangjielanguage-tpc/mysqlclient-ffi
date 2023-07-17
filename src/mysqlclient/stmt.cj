@@ -1,8 +1,14 @@
 package mysqlclient
 
-/*
+foreign func mysql_stmt_init(mysql: CPointer<Unit>): CPointer<Unit>
 
-MYSQL_STMT *STDCALL mysql_stmt_init(MYSQL *mysql);
+public func cj_mysql_stmt_init(mysql: CPointer<Unit>): CPointer<Unit>{
+   unsafe {
+    mysql_stmt_init(mysql)
+  }
+}
+
+/*
 int STDCALL mysql_stmt_prepare(MYSQL_STMT *stmt, const char *query,
                                unsigned long length);
 int STDCALL mysql_stmt_execute(MYSQL_STMT *stmt);
