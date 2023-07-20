@@ -16,6 +16,26 @@ foreign func mysql_stmt_close(stmt: CPointer<Unit>): Bool
 
 foreign func mysql_stmt_reset(stmt: CPointer<Unit>): Bool
 
+foreign func mysql_stmt_bind_param(stmt: CPointer<Unit>, bnd: CPointer<Unit>): Bool
+
+foreign func mysql_stmt_bind_result(stmt: CPointer<Unit>, bnd: CPointer<Unit>): Bool
+
+foreign func mysql_stmt_free_result(stmt: CPointer<Unit>): Bool
+
+foreign func mysql_stmt_errno(stmt: CPointer<Unit>): UInt32
+
+foreign func mysql_stmt_error(stmt: CPointer<Unit>): CString
+
+foreign func mysql_stmt_sqlstate(stmt: CPointer<Unit>): CString
+
+foreign func mysql_stmt_num_rows(stmt: CPointer<Unit>): UInt64
+
+foreign func mysql_stmt_affected_rows(stmt: CPointer<Unit>): UInt64
+
+foreign func mysql_stmt_insert_id(stmt: CPointer<Unit>): UInt64
+
+foreign func mysql_stmt_field_count(stmt: CPointer<Unit>): UInt32
+
 public func cj_mysql_stmt_init(mysql: CPointer<Unit>): CPointer<Unit>{
    unsafe {
     mysql_stmt_init(mysql)
@@ -64,17 +84,5 @@ public func cj_mysql_mysql_stmt_reset(stmt: CPointer<Unit>): Bool{
   }
 }
 
-/*
-bool STDCALL mysql_stmt_bind_param(MYSQL_STMT *stmt, MYSQL_BIND *bnd);
-bool STDCALL mysql_stmt_bind_result(MYSQL_STMT *stmt, MYSQL_BIND *bnd);
-bool STDCALL mysql_stmt_free_result(MYSQL_STMT *stmt);
-unsigned int STDCALL mysql_stmt_errno(MYSQL_STMT *stmt);
-const char *STDCALL mysql_stmt_error(MYSQL_STMT *stmt);
-const char *STDCALL mysql_stmt_sqlstate(MYSQL_STMT *stmt);
-uint64_t STDCALL mysql_stmt_num_rows(MYSQL_STMT *stmt);
-uint64_t STDCALL mysql_stmt_affected_rows(MYSQL_STMT *stmt);
-uint64_t STDCALL mysql_stmt_insert_id(MYSQL_STMT *stmt);
-unsigned int STDCALL mysql_stmt_field_count(MYSQL_STMT *stmt);
 
-*/
 
