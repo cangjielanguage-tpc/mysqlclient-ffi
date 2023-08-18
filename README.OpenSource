@@ -1,0 +1,11 @@
+[
+    {
+        "Name": "mysql-client",
+        "License": "Apache License 2.0",
+        "License File": "LICENSE",
+        "Version Number": "v8.0.34",
+        "Owner" : "",
+        "Upstream URL": "",
+        "Description": "HTML Parser"
+    }
+]
