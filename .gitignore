@@ -23,3 +23,25 @@
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml
 hs_err_pid*
+
+.vscode
+build/
+.cjpm-history
+module-lock.json
+test/report/
+src/mysqlclient/z*_test.cj
+perf*
+tmp
+mysql
+unittest
+ci_test/
+ci_lib/
+cov_output/
+*.cjo
+*.gcda
+*.gcno
+bin/
+output/
+log/
+report/
+module-resolve.json

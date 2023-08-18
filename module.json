@@ -1,14 +1,19 @@
 {
-	"cjc_version": "0.38.2",
+	"cjc_version": "0.39.5",
 	"organization": "cangjie",
 	"name": "mysqlclient",
 	"description": "",
-	"version": "1.0.0",
+	"version": "0.0.1",
 	"requires": {},
 	"package_requires": {},
-	"foreign_requires": {},
+	"foreign_requires": {
+		"mysqlclient": {
+			"path": "./lib/",
+			"export": []
+		}
+	},
 	"output_type": "executable",
-    "command_option": "-L ./lib -l mysqlclient",
+    "command_option": "",
 	"condition_option": {},
 	"link_option": "",
 	"cross_compile_configuration": {},
