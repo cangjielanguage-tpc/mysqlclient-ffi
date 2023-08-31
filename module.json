@@ -13,7 +13,7 @@
 		}
 	},
 	"output_type": "executable",
-    "command_option": "",
+    "command_option": "-g",
 	"condition_option": {},
 	"link_option": "",
 	"cross_compile_configuration": {},
