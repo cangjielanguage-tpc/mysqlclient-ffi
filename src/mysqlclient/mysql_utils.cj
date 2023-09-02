@@ -588,7 +588,7 @@ struct MYSQL_BIND {
     /*
      * Pointer to null indicator
      */
-    var is_null: CPointer<Bool> = CPointer<Bool>()
+    var is_null: CPointer<UInt8> = CPointer<UInt8>()
 
     /*
      * buffer to get/put data
@@ -598,7 +598,7 @@ struct MYSQL_BIND {
     /*
      * set this if you want to track data truncations happened during fetch
      */
-    var error: CPointer<Bool> = CPointer<Bool>()
+    var error: CPointer<UInt8> = CPointer<UInt8>()
 
     /*
      * for the current data position
@@ -664,5 +664,5 @@ struct MYSQL_BIND {
      */
     var is_null_value: Bool = false
 
-    var extension: CPointer<Bool> = CPointer<Bool>()
+    var extension: CPointer<Unit> = CPointer<Unit>()
 }
