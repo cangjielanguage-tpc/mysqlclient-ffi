@@ -1,5 +1,9 @@
 package mysqlclient
 
+let bufferLengthUInt64: UInt64 = 1024
+
+let bufferLengthInt64: Int64 = 1024
+
 /*
  * 执行Select语句产生的结果
  */
@@ -46,12 +50,11 @@ public class MysqlQueryResult <: QueryResult {
     public override func next(values: Array<SqlDbType>): Bool {
         unsafe {
             // 112是MYSQL_BIND的指针长度
-            var binds: CPointer<MYSQL_BIND> = LibC.malloc<MYSQL_BIND>(count: values.size * 112)
+            var binds: CPointer<MYSQL_BIND> = LibC.malloc<MYSQL_BIND>(count: values.size)
             for (i in 0..values.size) {
-                var bind: MYSQL_BIND = cjTypeToMysqlTypeQuery(values[i])
-                unsafe {
-                    binds.write(i, bind)
-                }
+                var bind: MYSQL_BIND = cjTypeToMysqlTypeQuery(values[i], resultCount[i].length)
+
+                binds.write(i, bind)
             }
             let bind: CPointer<Unit> = CPointer<Unit>(binds)
             let isBool: Bool = mysql_stmt_bind_result(stmt, bind)
@@ -69,7 +72,7 @@ public class MysqlQueryResult <: QueryResult {
                         mysqlBind.buffer_type == MYSQL_TYPE_DATE || mysqlBind.buffer_type == MYSQL_TYPE_TIME || mysqlBind.
                     buffer_type == MYSQL_TYPE_DATETIME || mysqlBind.buffer_type == MYSQL_TYPE_TIMESTAMP) {
                         var len: UInt64 = mysqlBind.length.read()
-                        if (len > 1024) {
+                        if (len > UInt64(resultCount[i].length)) {
                             LibC.free<Unit>(mysqlBind.buffer)
                             mysqlBind.buffer = LibC.malloc<Unit>(count: Int64(len + 1))
                             mysqlBind.buffer_length = len + 1
@@ -79,7 +82,11 @@ public class MysqlQueryResult <: QueryResult {
                                 freeQueryCPointer(values.size, binds)
                                 throw SqlException(mysql_stmt_error(stmt).toString())
                             }
+                        } else {
+                            binds.write(i, mysqlBind)
                         }
+                    } else {
+                        binds.write(i, mysqlBind)
                     }
                 }
             } else if (intFetch == 1) {
@@ -108,7 +115,7 @@ public class MysqlQueryResult <: QueryResult {
     public override func close(): Unit {
         unsafe {
             // 释放预准备语句内存资源
-            let isBool: Bool = mysql_stmt_close(stmt)
+            let isBool: Bool = mysql_stmt_free_result(stmt)
             if (isBool) {
                 throw SqlException(mysql_stmt_error(stmt).toString())
             }
@@ -142,32 +149,32 @@ func freeQueryCPointer(index: Int64, binds: CPointer<MYSQL_BIND>): Unit {
     }
 }
 
-func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType): MYSQL_BIND {
+func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType, length: Int64): MYSQL_BIND {
     return match (sqlDbType) {
         // String----SqlChar----CHAR----CHAR----MYSQL_TYPE_STRING----char[]
-        case _: SqlChar => setStringQuery(MYSQL_TYPE_STRING)
-        case _: SqlNullableChar => setStringQuery(MYSQL_TYPE_STRING)
+        case _: SqlChar => setStringQuery(MYSQL_TYPE_STRING, length)
+        case _: SqlNullableChar => setStringQuery(MYSQL_TYPE_STRING, length)
 
         // String----SqlVarchar----VARCHAR----VARCHAR----MYSQL_TYPE_VAR_STRING----char[]
-        case _: SqlVarchar => setStringQuery(MYSQL_TYPE_VAR_STRING)
-        case _: SqlNullableVarchar => setStringQuery(MYSQL_TYPE_VAR_STRING)
+        case _: SqlVarchar => setStringQuery(MYSQL_TYPE_VAR_STRING, length)
+        case _: SqlNullableVarchar => setStringQuery(MYSQL_TYPE_VAR_STRING, length)
 
         // Array<Byte>----SqlBinary----BINARY----BINARY----MYSQL_TYPE_STRING----char[]
-        case _: SqlBinary => setBytesQuery(MYSQL_TYPE_STRING)
-        case _: SqlNullableBinary => setBytesQuery(MYSQL_TYPE_STRING)
+        case _: SqlBinary => setBytesQuery(MYSQL_TYPE_STRING, length)
+        case _: SqlNullableBinary => setBytesQuery(MYSQL_TYPE_STRING, length)
 
         // Array<Byte>----SqlVarBinary----VARBINARY----VARBINARY----MYSQL_TYPE_VAR_STRING----char[]
-        case _: SqlVarBinary => setBytesQuery(MYSQL_TYPE_VAR_STRING)
-        case _: SqlNullableVarBinary => setBytesQuery(MYSQL_TYPE_VAR_STRING)
+        case _: SqlVarBinary => setBytesQuery(MYSQL_TYPE_VAR_STRING, length)
+        case _: SqlNullableVarBinary => setBytesQuery(MYSQL_TYPE_VAR_STRING, length)
 
         // 长字符串，mysql输入对应表格没有给出，在输出表格有对应数据
         // Array<InputStream>----SqlClob----CLOB----LONGTEXT----MYSQL_TYPE_LONG_BLOB----char[]
-        case _: SqlClob => setClobQuery(MYSQL_TYPE_BLOB)
-        case _: SqlNullableClob => setClobQuery(MYSQL_TYPE_BLOB)
+        case _: SqlClob => setClobQuery(MYSQL_TYPE_BLOB, length)
+        case _: SqlNullableClob => setClobQuery(MYSQL_TYPE_BLOB, length)
 
         // Array<InputStream>----SqlBlob----BLOB----BLOB----MYSQL_TYPE_BLOB----char[]
-        case _: SqlBlob => setBlobQuery(MYSQL_TYPE_BLOB)
-        case _: SqlNullableBlob => setBlobQuery(MYSQL_TYPE_BLOB)
+        case _: SqlBlob => setBlobQuery(MYSQL_TYPE_BLOB, length)
+        case _: SqlNullableBlob => setBlobQuery(MYSQL_TYPE_BLOB, length)
 
         // 布尔类型在mysql数据库中表现形式是TINYINT
         // Bool----SqlBool----BOOLEAN----TINYINT----MYSQL_TYPE_TINY----signed char
@@ -231,50 +238,47 @@ func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType): MYSQL_BIND {
     }
 }
 
-let bufferLengthUInt64: UInt64 = 1024
-let bufferLengthInt64: Int64 = 1024
-
-func setStringQuery(sqlType: Int32): MYSQL_BIND {
+func setStringQuery(sqlType: Int32, length: Int64): MYSQL_BIND {
     var mysqlBind: MYSQL_BIND = MYSQL_BIND()
     mysqlBind.buffer_type = sqlType
-    mysqlBind.buffer_length = bufferLengthUInt64
+    mysqlBind.buffer_length = UInt64(length)
     mysqlBind.length = LibC.malloc<UInt64>(count: 8)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    mysqlBind.buffer = LibC.malloc<Unit>(count: bufferLengthInt64)
+    mysqlBind.buffer = LibC.malloc<Unit>(count: length)
     return mysqlBind
 }
 
-func setBytesQuery(sqlType: Int32): MYSQL_BIND {
+func setBytesQuery(sqlType: Int32, length: Int64): MYSQL_BIND {
     var mysqlBind: MYSQL_BIND = MYSQL_BIND()
     mysqlBind.buffer_type = sqlType
-    mysqlBind.buffer_length = bufferLengthUInt64
+    mysqlBind.buffer_length = UInt64(length)
     mysqlBind.length = LibC.malloc<UInt64>(count: 8)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    mysqlBind.buffer = LibC.malloc<Unit>(count: bufferLengthInt64)
+    mysqlBind.buffer = LibC.malloc<Unit>(count: length)
     return mysqlBind
 }
 
-func setClobQuery(sqlType: Int32): MYSQL_BIND {
+func setClobQuery(sqlType: Int32, length: Int64): MYSQL_BIND {
     var mysqlBind: MYSQL_BIND = MYSQL_BIND()
     mysqlBind.buffer_type = sqlType
-    mysqlBind.buffer_length = bufferLengthUInt64
+    mysqlBind.buffer_length = UInt64(length)
     mysqlBind.length = LibC.malloc<UInt64>(count: 8)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    mysqlBind.buffer = LibC.malloc<Unit>(count: bufferLengthInt64)
+    mysqlBind.buffer = LibC.malloc<Unit>(count: length)
     return mysqlBind
 }
 
-func setBlobQuery(sqlType: Int32): MYSQL_BIND {
+func setBlobQuery(sqlType: Int32, length: Int64): MYSQL_BIND {
     var mysqlBind: MYSQL_BIND = MYSQL_BIND()
     mysqlBind.buffer_type = sqlType
-    mysqlBind.buffer_length = bufferLengthUInt64
+    mysqlBind.buffer_length = UInt64(length)
     mysqlBind.length = LibC.malloc<UInt64>(count: 8)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    mysqlBind.buffer = LibC.malloc<Unit>(count: bufferLengthInt64)
+    mysqlBind.buffer = LibC.malloc<Unit>(count: length)
     return mysqlBind
 }
 
@@ -355,7 +359,7 @@ func setDateQuery(sqlType: Int32): MYSQL_BIND {
     mysqlBind.length = LibC.malloc<UInt64>(count: 41)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
     mysqlBind.buffer = CPointer<Unit>(buffer)
     return mysqlBind
 }
@@ -367,7 +371,7 @@ func setTimeQuery(sqlType: Int32): MYSQL_BIND {
     mysqlBind.length = LibC.malloc<UInt64>(count: 41)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
     mysqlBind.buffer = CPointer<Unit>(buffer)
     return mysqlBind
 }
@@ -379,7 +383,7 @@ func setTimestampQuery(sqlType: Int32): MYSQL_BIND {
     mysqlBind.length = LibC.malloc<UInt64>(count: 41)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
     mysqlBind.buffer = CPointer<Unit>(buffer)
     return mysqlBind
 }
@@ -391,7 +395,7 @@ func setDateTimeQuery(sqlType: Int32): MYSQL_BIND {
     mysqlBind.length = LibC.malloc<UInt64>(count: 41)
     mysqlBind.is_null = LibC.malloc<UInt8>(count: 1)
     mysqlBind.error = LibC.malloc<UInt8>(count: 1)
-    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+    let buffer: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
     mysqlBind.buffer = CPointer<Unit>(buffer)
     return mysqlBind
 }
@@ -498,7 +502,7 @@ func setBlob(buffer: CPointer<Unit>, bufferBool: Bool, valueBool: Bool, mysqlBin
             let bufferLength: Int64 = Int64(mysqlBind.length.read())
             var arr = Array<Byte>(bufferLength, item: 0)
             for (i in 0..bufferLength) {
-                arr[i] = unsafe { valueCPointer.read(i) }
+                arr[i] = valueCPointer.read(i)
             }
 
             var output = ByteArrayStream()
