@@ -64,7 +64,7 @@ public class MysqlDatasource <: Datasource {
      * 参数 key - C中枚举 enum mysql_option
      * 参数 value - 值
      */
-    public func setOption(key: Int32, value: String): Unit
+    public func setOption(key: MysqlOption, value: String): Unit
 
     /*
      * 连接前设置选项
@@ -72,7 +72,7 @@ public class MysqlDatasource <: Datasource {
      * 参数 key - C中枚举 enum mysql_option
      * 参数 value - 值
      */
-    public func setOption(key: Int32, value: UInt32): Unit
+    public func setOption(key: MysqlOption, value: UInt32): Unit
 
     /*
      * 连接前设置选项
@@ -80,7 +80,7 @@ public class MysqlDatasource <: Datasource {
      * 参数 key - C中枚举 enum mysql_option
      * 参数 value - 值
      */
-    public func setOption(key: Int32, value: UInt64): Unit
+    public func setOption(key: MysqlOption, value: UInt64): Unit
 
     /*
      * 连接前设置选项
@@ -88,7 +88,7 @@ public class MysqlDatasource <: Datasource {
      * 参数 key - C中枚举 enum mysql_option
      * 参数 value - 值
      */
-    public func setOption(key: Int32, value: Bool): Unit
+    public func setOption(key: MysqlOption, value: Bool): Unit
 
     /*
      * 返回一个可用的连接
@@ -121,7 +121,7 @@ public class MysqlConnection <: Connection {
      *
      * 参数 option - C中枚举 enum enum_mysql_set_option
      */
-    public func setOption(option: Int32): Unit
+    public func setOption(option: MysqlSetOption): Unit
 
     /**
      * 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
@@ -175,7 +175,7 @@ public class MysqlStatement <: Statement {
     /*
      * 预执行sql语句中，占位的参数个数
      */
-    public override prop parameterCount: Int64
+    public prop parameterCount: Int64
 
     /**
      * 设置预执行sql语句选项
@@ -183,7 +183,7 @@ public class MysqlStatement <: Statement {
      * 参数 key - C中枚举 enum enum_stmt_attr_type
      * 参数 arg - 值
      */
-    public func setOption(option: Int32, arg: Bool): Unit
+    public func setOption(option: MysqlStmtAttrType, arg: Bool): Unit
 
     /**
      * 设置预执行sql语句选项
@@ -191,7 +191,7 @@ public class MysqlStatement <: Statement {
      * 参数 key - C中枚举 enum enum_stmt_attr_type
      * 参数 arg - 值
      */
-    public func setOption(option: Int32, arg: UInt64): Unit
+    public func setOption(option: MysqlStmtAttrType, arg: UInt64): Unit
 
     /**
      * 执行sql语句，得到更新结果
@@ -464,7 +464,7 @@ public class MysqlCharSetApi {
      *
      * 返回值 String - 默认字符集名称
      */
-    public func MysqlCharacterSetName(): String
+    public func mysqlCharacterSetName(): String
 
     /*
      * 设置当前连接默认字符集
@@ -472,7 +472,7 @@ public class MysqlCharSetApi {
      * 参数 charset - 默认字符集
      * 返回值 Int32 - 设置结果
      */
-    public func MysqlSetCharacterSet(charset: String): Int32
+    public func mysqlSetCharacterSet(charset: String): Int32
 }
 ```
 
@@ -503,7 +503,7 @@ public class MysqlConnectionApi {
      * 参数 db - 数据库名称
      * 返回值 Bool - 打开结果
      */
-    public func MysqlChangeUser(user: String, passwd: String, db: String): Bool
+    public func mysqlChangeUser(user: String, passwd: String, db: String): Bool
 
     /*
      * 选择数据库
@@ -511,14 +511,14 @@ public class MysqlConnectionApi {
      * 参数 db - 数据库名称
      * 返回值 Int32 - 选择结果
      */
-    public func MysqlSelectDb(db: String): Int32
+    public func mysqlSelectDb(db: String): Int32
 
     /*
      * 重置连接以清除会话状态
      *
      * 返回值 Int32 - 结果
      */
-    public func MysqlResetConnection(): Int32
+    public func mysqlResetConnection(): Int32
 }
 ```
 
@@ -546,33 +546,33 @@ public class MysqlInfoApi {
      *
      * 返回值 UInt32 - 错误号
      */
-    public func MysqlErrno(): UInt32
+    public func mysqlErrno(): UInt32
 
     /*
      * 最近调用的 MySQL 函数的 SQLSTATE 值
      *
      * 返回值 String - SQLSTATE 值
      */
-    public func MysqlSqlstate(): String
+    public func mysqlSqlstate(): String
 
     /*
      * 上一个语句的警告计数
      *
      * 返回值 UInt32 - 警告计数
      */
-    public func MysqlWarningCount(): UInt32
+    public func mysqlWarningCount(): UInt32
 
     /*
      * 有关最近执行的语句的信息
      *
      * 返回值 String - 最近执行的语句的信息
      */
-    public func MysqlInfo(): String
+    public func mysqlInfo(): String
 
     /*
      * 将调试信息写入错误日志
      */
-    public func MysqlDumpDebugInfo(): Unit
+    public func mysqlDumpDebugInfo(): Unit
 }
 ```
 
@@ -663,7 +663,7 @@ public class MysqlRecordApi {
      * 参数 length - sql语句长度
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlSendQuery(q: String, length: UInt32): Int32
+    public func mysqlSendQuery(q: String, length: UInt64): Int32
 
     /*
      * 执行语句
@@ -672,7 +672,7 @@ public class MysqlRecordApi {
      * 参数 length - sql语句的字节长度
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlRealQuery(q: String, length: UInt32): Int32
+    public func mysqlRealQuery(q: String, length: UInt64): Int32
 
     /*
      * 检索和存储整个结果集
@@ -701,9 +701,9 @@ public class MysqlRecordApi {
      * 结果集中的行数
      *
      * 参数 result - 结果集
-     * 返回值 Int32 - 行数
+     * 返回值 UInt64 - 行数
      */
-    public func mysqlNumRows(result: CPointer<Unit>): Int32
+    public func mysqlNumRows(result: CPointer<Unit>): UInt64
 
     /*
      * 提取下一个结果集行
@@ -792,7 +792,7 @@ public class MysqlServerApi {
      * 参数 pid - 线程id
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlKill(pid: UInt32): Int32
+    public func mysqlKill(pid: UInt64): Int32
 }
 ```
 
@@ -804,7 +804,7 @@ ssl相关
 
 #### 主要接口
 
-##### public class MysqlServerApi
+##### public class MysqlSslApi
 
 ```cangjie
 public class MysqlSslApi {
@@ -951,9 +951,9 @@ public class MysqlthreadApi {
     /*
      * 当前线程 ID
      *
-     * 返回值 UInt32 - 线程 ID
+     * 返回值 UInt64 - 线程 ID
      */
-    public func mysqlThreadId(): UInt32
+    public func mysqlThreadId(): UInt64
 
     /*
      * 初始化线程处理程序
