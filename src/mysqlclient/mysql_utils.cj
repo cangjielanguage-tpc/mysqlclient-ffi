@@ -121,116 +121,116 @@ public let MYSQL_TIMESTAMP_DATETIME_TZ: Int32 = 3
  * In the new API we do that only by request because it slows down
  * mysql_stmt_store_result sufficiently.
  */
-public let STMT_ATTR_UPDATE_MAX_LENGTH: Int32 = 0
+public let STMT_ATTR_UPDATE_MAX_LENGTH_INT: Int32 = 0
 
 /*
  * unsigned long with combination of cursor flags (read only, for update,etc)
  */
-public let STMT_ATTR_CURSOR_TYPE: Int32 = 1
+public let STMT_ATTR_CURSOR_TYPE_INT: Int32 = 1
 
 /*
  * Amount of rows to retrieve from server per one fetch if using cursors.
  * Accepts unsigned long attribute in the range 1 - ulong_max
  */
-public let STMT_ATTR_PREFETCH_ROWS: Int32 = 2
+public let STMT_ATTR_PREFETCH_ROWS_INT: Int32 = 2
 
 /*--------------------- C中枚举 enum enum_mysql_set_option ---------------------*/
-public let MYSQL_OPTION_MULTI_STATEMENTS_ON: Int32 = 0
+public let MYSQL_OPTION_MULTI_STATEMENTS_ON_INT: Int32 = 0
 
-public let MYSQL_OPTION_MULTI_STATEMENTS_OFF: Int32 = 1
+public let MYSQL_OPTION_MULTI_STATEMENTS_OFF_INT: Int32 = 1
 
 /*--------------------- C中枚举 enum mysql_option ---------------------*/
-public let MYSQL_OPT_CONNECT_TIMEOUT: Int32 = 0
+public let MYSQL_OPT_CONNECT_TIMEOUT_INT: Int32 = 0
 
-public let MYSQL_OPT_COMPRESS: Int32 = 1
+public let MYSQL_OPT_COMPRESS_INT: Int32 = 1
 
-public let MYSQL_OPT_NAMED_PIPE: Int32 = 2
+public let MYSQL_OPT_NAMED_PIPE_INT: Int32 = 2
 
-public let MYSQL_INIT_COMMAND: Int32 = 3
+public let MYSQL_INIT_COMMAND_INT: Int32 = 3
 
-public let MYSQL_READ_DEFAULT_FILE: Int32 = 4
+public let MYSQL_READ_DEFAULT_FILE_INT: Int32 = 4
 
-public let MYSQL_READ_DEFAULT_GROUP: Int32 = 5
+public let MYSQL_READ_DEFAULT_GROUP_INT: Int32 = 5
 
-public let MYSQL_SET_CHARSET_DIR: Int32 = 6
+public let MYSQL_SET_CHARSET_DIR_INT: Int32 = 6
 
-public let MYSQL_SET_CHARSET_NAME: Int32 = 7
+public let MYSQL_SET_CHARSET_NAME_INT: Int32 = 7
 
-public let MYSQL_OPT_LOCAL_INFILE: Int32 = 8
+public let MYSQL_OPT_LOCAL_INFILE_INT: Int32 = 8
 
-public let MYSQL_OPT_PROTOCOL: Int32 = 9
+public let MYSQL_OPT_PROTOCOL_INT: Int32 = 9
 
-public let MYSQL_SHARED_MEMORY_BASE_NAME: Int32 = 10
+public let MYSQL_SHARED_MEMORY_BASE_NAME_INT: Int32 = 10
 
-public let MYSQL_OPT_READ_TIMEOUT: Int32 = 11
+public let MYSQL_OPT_READ_TIMEOUT_INT: Int32 = 11
 
-public let MYSQL_OPT_WRITE_TIMEOUT: Int32 = 12
+public let MYSQL_OPT_WRITE_TIMEOUT_INT: Int32 = 12
 
-public let MYSQL_OPT_USE_RESULT: Int32 = 13
+public let MYSQL_OPT_USE_RESULT_INT: Int32 = 13
 
-public let MYSQL_REPORT_DATA_TRUNCATION: Int32 = 14
+public let MYSQL_REPORT_DATA_TRUNCATION_INT: Int32 = 14
 
-public let MYSQL_OPT_RECONNECT: Int32 = 15
+public let MYSQL_OPT_RECONNECT_INT: Int32 = 15
 
-public let MYSQL_PLUGIN_DIR: Int32 = 16
+public let MYSQL_PLUGIN_DIR_INT: Int32 = 16
 
-public let MYSQL_DEFAULT_AUTH: Int32 = 17
+public let MYSQL_DEFAULT_AUTH_INT: Int32 = 17
 
-public let MYSQL_OPT_BIND: Int32 = 18
+public let MYSQL_OPT_BIND_INT: Int32 = 18
 
-public let MYSQL_OPT_SSL_KEY: Int32 = 19
+public let MYSQL_OPT_SSL_KEY_INT: Int32 = 19
 
-public let MYSQL_OPT_SSL_CERT: Int32 = 20
+public let MYSQL_OPT_SSL_CERT_INT: Int32 = 20
 
-public let MYSQL_OPT_SSL_CA: Int32 = 21
+public let MYSQL_OPT_SSL_CA_INT: Int32 = 21
 
-public let MYSQL_OPT_SSL_CAPATH: Int32 = 22
+public let MYSQL_OPT_SSL_CAPATH_INT: Int32 = 22
 
-public let MYSQL_OPT_SSL_CIPHER: Int32 = 23
+public let MYSQL_OPT_SSL_CIPHER_INT: Int32 = 23
 
-public let MYSQL_OPT_SSL_CRL: Int32 = 24
+public let MYSQL_OPT_SSL_CRL_INT: Int32 = 24
 
-public let MYSQL_OPT_SSL_CRLPATH: Int32 = 25
+public let MYSQL_OPT_SSL_CRLPATH_INT: Int32 = 25
 
-public let MYSQL_OPT_CONNECT_ATTR_RESET: Int32 = 26
+public let MYSQL_OPT_CONNECT_ATTR_RESET_INT: Int32 = 26
 
-public let MYSQL_OPT_CONNECT_ATTR_ADD: Int32 = 27
+public let MYSQL_OPT_CONNECT_ATTR_ADD_INT: Int32 = 27
 
-public let MYSQL_OPT_CONNECT_ATTR_DELETE: Int32 = 28
+public let MYSQL_OPT_CONNECT_ATTR_DELETE_INT: Int32 = 28
 
-public let MYSQL_SERVER_PUBLIC_KEY: Int32 = 29
+public let MYSQL_SERVER_PUBLIC_KEY_INT: Int32 = 29
 
-public let MYSQL_ENABLE_CLEARTEXT_PLUGIN: Int32 = 30
+public let MYSQL_ENABLE_CLEARTEXT_PLUGIN_INT: Int32 = 30
 
-public let MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORDS: Int32 = 31
+public let MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORDS_INT: Int32 = 31
 
-public let MYSQL_OPT_MAX_ALLOWED_PACKET: Int32 = 32
+public let MYSQL_OPT_MAX_ALLOWED_PACKET_INT: Int32 = 32
 
-public let MYSQL_OPT_NET_BUFFER_LENGTH: Int32 = 33
+public let MYSQL_OPT_NET_BUFFER_LENGTH_INT: Int32 = 33
 
-public let MYSQL_OPT_TLS_VERSION: Int32 = 34
+public let MYSQL_OPT_TLS_VERSION_INT: Int32 = 34
 
-public let MYSQL_OPT_SSL_MODE: Int32 = 35
+public let MYSQL_OPT_SSL_MODE_INT: Int32 = 35
 
-public let MYSQL_OPT_GET_SERVER_PUBLIC_KEY: Int32 = 36
+public let MYSQL_OPT_GET_SERVER_PUBLIC_KEY_INT: Int32 = 36
 
-public let MYSQL_OPT_RETRY_COUNT: Int32 = 37
+public let MYSQL_OPT_RETRY_COUNT_INT: Int32 = 37
 
-public let MYSQL_OPT_OPTIONAL_RESULTSET_METADATA: Int32 = 38
+public let MYSQL_OPT_OPTIONAL_RESULTSET_METADATA_INT: Int32 = 38
 
-public let MYSQL_OPT_SSL_FIPS_MODE: Int32 = 39
+public let MYSQL_OPT_SSL_FIPS_MODE_INT: Int32 = 39
 
-public let MYSQL_OPT_TLS_CIPHERSUITES: Int32 = 40
+public let MYSQL_OPT_TLS_CIPHERSUITES_INT: Int32 = 40
 
-public let MYSQL_OPT_COMPRESSION_ALGORITHMS: Int32 = 41
+public let MYSQL_OPT_COMPRESSION_ALGORITHMS_INT: Int32 = 41
 
-public let MYSQL_OPT_ZSTD_COMPRESSION_LEVEL: Int32 = 42
+public let MYSQL_OPT_ZSTD_COMPRESSION_LEVEL_INT: Int32 = 42
 
-public let MYSQL_OPT_LOAD_DATA_LOCAL_DIR: Int32 = 43
+public let MYSQL_OPT_LOAD_DATA_LOCAL_DIR_INT: Int32 = 43
 
-public let MYSQL_OPT_USER_PASSWORD: Int32 = 44
+public let MYSQL_OPT_USER_PASSWORD_INT: Int32 = 44
 
-public let MYSQL_OPT_SSL_SESSION_DATA: Int32 = 45
+public let MYSQL_OPT_SSL_SESSION_DATA_INT: Int32 = 45
 
 /*--------------------- MYSQL_FIELD参数中的flags ---------------------*/
 /*
