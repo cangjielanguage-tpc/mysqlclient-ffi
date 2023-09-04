@@ -110,7 +110,7 @@ public class MysqlStatement <: Statement {
         if (parameterCount == params.size) {
             unsafe {
                 // 112是MYSQL_BIND的指针长度
-                var binds: CPointer<MYSQL_BIND> = unsafe { LibC.malloc<MYSQL_BIND>(count: params.size * 112) }
+                var binds: CPointer<MYSQL_BIND> = LibC.malloc<MYSQL_BIND>(count: params.size)
                 for (i in 0..params.size) {
                     var bind = cjTypeToMysqlType(params[i])
                     binds.write(i, bind)
@@ -156,12 +156,13 @@ public class MysqlStatement <: Statement {
     public override func query(params: Array<SqlDbType>): MysqlQueryResult {
         if (parameterCount == params.size) {
             unsafe {
-                let metadata: CPointer<MYSQL_RES> = mysql_stmt_result_metadata(stmt)
-                if (metadata.isNull()) {
+                let metadataUnit: CPointer<Unit> = mysql_stmt_result_metadata(stmt)
+                if (metadataUnit.isNull()) {
                     // 不存在准备好的元信息申明，返回NULL
                     throw SqlException(mysql_stmt_error(stmt).toString())
                 }
                 let columnCount: UInt32 = mysql_stmt_field_count(stmt)
+                let metadata: CPointer<MYSQL_RES> = CPointer<MYSQL_RES>(metadataUnit)
                 var res: MYSQL_RES = metadata.read()
                 var fields: CPointer<MYSQL_FIELD> = res.fields
                 if (fields.isNull()) {
@@ -181,38 +182,30 @@ public class MysqlStatement <: Statement {
                 }
 
                 // 112是MYSQL_BIND的指针长度
-                var binds: CPointer<MYSQL_BIND> = LibC.malloc<MYSQL_BIND>(count: params.size * 112)
-                if (params.size != 0) {
-                    for (i in 0..params.size) {
-                        var bind: MYSQL_BIND = cjTypeToMysqlType(params[i])
-                        unsafe {
-                            binds.write(i, bind)
-                        }
-                    }
-                    let bind: CPointer<Unit> = CPointer<Unit>(binds)
+                var binds: CPointer<MYSQL_BIND> = LibC.malloc<MYSQL_BIND>(count: params.size)
+                for (i in 0..params.size) {
+                    var bind: MYSQL_BIND = cjTypeToMysqlType(params[i])
 
-                    // 将应用程序数据缓冲区与prepared语句中的参数标记关联
-                    let isBool: Bool = mysql_stmt_bind_param(stmt, bind)
-                    if (isBool) {
-                        freeCPointer(params.size, binds)
-
-                        // 发生错误非零值，true在c语言中是1，false是0.
-                        throw SqlException(mysql_stmt_error(stmt).toString())
-                    }
+                    binds.write(i, bind)
                 }
+                let bind: CPointer<Unit> = CPointer<Unit>(binds)
 
+                // 将应用程序数据缓冲区与prepared语句中的参数标记关联
+                let isBool: Bool = mysql_stmt_bind_param(stmt, bind)
+                if (isBool) {
+                    freeCPointer(params.size, binds)
+
+                    // 发生错误非零值，true在c语言中是1，false是0.
+                    throw SqlException(mysql_stmt_error(stmt).toString())
+                }
                 let execute: Int32 = mysql_stmt_execute(stmt)
                 if (execute != 0) {
-                    if (params.size != 0) {
-                        freeCPointer(params.size, binds)
-                    }
+                    freeCPointer(params.size, binds)
 
                     // 发生错误非零值
                     throw SqlException(mysql_stmt_error(stmt).toString())
                 }
-                if (params.size != 0) {
-                    freeCPointer(params.size, binds)
-                }
+                freeCPointer(params.size, binds)
                 return MysqlQueryResult(stmt, mysqlColumnInfos)
             }
         } else {
@@ -259,7 +252,7 @@ func freeCPointer(index: Int64, binds: CPointer<MYSQL_BIND>): Unit {
                     let bufferLength: Int64 = Int64(bind.buffer_length)
                     var arr = Array<Byte>(bufferLength, item: 0)
                     for (i in 0..bufferLength) {
-                        arr[i] = unsafe { valueCPointer.read(i) }
+                        arr[i] = valueCPointer.read(i)
                     }
                     releaseArrayRawData<Byte>(CPointerHandle<Byte>(valueCPointer, arr))
                 } else if (bind.buffer_type == MYSQL_TYPE_STRING) {
@@ -369,7 +362,7 @@ func setString(value: Option<String>, sqlType: Int32): MYSQL_BIND {
     mysqlBind.buffer_type = sqlType
     match (value) {
         case Some(v) =>
-            mysqlBind.buffer_length = UInt64(v.size)
+            mysqlBind.buffer_length = UInt64(v.size + 1)
             unsafe {
                 let strCtring: CString = LibC.mallocCString(v)
                 mysqlBind.buffer = CPointer<Unit>(strCtring.getChars())
@@ -636,7 +629,7 @@ func setDate(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.year = UInt32(v.year)
                 date.month = UInt32(v.monthValue)
@@ -667,7 +660,7 @@ func setTime(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.hour = UInt32(v.hour)
                 date.minute = UInt32(v.minute)
@@ -698,7 +691,7 @@ func setTimestamp(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
 
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.year = UInt32(v.year)
@@ -733,7 +726,7 @@ func setDateTime(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 41)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
 
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.year = UInt32(v.year)

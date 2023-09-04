@@ -72,7 +72,7 @@ foreign func mysql_stmt_init(mysql: CPointer<Unit>): CPointer<Unit>
  * MYSQL_RES * mysql_stmt_result_metadata(MYSQL_STMT *stmt)
  */
 @C
-foreign func mysql_stmt_result_metadata(stmt: CPointer<Unit>): CPointer<MYSQL_RES>
+foreign func mysql_stmt_result_metadata(stmt: CPointer<Unit>): CPointer<Unit>
 
 /*
  * 准备要执行的语句
