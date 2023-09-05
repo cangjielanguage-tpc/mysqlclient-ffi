@@ -135,7 +135,7 @@ public class MysqlTransaction <: Transaction {
         unsafe {
             // 设置自动提交模式
             let isBool: Bool = mysql_autocommit(mysql, false)
-            if (!isBool) {
+            if (isBool) {
                 throw SqlException(mysql_error(mysql).toString())
             }
         }
