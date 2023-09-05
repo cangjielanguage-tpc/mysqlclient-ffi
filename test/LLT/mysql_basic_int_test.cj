@@ -102,12 +102,10 @@ public class MysqlIntTest {
 
         // 关闭链接
         mysqlConnection.close()
-
     }
 
     @TestCase
     public func mysqlIntTest02(): Unit {
-
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
         @Assert(true, mysqlDriver.name.size > 0)
@@ -144,6 +142,7 @@ public class MysqlIntTest {
         // 执行插入语句插入数据
         var mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+
         // 释放预执行语句内存
         mysqlStatement.close()
 
@@ -286,6 +285,7 @@ public class MysqlIntTest {
         @Assert(1, (arrDb[5] as SqlNullableSmallInt).getOrThrow().value.getOrThrow())
         @Assert(0.0, (arrDb[6] as SqlNullableReal).getOrThrow().value.getOrThrow())
         @Assert(0.0, (arrDb[7] as SqlNullableDouble).getOrThrow().value.getOrThrow())
+
         // 释放预执行语句内存
         mysqlStatement.close()
 
@@ -333,7 +333,7 @@ public class MysqlIntTest {
         arrDb = [id]
 
         // 执行查询语句
-        var mysqlQueryResult: MysqlQueryResult= mysqlStatement.query(arrDb)
+        var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query(arrDb)
 
         name = SqlNullableVarchar("")
         var intt: SqlNullableInteger = SqlNullableInteger(1)
@@ -345,9 +345,11 @@ public class MysqlIntTest {
         var dou: SqlNullableDouble = SqlNullableDouble(0.0)
 
         arrDb = [id, name, intt, char1, tiny, small, flo, dou]
+
         // 获取数据
         let isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
+
         // 释放预执行语句内存
         mysqlStatement.close()
 
@@ -381,7 +383,7 @@ public class MysqlIntTest {
         var name: SqlNullableVarchar = SqlNullableVarchar("lihao333")
         var intt: SqlNullableInteger = SqlNullableInteger(11)
         var id: SqlNullableBigInt = SqlNullableBigInt(1)
-        
+
         var arrDb: Array<SqlDbType> = [name, intt, id]
 
         // 执行更新语句
@@ -421,12 +423,12 @@ public class MysqlIntTest {
         @Assert(1, (arrDb[0] as SqlNullableBigInt).getOrThrow().value.getOrThrow())
         @Assert("lihao333", (arrDb[1] as SqlNullableVarchar).getOrThrow().value.getOrThrow())
         @Assert(11, (arrDb[2] as SqlNullableInteger).getOrThrow().value.getOrThrow())
+
         // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接
         mysqlConnection.close()
-
     }
 
     @TestCase
@@ -447,7 +449,6 @@ public class MysqlIntTest {
         // 返回一个可用的链接
         let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
 
-
         var mysqlStatement = mysqlConnection.prepareStatement(
             "update t_test set name = ?, intt = ?, char1 = ?, tiny = ?, small = ?, flo = ?, dou = ?  where id = ?"
         )
@@ -463,7 +464,7 @@ public class MysqlIntTest {
         var dou: SqlNullableDouble = SqlNullableDouble(None)
 
         var id: SqlNullableBigInt = SqlNullableBigInt(1)
-        
+
         var arrDb: Array<SqlDbType> = [name, intt, char1, tiny, small, flo, dou, id]
 
         // 执行更新语句
@@ -504,50 +505,44 @@ public class MysqlIntTest {
 
         match ((arrDb[1] as SqlNullableVarchar).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[2] as SqlNullableInteger).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[3] as SqlNullableChar).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[4] as SqlNullableByte).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[5] as SqlNullableSmallInt).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[6] as SqlNullableReal).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[7] as SqlNullableDouble).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
+
+            case None => @Assert(1, 1)
         }
 
         // 删除t_test名称数据表
@@ -564,11 +559,10 @@ public class MysqlIntTest {
     public func getStr(): String {
         let baseStr: String = "lihao22222"
         let sb: StringBuilder = StringBuilder()
-        
+
         for (_ in 0..100) {
             sb.append(baseStr)
         }
         return sb.toString()
     }
-
 }

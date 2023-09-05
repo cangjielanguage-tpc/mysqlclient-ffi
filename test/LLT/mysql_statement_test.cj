@@ -36,10 +36,10 @@ public class MysqlStatementTest {
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_time")
         mysqlStatement1.update()
         mysqlStatement1.parameterColumnInfos
-        mysqlStatement1.setOption("111","1111")
-        mysqlStatement1.setOption(MysqlStmtAttrType.STMT_ATTR_UPDATE_MAX_LENGTH,true)
-        mysqlStatement1.setOption(MysqlStmtAttrType.STMT_ATTR_UPDATE_MAX_LENGTH,false)
-        mysqlStatement1.setOption(MysqlStmtAttrType.STMT_ATTR_CURSOR_TYPE,UInt64(1))
+        mysqlStatement1.setOption("111", "1111")
+        mysqlStatement1.setOption(MysqlStmtAttrType.STMT_ATTR_UPDATE_MAX_LENGTH, true)
+        mysqlStatement1.setOption(MysqlStmtAttrType.STMT_ATTR_UPDATE_MAX_LENGTH, false)
+        mysqlStatement1.setOption(MysqlStmtAttrType.STMT_ATTR_CURSOR_TYPE, UInt64(1))
         @Assert(false, mysqlStatement1.isClosed())
 
         // 释放预执行语句内存
