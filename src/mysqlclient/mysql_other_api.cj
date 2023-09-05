@@ -162,10 +162,12 @@ public class MysqlInfoApi {
 
     /*
      * 将调试信息写入错误日志
+     *
+     * 返回值 Int32 - 结果
      */
-    public func mysqlDumpDebugInfo(): Unit {
+    public func mysqlDumpDebugInfo(): Int32 {
         unsafe {
-            mysql_dump_debug_info(mysql)
+            return mysql_dump_debug_info(mysql)
         }
     }
 }
