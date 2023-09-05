@@ -45,3 +45,4 @@ output/
 log/
 report/
 module-resolve.json
+temp_ci_lib/
