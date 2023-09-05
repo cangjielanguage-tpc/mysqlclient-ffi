@@ -362,9 +362,9 @@ func setString(value: Option<String>, sqlType: Int32): MYSQL_BIND {
     mysqlBind.buffer_type = sqlType
     match (value) {
         case Some(v) =>
-            mysqlBind.buffer_length = UInt64(v.size + 1)
             unsafe {
                 let strCtring: CString = LibC.mallocCString(v)
+                mysqlBind.buffer_length = UInt64(strCtring.size() + 1)
                 mysqlBind.buffer = CPointer<Unit>(strCtring.getChars())
             }
         case None =>
