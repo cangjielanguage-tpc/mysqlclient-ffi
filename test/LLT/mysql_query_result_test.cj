@@ -18,7 +18,7 @@ main(): Int64 {
 public class MysqlQueryResultTest {
     @TestCase
     public func mysqlQueryResultTest01(): Unit {
-                // 初始化数据库驱动
+        // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
         @Assert("mysql", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
@@ -32,7 +32,7 @@ public class MysqlQueryResultTest {
         // 返回一个可用的链接
         let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
 
-         // 删除t_test2名称数据表
+        // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_time")
         mysqlStatement1.update()
 

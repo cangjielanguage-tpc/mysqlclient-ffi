@@ -90,18 +90,17 @@ public class MysqlBigintVarcharTest {
         var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
 
+        id = SqlNullableBigInt(2)
+        name = SqlNullableVarchar("lihao222")
+        intt = SqlNullableInteger(1)
+        char1 = SqlNullableChar("lihao222")
 
-         id = SqlNullableBigInt(2)
-         name = SqlNullableVarchar("lihao222")
-         intt = SqlNullableInteger(1)
-         char1 = SqlNullableChar("lihao222")
+        tiny = SqlNullableByte(1)
+        small = SqlNullableSmallInt(1)
+        flo = SqlNullableReal(0.0)
+        dou = SqlNullableDouble(0.0)
 
-         tiny = SqlNullableByte(1)
-         small = SqlNullableSmallInt(1)
-         flo = SqlNullableReal(0.0)
-         dou = SqlNullableDouble(0.0)
-
-         arrDb = [id, name, intt, char1, tiny, small, flo, dou]
+        arrDb = [id, name, intt, char1, tiny, small, flo, dou]
 
         // 执行插入语句插入数据
         mysqlUpdateResult = mysqlStatement.update(arrDb)
@@ -216,7 +215,7 @@ public class MysqlBigintVarcharTest {
         @Assert(1, (arrDb[5] as SqlNullableSmallInt).getOrThrow().value.getOrThrow())
         @Assert(0.0, (arrDb[6] as SqlNullableReal).getOrThrow().value.getOrThrow())
         @Assert(0.0, (arrDb[7] as SqlNullableDouble).getOrThrow().value.getOrThrow())
-        
+
         // 删除语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement(
             "delete from t_test where name = ?"
@@ -278,7 +277,7 @@ public class MysqlBigintVarcharTest {
         dou = SqlNullableDouble(None)
 
         id = SqlNullableBigInt(1)
-        
+
         arrDb = [name, intt, char1, tiny, small, flo, dou, id]
 
         // 执行更新语句
@@ -319,51 +318,44 @@ public class MysqlBigintVarcharTest {
 
         match ((arrDb[1] as SqlNullableVarchar).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[2] as SqlNullableInteger).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[3] as SqlNullableChar).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[4] as SqlNullableByte).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[5] as SqlNullableSmallInt).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[6] as SqlNullableReal).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         match ((arrDb[7] as SqlNullableDouble).getOrThrow().value) {
             case Some(_) => @Assert(1, 0)
-                
-            case None =>@Assert(1, 1)
-                
+
+            case None => @Assert(1, 1)
         }
 
         // 删除t_test名称数据表

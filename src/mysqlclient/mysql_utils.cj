@@ -294,16 +294,6 @@ public let MYSQL_STMT_FETCH_NO_DATA = 100
  */
 public let MYSQL_STMT_FETCH_DATA_TRUNCATED = 101
 
-/*
-   typedef struct MYSQL_TIME {
-     unsigned int year, month, day, hour, minute, second;
-     unsigned long second_part; /**< microseconds */
-     bool neg;
-     enum enum_mysql_timestamp_type time_type;
-     /// The time zone displacement, specified in seconds.
-     int time_zone_displacement;
-   } MYSQL_TIME;
- */
 @C
 struct MYSQL_TIME {
     var year: UInt32 = 0
@@ -333,13 +323,6 @@ struct MYSQL_TIME {
     var time_zone_displacement: Int32 = 0
 }
 
-/*
-   typedef struct MYSQL_ROWS {
-     struct MYSQL_ROWS *next; /* list of rows */
-     MYSQL_ROW data;
-     unsigned long length;
-   } MYSQL_ROWS;
- */
 @C
 struct MYSQL_ROWS {
     /*
@@ -352,26 +335,6 @@ struct MYSQL_ROWS {
     var length: UInt64 = 0
 }
 
-/*
-   typedef struct MYSQL_RES {
-     uint64_t row_count;
-     MYSQL_FIELD *fields;
-     struct MYSQL_DATA *data;
-     MYSQL_ROWS *data_cursor;
-     unsigned long *lengths; /* column lengths of current row */
-     MYSQL *handle;          /* for unbuffered reads */
-     const struct MYSQL_METHODS *methods;
-     MYSQL_ROW row;         /* If unbuffered read */
-     MYSQL_ROW current_row; /* buffer to current row */
-     struct MEM_ROOT *field_alloc;
-     unsigned int field_count, current_field;
-     bool eof; /* Used by mysql_fetch_row */
-     /* mysql_stmt_close() had to cancel this result */
-     bool unbuffered_fetch_cancelled;
-     enum enum_resultset_metadata metadata;
-     void *extension;
-   } MYSQL_RES;
- */
 @C
 struct MYSQL_RES {
     var row_count: UInt64 = 0
@@ -425,31 +388,6 @@ struct MYSQL_RES {
     var extension: CPointer<Unit> = CPointer<Unit>()
 }
 
-/*
-   typedef struct MYSQL_FIELD {
-     char *name;               /* Name of column */
-     char *org_name;           /* Original column name, if an alias */
-     char *table;              /* Table of column if column was a field */
-     char *org_table;          /* Org table name, if table was an alias */
-     char *db;                 /* Database for table */
-     char *catalog;            /* Catalog for table */
-     char *def;                /* Default value (set by mysql_list_fields) */
-     unsigned long length;     /* Width of column (create length) */
-     unsigned long max_length; /* Max width for selected set */
-     unsigned int name_length;
-     unsigned int org_name_length;
-     unsigned int table_length;
-     unsigned int org_table_length;
-     unsigned int db_length;
-     unsigned int catalog_length;
-     unsigned int def_length;
-     unsigned int flags;         /* Div flags */
-     unsigned int decimals;      /* Number of decimals in field */
-     unsigned int charsetnr;     /* Character set */
-     enum enum_field_types type; /* Type of field. See mysql_com.h for types */
-     void *extension;
-   } MYSQL_FIELD;
- */
 @C
 struct MYSQL_FIELD {
     /*
@@ -534,14 +472,6 @@ struct MYSQL_FIELD {
     var extension: CPointer<Unit> = CPointer<Unit>()
 }
 
-/*
-   typedef struct MYSQL_DATA {
-     MYSQL_ROWS *data;
-     struct MEM_ROOT *alloc;
-     uint64_t rows;
-     unsigned int fields;
-   } MYSQL_DATA;
- */
 @C
 struct MYSQL_DATA {
     var data: CPointer<MYSQL_ROWS> = CPointer<MYSQL_ROWS>()
@@ -553,31 +483,6 @@ struct MYSQL_DATA {
     var fields: UInt32 = 0
 }
 
-/*
-   typedef struct MYSQL_BIND {
-     unsigned long *length; /* output length pointer */
-     bool *is_null;         /* Pointer to null indicator */
-     void *buffer;          /* buffer to get/put data */
-     /* set this if you want to track data truncations happened during fetch */
-     bool *error;
-     unsigned char *row_ptr; /* for the current data position */
-     void (*store_param_func)(NET *net, struct MYSQL_BIND *param);
-     void (*fetch_result)(struct MYSQL_BIND *, MYSQL_FIELD *, unsigned char **row);
-     void (*skip_result)(struct MYSQL_BIND *, MYSQL_FIELD *, unsigned char **row);
-     /* output buffer length, must be set when fetching str/binary */
-     unsigned long buffer_length;
-     unsigned long offset;              /* offset position for char/binary fetch */
-     unsigned long length_value;        /* Used if length is 0 */
-     unsigned int param_number;         /* For null count and error messages */
-     unsigned int pack_length;          /* Internal length for packed data */
-     enum enum_field_types buffer_type; /* buffer type */
-     bool error_value;                  /* used if error is 0 */
-     bool is_unsigned;                  /* set if integer type is unsigned */
-     bool long_data_used;               /* If used with mysql_send_long_data */
-     bool is_null_value;                /* Used if is_null is 0 */
-     void *extension;
-   } MYSQL_BIND;
- */
 @C
 struct MYSQL_BIND {
     /*
