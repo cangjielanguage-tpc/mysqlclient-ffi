@@ -53,7 +53,7 @@ public class MysqlDatasource <: Datasource {
      */
     public func setOption(key: MysqlOption, value: UInt32): Unit {
         unsafe {
-            let valueCPointer: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            let valueCPointer: CPointer<UInt32> = LibC.malloc<UInt32>()
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
 
@@ -71,7 +71,7 @@ public class MysqlDatasource <: Datasource {
      */
     public func setOption(key: MysqlOption, value: UInt64): Unit {
         unsafe {
-            let valueCPointer: CPointer<UInt64> = LibC.malloc<UInt64>(count: 8)
+            let valueCPointer: CPointer<UInt64> = LibC.malloc<UInt64>()
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
 
@@ -89,7 +89,7 @@ public class MysqlDatasource <: Datasource {
      */
     public func setOption(key: MysqlOption, value: Bool): Unit {
         unsafe {
-            let valueCPointer: CPointer<Byte> = LibC.malloc<Byte>(count: 1)
+            let valueCPointer: CPointer<Byte> = LibC.malloc<Byte>()
             if (value) {
                 valueCPointer.write(1)
             } else {
@@ -132,7 +132,7 @@ public class MysqlDatasource <: Datasource {
             arrList[3].releaseRaw(dbCp)
             arrList[5].releaseRaw(unixSocketCp)
             if (mysql.isNull()) {
-                throw SqlException(mysql_error(mysql).toString())
+                throw SqlException("Connect Failed!")
             }
         }
         return MysqlConnection(mysql)

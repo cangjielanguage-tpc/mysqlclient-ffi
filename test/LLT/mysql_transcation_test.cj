@@ -6,14 +6,6 @@ from std import unittest.testmacro.*
 from std import database.sql.*
 from std import time.*
 
-let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
-let arr: Array<(String, String)> = Array<(String, String)>()
-let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-    "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
-    arr
-)
-let con: MysqlConnection = mysqlDatasource.connect()
-
 main(): Int64 {
     let transactionTest: TransactionTest = TransactionTest()
 
@@ -35,6 +27,13 @@ main(): Int64 {
 public class TransactionTest {
     @TestCase
     public func TransactionTest01(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
 
         //数据库事务访问模式ReadWrite
@@ -44,10 +43,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest02(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
 
         //数据库事务隔离级别ReadUncommitted
@@ -57,10 +65,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest03(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
 
         //数据库事务隔离级别Serializable
@@ -70,10 +87,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest04(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
 
         //数据库事务隔离级别ReadCommitted
@@ -83,10 +109,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest05(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
 
         //数据库事务隔离级别RepeatableRead
@@ -96,10 +131,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest06(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
 
         //数据库事务访问模式Readonly
@@ -109,10 +153,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest07(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
 
         //数据库事务隔离级别RepeatableRead
@@ -122,10 +175,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest08(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
         transaction.save("savePointName")
         transaction.rollback("savePointName")
@@ -138,10 +200,19 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 
     @TestCase
     public func TransactionTest09(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        let arr: Array<(String, String)> = Array<(String, String)>()
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            arr
+        )
+        let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
         transaction.begin()
         transaction.commit()
@@ -154,5 +225,7 @@ public class TransactionTest {
             case _ => 1
         }
         @Assert(0, res)
+
+        con.close()
     }
 }

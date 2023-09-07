@@ -59,7 +59,7 @@ public class MysqlStatement <: Statement {
      */
     public func setOption(option: MysqlStmtAttrType, arg: Bool): Unit {
         unsafe {
-            let argCPointer: CPointer<Byte> = LibC.malloc<Byte>(count: 1)
+            let argCPointer: CPointer<Byte> = LibC.malloc<Byte>()
             if (arg) {
                 argCPointer.write(1)
             } else {
@@ -85,7 +85,7 @@ public class MysqlStatement <: Statement {
      */
     public func setOption(option: MysqlStmtAttrType, arg: UInt64): Unit {
         unsafe {
-            let argCPointer: CPointer<UInt64> = LibC.malloc<UInt64>(count: 8)
+            let argCPointer: CPointer<UInt64> = LibC.malloc<UInt64>()
             argCPointer.write(arg)
             let argCPointer1: CPointer<Unit> = CPointer<Unit>(argCPointer)
 
@@ -115,10 +115,9 @@ public class MysqlStatement <: Statement {
                     var bind = cjTypeToMysqlType(params[i])
                     binds.write(i, bind)
                 }
-                let bind: CPointer<Unit> = CPointer<Unit>(binds)
 
                 // 将应用程序数据缓冲区与prepared语句中的参数标记关联
-                let isBool: Bool = mysql_stmt_bind_param(stmt, bind)
+                let isBool: Bool = mysql_stmt_bind_param(stmt, binds)
                 if (isBool) {
                     freeCPointer(params.size, binds)
 
@@ -182,30 +181,29 @@ public class MysqlStatement <: Statement {
                 }
 
                 // 112是MYSQL_BIND的指针长度
-                var binds: CPointer<MYSQL_BIND> = LibC.malloc<MYSQL_BIND>(count: params.size)
+                var bindsCp: CPointer<MYSQL_BIND> = LibC.malloc<MYSQL_BIND>(count: params.size)
                 for (i in 0..params.size) {
                     var bind: MYSQL_BIND = cjTypeToMysqlType(params[i])
 
-                    binds.write(i, bind)
+                    bindsCp.write(i, bind)
                 }
-                let bind: CPointer<Unit> = CPointer<Unit>(binds)
 
                 // 将应用程序数据缓冲区与prepared语句中的参数标记关联
-                let isBool: Bool = mysql_stmt_bind_param(stmt, bind)
+                let isBool: Bool = mysql_stmt_bind_param(stmt, bindsCp)
                 if (isBool) {
-                    freeCPointer(params.size, binds)
+                    freeCPointer(params.size, bindsCp)
 
                     // 发生错误非零值，true在c语言中是1，false是0.
                     throw SqlException(mysql_stmt_error(stmt).toString())
                 }
                 let execute: Int32 = mysql_stmt_execute(stmt)
                 if (execute != 0) {
-                    freeCPointer(params.size, binds)
+                    freeCPointer(params.size, bindsCp)
 
                     // 发生错误非零值
                     throw SqlException(mysql_stmt_error(stmt).toString())
                 }
-                freeCPointer(params.size, binds)
+                freeCPointer(params.size, bindsCp)
                 return MysqlQueryResult(stmt, mysqlColumnInfos)
             }
         } else {
@@ -262,6 +260,9 @@ func freeCPointer(index: Int64, binds: CPointer<MYSQL_BIND>): Unit {
                 } else {
                     LibC.free<Unit>(bind.buffer)
                 }
+            }
+            if (!bind.is_null.isNull()) {
+                LibC.free<UInt8>(bind.is_null)
             }
         }
         LibC.free<MYSQL_BIND>(binds)
@@ -370,11 +371,11 @@ func setString(value: Option<String>, sqlType: Int32): MYSQL_BIND {
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -392,8 +393,14 @@ func setBytes(value: Option<Array<Byte>>, sqlType: Int32): MYSQL_BIND {
                 mysqlBind.buffer = CPointer<Unit>(bytesCPointer)
             }
         case None =>
-            mysqlBind.buffer_length = 0
-            mysqlBind.buffer = CPointer<Unit>()
+            unsafe {
+                mysqlBind.buffer_length = 0
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
+                isNull.write(1)
+                mysqlBind.is_null = isNull
+                mysqlBind.is_null_value = true
+                mysqlBind.buffer = CPointer<Unit>()
+            }
     }
     return mysqlBind
 }
@@ -421,8 +428,14 @@ func setClob(value: Option<InputStream>, sqlType: Int32): MYSQL_BIND {
                 mysqlBind.buffer = CPointer<Unit>(bytesCPointer)
             }
         case None =>
-            mysqlBind.buffer_length = 0
-            mysqlBind.buffer = CPointer<Unit>()
+            unsafe {
+                mysqlBind.buffer_length = 0
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
+                isNull.write(1)
+                mysqlBind.is_null = isNull
+                mysqlBind.is_null_value = true
+                mysqlBind.buffer = CPointer<Unit>()
+            }
     }
     return mysqlBind
 }
@@ -450,8 +463,14 @@ func setBlob(value: Option<InputStream>, sqlType: Int32): MYSQL_BIND {
                 mysqlBind.buffer = CPointer<Unit>(bytesCPointer)
             }
         case None =>
-            mysqlBind.buffer_length = 0
-            mysqlBind.buffer = CPointer<Unit>()
+            unsafe {
+                mysqlBind.buffer_length = 0
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
+                isNull.write(1)
+                mysqlBind.is_null = isNull
+                mysqlBind.is_null_value = true
+                mysqlBind.buffer = CPointer<Unit>()
+            }
     }
     return mysqlBind
 }
@@ -462,7 +481,7 @@ func setBool(value: Option<Bool>, sqlType: Int32): MYSQL_BIND {
     match (value) {
         case Some(v) =>
             unsafe {
-                let valueCPointer: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                let valueCPointer: CPointer<UInt8> = LibC.malloc<UInt8>()
                 if (v) {
                     valueCPointer.write(1)
                 } else {
@@ -473,14 +492,13 @@ func setBool(value: Option<Bool>, sqlType: Int32): MYSQL_BIND {
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
-    (value, sqlType)
     return mysqlBind
 }
 
@@ -490,18 +508,18 @@ func setInt8(value: Option<Int8>, sqlType: Int32): MYSQL_BIND {
     match (value) {
         case Some(v) =>
             unsafe {
-                let valueCPointer: CPointer<Int8> = LibC.malloc<Int8>(count: 1)
+                let valueCPointer: CPointer<Int8> = LibC.malloc<Int8>()
                 valueCPointer.write(v)
                 mysqlBind.buffer = CPointer<Unit>(valueCPointer)
             }
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -513,18 +531,18 @@ func setInt16(value: Option<Int16>, sqlType: Int32): MYSQL_BIND {
     match (value) {
         case Some(v) =>
             unsafe {
-                let valueCPointer: CPointer<Int16> = LibC.malloc<Int16>(count: 2)
+                let valueCPointer: CPointer<Int16> = LibC.malloc<Int16>()
                 valueCPointer.write(v)
                 mysqlBind.buffer = CPointer<Unit>(valueCPointer)
             }
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -536,18 +554,18 @@ func setInt32(value: Option<Int32>, sqlType: Int32): MYSQL_BIND {
     match (value) {
         case Some(v) =>
             unsafe {
-                let valueCPointer: CPointer<Int32> = LibC.malloc<Int32>(count: 4)
+                let valueCPointer: CPointer<Int32> = LibC.malloc<Int32>()
                 valueCPointer.write(v)
                 mysqlBind.buffer = CPointer<Unit>(valueCPointer)
             }
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -559,18 +577,18 @@ func setInt64(value: Option<Int64>, sqlType: Int32): MYSQL_BIND {
     match (value) {
         case Some(v) =>
             unsafe {
-                let valueCPointer: CPointer<Int64> = LibC.malloc<Int64>(count: 8)
+                let valueCPointer: CPointer<Int64> = LibC.malloc<Int64>()
                 valueCPointer.write(v)
                 mysqlBind.buffer = CPointer<Unit>(valueCPointer)
             }
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -582,18 +600,18 @@ func setFloat32(value: Option<Float32>, sqlType: Int32): MYSQL_BIND {
     match (value) {
         case Some(v) =>
             unsafe {
-                let valueCPointer: CPointer<Float32> = LibC.malloc<Float32>(count: 4)
+                let valueCPointer: CPointer<Float32> = LibC.malloc<Float32>()
                 valueCPointer.write(v)
                 mysqlBind.buffer = CPointer<Unit>(valueCPointer)
             }
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -605,18 +623,18 @@ func setFloat64(value: Option<Float64>, sqlType: Int32): MYSQL_BIND {
     match (value) {
         case Some(v) =>
             unsafe {
-                let valueCPointer: CPointer<Float64> = LibC.malloc<Float64>(count: 8)
+                let valueCPointer: CPointer<Float64> = LibC.malloc<Float64>()
                 valueCPointer.write(v)
                 mysqlBind.buffer = CPointer<Unit>(valueCPointer)
             }
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -629,7 +647,7 @@ func setDate(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>()
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.year = UInt32(v.year)
                 date.month = UInt32(v.monthValue)
@@ -643,11 +661,11 @@ func setDate(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -660,7 +678,7 @@ func setTime(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>()
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.hour = UInt32(v.hour)
                 date.minute = UInt32(v.minute)
@@ -674,11 +692,11 @@ func setTime(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -691,7 +709,7 @@ func setTimestamp(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>()
 
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.year = UInt32(v.year)
@@ -709,11 +727,11 @@ func setTimestamp(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind
@@ -726,7 +744,7 @@ func setDateTime(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case Some(v) =>
             unsafe {
                 // 41是MYSQL_TIME的指针长度
-                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>(count: 1)
+                var parameterValuePtr: CPointer<MYSQL_TIME> = LibC.malloc<MYSQL_TIME>()
 
                 var date: MYSQL_TIME = MYSQL_TIME()
                 date.year = UInt32(v.year)
@@ -744,11 +762,11 @@ func setDateTime(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
         case None =>
             unsafe {
                 mysqlBind.buffer_length = 0
-                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>(count: 1)
+                var isNull: CPointer<UInt8> = LibC.malloc<UInt8>()
                 isNull.write(1)
                 mysqlBind.is_null = isNull
                 mysqlBind.is_null_value = true
-                mysqlBind.buffer = LibC.malloc<Unit>(count: 0)
+                mysqlBind.buffer = CPointer<Unit>()
             }
     }
     return mysqlBind

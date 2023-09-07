@@ -12,8 +12,8 @@
 			"export": []
 		}
 	},
-	"output_type": "executable",
-    "command_option": "-g",
+	"output_type": "dynamic",
+	"command_option": "-O2",
 	"condition_option": {},
 	"link_option": "",
 	"cross_compile_configuration": {},

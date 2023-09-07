@@ -179,8 +179,7 @@ public class MysqlTimestampTest {
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
             "update t_test_timestamp set timestampValue1 = ?, timestampValue2 = ?  where id = ?"
         )
-
-        // @Assert(3, mysqlStatement7.parameterCount)
+        @Assert(3, mysqlStatement7.parameterCount)
         id = SqlBigInt(2)
         let dateTime6: DateTime = DateTime.of(year: 1999, month: 1, dayOfMonth: 1, hour: 9, minute: 11, second: 31)
         let dateTime7: DateTime = DateTime.of(year: 2000, month: 2, dayOfMonth: 2, hour: 13, minute: 6, second: 4)

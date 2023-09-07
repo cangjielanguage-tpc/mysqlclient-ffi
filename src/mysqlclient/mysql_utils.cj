@@ -513,11 +513,11 @@ struct MYSQL_BIND {
     var store_param_func: CFunc<(CPointer<Unit>, CPointer<MYSQL_BIND>) -> Unit> = CFunc<(CPointer<Unit>, CPointer<MYSQL_BIND>) -> Unit>(CPointer<Unit>(
             ))
 
-    var fetch_result: CFunc<(CPointer<MYSQL_BIND>, CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt8>>) -> Unit> = CFunc<(CPointer<MYSQL_BIND>,
-        CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt8>>) -> Unit>(CPointer<Unit>())
+    var fetch_result: CFunc<(CPointer<MYSQL_BIND>, CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt64>>) -> Unit> = CFunc<(CPointer<MYSQL_BIND>,
+        CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt64>>) -> Unit>(CPointer<Unit>())
 
-    var skip_result: CFunc<(CPointer<MYSQL_BIND>, CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt8>>) -> Unit> = CFunc<(CPointer<MYSQL_BIND>,
-        CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt8>>) -> Unit>(CPointer<Unit>())
+    var skip_result: CFunc<(CPointer<MYSQL_BIND>, CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt64>>) -> Unit> = CFunc<(CPointer<MYSQL_BIND>,
+        CPointer<MYSQL_FIELD>, CPointer<CPointer<UInt64>>) -> Unit>(CPointer<Unit>())
 
     /*
      * output buffer length, must be set when fetching str/binary

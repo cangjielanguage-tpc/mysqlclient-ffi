@@ -325,9 +325,9 @@ public class MysqlRecordApi {
      * 结果集中的列数
      *
      * 参数 result - 结果集
-     * 返回值 Int32 - 列数
+     * 返回值 UInt32 - 列数
      */
-    public func mysqlNumFields(result: CPointer<Unit>): Int32 {
+    public func mysqlNumFields(result: CPointer<Unit>): UInt32 {
         unsafe {
             return mysql_num_fields(result)
         }

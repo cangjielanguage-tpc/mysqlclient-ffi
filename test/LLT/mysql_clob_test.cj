@@ -112,7 +112,7 @@ public class MysqlClobTest {
         var isBool: Bool = mysqlQueryResult.next(arrDb)
         @Assert(true, isBool)
         @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        if (let None <- (arrDb[1] as SqlBlob)) {
+        if (let None <- (arrDb[1] as SqlClob)) {
             @Assert(true, true)
         }
 
@@ -201,7 +201,7 @@ public class MysqlClobTest {
         @Assert(true, isBool)
         @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
         var buf = Array<Byte>(10, item: 0)
-        (arrDb[1] as SqlBlob).getOrThrow().value.read(buf)
+        (arrDb[1] as SqlClob).getOrThrow().value.read(buf)
         @Assert("7777777777", String.fromUtf8(buf))
 
         //删除t_test名称数据表

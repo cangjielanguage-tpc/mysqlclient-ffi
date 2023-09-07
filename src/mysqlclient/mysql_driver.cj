@@ -20,7 +20,7 @@ public class MysqlDriver <: Driver {
             mysql = mysql_init(tCPointer)
             if (this.mysql.isNull()) {
                 // 内存不足返回NULL
-                throw SqlException(mysql_error(mysql).toString())
+                throw SqlException("Mysql Initialization Failed!")
             }
         }
     }
@@ -45,7 +45,7 @@ public class MysqlDriver <: Driver {
                 // 服务器版本号（字符串）
                 let version: CString = mysql_get_client_info()
                 if (version.isNull()) {
-                    throw SqlException("mysql version failed.")
+                    throw SqlException("Mysql Version Failed!")
                 } else {
                     return version.toString()
                 }
@@ -86,7 +86,7 @@ public class MysqlDriver <: Driver {
     private func openString(connectionString: String): Array<String> {
         var arr: Array<String> = connectionString.split(';')
         if (arr.size != 7) {
-            throw SqlException("Url is error")
+            throw SqlException("Url is error!")
         }
         var hostString: String = ""
         var userString: String = ""
@@ -98,7 +98,7 @@ public class MysqlDriver <: Driver {
         for (i in 0..7) {
             var list = arr[i].split('=')
             if (list.size != 2) {
-                throw SqlException("Url is error")
+                throw SqlException("Url is error!")
             }
             if (list[0].equals("HOST")) {
                 hostString = list[1]
@@ -115,10 +115,10 @@ public class MysqlDriver <: Driver {
             } else if (list[0].equals("CLIENT_FLAG")) {
                 clientFlagString = list[1]
             } else {
-                throw SqlException("Url is error")
+                throw SqlException("Url is error!")
             }
         }
-        var arrList: Array<String> = Array<String>(9, item: "")
+        var arrList: Array<String> = Array<String>(7, item: "")
         arrList[0] = hostString
         arrList[1] = userString
         arrList[2] = pwdString

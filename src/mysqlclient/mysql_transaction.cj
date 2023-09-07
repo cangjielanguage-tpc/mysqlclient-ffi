@@ -51,7 +51,7 @@ public class MysqlTransaction <: Transaction {
             unsafe {
                 var sql = match (value) {
                     case TransactionIsoLevel.ReadCommitted => "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
-                    case TransactionIsoLevel.ReadUncommitted => "SET SESSION TRANSACTION ISOLATION LEVEL READ UNCOMMITTED"
+                    case TransactionIsoLevel.ReadUncommitted => "set SESSION transaction_isolation='READ-UNCOMMITTED'"
                     case TransactionIsoLevel.RepeatableRead => "SET SESSION TRANSACTION ISOLATION LEVEL REPEATABLE READ"
                     case TransactionIsoLevel.Serializable => "SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE"
                     case _ => throw SqlException("unsupport TransactionIsoLevel Type: ${value}")
@@ -98,8 +98,8 @@ public class MysqlTransaction <: Transaction {
             unsafe {
                 var sql = ""
                 match (value) {
-                    case TransactionAccessMode.ReadWrite => sql = "SET SESSION transaction_read_only = OFF;"
-                    case TransactionAccessMode.ReadOnly => sql = "SET SESSION transaction_read_only = ON;"
+                    case TransactionAccessMode.ReadWrite => sql = "SET SESSION transaction_read_only = OFF"
+                    case TransactionAccessMode.ReadOnly => sql = "SET SESSION transaction_read_only = ON"
                     case _ => throw SqlException("error")
                 }
                 let sqlstr: CPointerHandle<UInt8> = sql.getRaw()

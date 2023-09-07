@@ -107,7 +107,7 @@ foreign func mysql_stmt_execute(stmt: CPointer<Unit>): Int32
  * bool mysql_stmt_bind_param(MYSQL_STMT *stmt, MYSQL_BIND *bind)
  */
 @C
-foreign func mysql_stmt_bind_param(stmt: CPointer<Unit>, bind: CPointer<Unit>): Bool
+foreign func mysql_stmt_bind_param(stmt: CPointer<Unit>, bind: CPointer<MYSQL_BIND>): Bool
 
 /*
  * 上次更新、删除或插入语句更改/删除/插入的行数
@@ -127,7 +127,7 @@ foreign func mysql_stmt_fetch_column(stmt: CPointer<Unit>, bind: CPointer<MYSQL_
  * 将应用程序数据缓冲区与结果集中的列相关联
  * bool mysql_stmt_bind_result(MYSQL_STMT *stmt, MYSQL_BIND *bind)
  */
-foreign func mysql_stmt_bind_result(stmt: CPointer<Unit>, bind: CPointer<Unit>): Bool
+foreign func mysql_stmt_bind_result(stmt: CPointer<Unit>, bind: CPointer<MYSQL_BIND>): Bool
 
 /*
  * 获取下一个结果集行并返回所有绑定列的数据
@@ -385,7 +385,7 @@ foreign func mysql_store_result(mysql: CPointer<Unit>): CPointer<Unit>
  * unsigned int mysql_num_fields(MYSQL_RES *result)
  */
 @C
-foreign func mysql_num_fields(result: CPointer<Unit>): Int32
+foreign func mysql_num_fields(result: CPointer<Unit>): UInt32
 
 /*
  * 确定是否已读取结果集的最后一行

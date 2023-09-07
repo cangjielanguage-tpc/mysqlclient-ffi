@@ -76,6 +76,10 @@ public class MysqlQueryResultTest {
         mysqlQueryResult.close()
         @Assert(false, mysqlStatement1.isClosed())
 
+        // 删除t_test2名称数据表
+        var mysqlStatement6: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_time")
+        mysqlStatement6.update()
+
         // 释放预执行语句内存
         mysqlStatement4.close()
 
