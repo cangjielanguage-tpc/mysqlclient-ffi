@@ -66,5 +66,15 @@ public class MysqlAllTest {
         mysqlStatement = mysqlConnection.prepareStatement(
             "insert into  t_test1(id,name,charValue,tinyintValue,smallintValue,bigintValue,floatValue,doubleValue,textValue,timeValue,dateValue,datetimeValue,timestampValue)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
         )
+
+        // 删除t_test名称数据表
+        mysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test1")
+        mysqlStatement.update()
+
+        // 释放预执行语句内存
+        mysqlStatement.close()
+
+        // 关闭链接
+        mysqlConnection.close()
     }
 }

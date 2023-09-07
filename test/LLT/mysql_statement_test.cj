@@ -14,9 +14,9 @@ main(): Int64 {
     return 0
 }
 
-// @Test
+@Test
 public class MysqlStatementTest {
-    // @TestCase
+    @TestCase
     public func mysqlStatementTest01(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")

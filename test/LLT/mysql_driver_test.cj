@@ -165,7 +165,7 @@ public class MysqlDriverTest {
         @Assert(false, mysqlDriver.preferredPooling)
         try {
             mysqlDriver.open(
-                "HOST==localhost;USER=root;PWD=123456;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+                "mysql=localhost;USER=root;PWD=123456;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
                 Array<(String, String)>()
             )
             @Assert(0, 1)
