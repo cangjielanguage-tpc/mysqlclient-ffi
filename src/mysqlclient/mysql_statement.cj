@@ -275,9 +275,9 @@ func cjTypeToMysqlType(sqlDbType: SqlDbType): MYSQL_BIND {
         case v: SqlChar => setString(v.value, MYSQL_TYPE_STRING)
         case v: SqlNullableChar => setString(v.value, MYSQL_TYPE_STRING)
 
-        // String----SqlVarchar----VARCHAR----VARCHAR----MYSQL_TYPE_STRING----char[]
-        case v: SqlVarchar => setString(v.value, MYSQL_TYPE_STRING)
-        case v: SqlNullableVarchar => setString(v.value, MYSQL_TYPE_STRING)
+        // String----SqlVarchar----VARCHAR----VARCHAR----MYSQL_TYPE_VAR_STRING----char[]
+        case v: SqlVarchar => setString(v.value, MYSQL_TYPE_VAR_STRING)
+        case v: SqlNullableVarchar => setString(v.value, MYSQL_TYPE_VAR_STRING)
 
         // Array<Byte>----SqlBinary----BINARY----BINARY----MYSQL_TYPE_BLOB----char[]
         case v: SqlBinary => setBytes(v.value, MYSQL_TYPE_BLOB)
@@ -863,7 +863,7 @@ func mysqlType(types: Int32): String {
         return "SqlBlob"
     }
     if (types == MYSQL_TYPE_LONG_BLOB) {
-        return "SqlBlob"
+        return "SqlClob"
     }
     if (types == MYSQL_TYPE_BLOB) {
         return "SqlBlob"

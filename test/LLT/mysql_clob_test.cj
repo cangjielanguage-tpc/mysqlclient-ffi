@@ -22,7 +22,7 @@ public class MysqlClobTest {
      * | Field | Type        | Null | Key | Default | Extra |
      * +-------+-------------+------+-----+---------+-------+
      * | id    | bigint      | YES  |     | NULL    |       |
-     * | name  | clob        | YES  |     | NULL    |       |
+     * | name  | longtext    | YES  |     | NULL    |       |
      * +-------+-------------+------+-----+---------+-------+
      */
     @TestCase
