@@ -166,13 +166,13 @@ func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType, length: Int64): MYSQL_BIND {
         case _: SqlVarchar => setStringQuery(MYSQL_TYPE_VAR_STRING, length)
         case _: SqlNullableVarchar => setStringQuery(MYSQL_TYPE_VAR_STRING, length)
 
-        // Array<Byte>----SqlBinary----BINARY----BINARY----MYSQL_TYPE_STRING----char[]
-        case _: SqlBinary => setBytesQuery(MYSQL_TYPE_STRING, length)
-        case _: SqlNullableBinary => setBytesQuery(MYSQL_TYPE_STRING, length)
+        // Array<Byte>----SqlBinary----BINARY----BINARY----MYSQL_TYPE_BLOB----char[]
+        case _: SqlBinary => setBytesQuery(MYSQL_TYPE_BLOB, length)
+        case _: SqlNullableBinary => setBytesQuery(MYSQL_TYPE_BLOB, length)
 
-        // Array<Byte>----SqlVarBinary----VARBINARY----VARBINARY----MYSQL_TYPE_VAR_STRING----char[]
-        case _: SqlVarBinary => setBytesQuery(MYSQL_TYPE_VAR_STRING, length)
-        case _: SqlNullableVarBinary => setBytesQuery(MYSQL_TYPE_VAR_STRING, length)
+        // Array<Byte>----SqlVarBinary----VARBINARY----VARBINARY----MYSQL_TYPE_BLOB----char[]
+        case _: SqlVarBinary => setBytesQuery(MYSQL_TYPE_BLOB, length)
+        case _: SqlNullableVarBinary => setBytesQuery(MYSQL_TYPE_BLOB, length)
 
         // 长字符串，mysql输入对应表格没有给出，在输出表格有对应数据
         // Array<InputStream>----SqlClob----CLOB----LONGTEXT----MYSQL_TYPE_LONG_BLOB----char[]
@@ -423,6 +423,14 @@ func mysqlTypeTocjType(mysqlBind: MYSQL_BIND, value: SqlDbType): SqlDbType {
         return setBool(buffer, bufferBool, valueBool)
     }
 
+    if (value.name.contains("SqlBinary") || value.name.contains("SqlNullableBinary")) {
+        return setBinary(buffer, bufferBool, valueBool, mysqlBind)
+    }
+
+    if (value.name.contains("SqlVarBinary") || value.name.contains("SqlNullableVarBinary")) {
+        return setVarBinary(buffer, bufferBool, valueBool, mysqlBind)
+    }
+
     if (mysqlBind.buffer_type == MYSQL_TYPE_LONG) {
         return setInteger(buffer, bufferBool, valueBool)
     } else if (mysqlBind.buffer_type == MYSQL_TYPE_STRING) {
@@ -500,6 +508,48 @@ func setVarchar(buffer: CPointer<Unit>, bufferBool: Bool, valueBool: Bool): SqlD
         }
     } else {
         return SqlNullableVarchar(None)
+    }
+}
+
+func setBinary(buffer: CPointer<Unit>, bufferBool: Bool, valueBool: Bool, mysqlBind: MYSQL_BIND): SqlDbType {
+    if (bufferBool) {
+        unsafe {
+            let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
+
+            let bufferLength: Int64 = Int64(mysqlBind.length.read())
+            var arr = Array<Byte>(bufferLength, item: 0)
+            for (i in 0..bufferLength) {
+                arr[i] = valueCPointer.read(i)
+            }
+            if (valueBool) {
+                return SqlBinary(arr)
+            } else {
+                return SqlNullableBinary(arr)
+            }
+        }
+    } else {
+        return SqlNullableBinary(None)
+    }
+}
+
+func setVarBinary(buffer: CPointer<Unit>, bufferBool: Bool, valueBool: Bool, mysqlBind: MYSQL_BIND): SqlDbType {
+    if (bufferBool) {
+        unsafe {
+            let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
+
+            let bufferLength: Int64 = Int64(mysqlBind.length.read())
+            var arr = Array<Byte>(bufferLength, item: 0)
+            for (i in 0..bufferLength) {
+                arr[i] = valueCPointer.read(i)
+            }
+            if (valueBool) {
+                return SqlVarBinary(arr)
+            } else {
+                return SqlNullableVarBinary(arr)
+            }
+        }
+    } else {
+        return SqlNullableVarBinary(None)
     }
 }
 

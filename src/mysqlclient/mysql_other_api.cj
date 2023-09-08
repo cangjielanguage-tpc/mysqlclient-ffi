@@ -128,6 +128,17 @@ public class MysqlInfoApi {
     }
 
     /*
+     * 最近调用的 MySQL 函数的错误信息
+     *
+     * 返回值 String - 错误信息
+     */
+    public func mysqlError(): String {
+        unsafe {
+            return mysql_error(mysql).toString()
+        }
+    }
+
+    /*
      * 最近调用的 MySQL 函数的 SQLSTATE 值
      *
      * 返回值 String - SQLSTATE 值
@@ -583,6 +594,17 @@ public class MysqlStmtApi {
      */
     public init(mysqlStatement: MysqlStatement) {
         stmt = mysqlStatement.stmt
+    }
+    
+    /*
+     * 最近调用的MySQL准备语句的错误消息功能
+     *
+     * 返回值 String - 错误消息
+     */
+    public func mysqlStmtError(): String {
+        unsafe {
+            return mysql_stmt_error(stmt).toString()
+        }
     }
 
     /*
