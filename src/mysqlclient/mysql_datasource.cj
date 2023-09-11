@@ -36,12 +36,12 @@ public class MysqlDatasource <: Datasource {
      */
     public func setOption(key: MysqlOption, value: String): Unit {
         unsafe {
-            let valueCp: CPointerHandle<UInt8> = value.getRaw()
-            let valueCPointer: CPointer<Unit> = CPointer<Unit>(valueCp.pointer)
+            let sqlCString: CString = LibC.mallocCString(value)
+            let valueCPointer: CPointer<Unit> = CPointer<Unit>(sqlCString.getChars())
 
             // 连接前设置选项
             mysql_options(mysql, key.toInt32(), valueCPointer)
-            value.releaseRaw(valueCp)
+            LibC.free(sqlCString)
         }
     }
 
