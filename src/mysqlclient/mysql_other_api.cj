@@ -31,10 +31,9 @@ public class MysqlCharSetApi {
      */
     public func mysqlSetCharacterSet(charset: String): Int32 {
         unsafe {
-            let charsetCp: CPointerHandle<UInt8> = charset.getRaw()
-            let charsetCString: CString = CString(charsetCp.pointer)
+            let charsetCString: CString = LibC.mallocCString(charset)
             let ret: Int32 = mysql_set_character_set(mysql, charsetCString)
-            charset.releaseRaw(charsetCp)
+            LibC.free(charsetCString)
             return ret
         }
     }
@@ -62,16 +61,13 @@ public class MysqlConnectionApi {
      */
     public func mysqlChangeUser(user: String, passwd: String, db: String): Bool {
         unsafe {
-            let userCp: CPointerHandle<UInt8> = user.getRaw()
-            let pwdCp: CPointerHandle<UInt8> = passwd.getRaw()
-            let dbCp: CPointerHandle<UInt8> = db.getRaw()
-            let userCString: CString = CString(userCp.pointer)
-            let pwdCString: CString = CString(pwdCp.pointer)
-            let dbCString: CString = CString(dbCp.pointer)
+            let userCString: CString = LibC.mallocCString(user)
+            let pwdCString: CString = LibC.mallocCString(passwd)
+            let dbCString: CString = LibC.mallocCString(db)
             let ret: Bool = mysql_change_user(mysql, userCString, pwdCString, dbCString)
-            user.releaseRaw(userCp)
-            passwd.releaseRaw(pwdCp)
-            db.releaseRaw(dbCp)
+            LibC.free(userCString)
+            LibC.free(pwdCString)
+            LibC.free(dbCString)
             return ret
         }
     }
@@ -84,10 +80,9 @@ public class MysqlConnectionApi {
      */
     public func mysqlSelectDb(db: String): Int32 {
         unsafe {
-            let dbCp: CPointerHandle<UInt8> = db.getRaw()
-            let dbCString: CString = CString(dbCp.pointer)
+            let dbCString: CString = LibC.mallocCString(db)
             let ret: Int32 = mysql_select_db(mysql, dbCString)
-            db.releaseRaw(dbCp)
+            LibC.free(dbCString)
             return ret
         }
     }
@@ -203,10 +198,9 @@ public class MysqlListApi {
      */
     public func mysqlListDbs(wild: String): CPointer<Unit> {
         unsafe {
-            let wildCp: CPointerHandle<UInt8> = wild.getRaw()
-            let wildCString: CString = CString(wildCp.pointer)
+            let wildCString: CString = LibC.mallocCString(wild)
             let ret: CPointer<Unit> = mysql_list_dbs(mysql, wildCString)
-            wild.releaseRaw(wildCp)
+            LibC.free(wildCString)
             return ret
         }
     }
@@ -219,10 +213,9 @@ public class MysqlListApi {
      */
     public func mysqlListTables(wild: String): CPointer<Unit> {
         unsafe {
-            let wildCp: CPointerHandle<UInt8> = wild.getRaw()
-            let wildCString: CString = CString(wildCp.pointer)
+            let wildCString: CString = LibC.mallocCString(wild)
             let ret: CPointer<Unit> = mysql_list_tables(mysql, wildCString)
-            wild.releaseRaw(wildCp)
+            LibC.free(wildCString)
             return ret
         }
     }
@@ -247,13 +240,11 @@ public class MysqlListApi {
      */
     public func mysqlListFields(table: String, wild: String): CPointer<Unit> {
         unsafe {
-            let tableCp: CPointerHandle<UInt8> = table.getRaw()
-            let wildCp: CPointerHandle<UInt8> = wild.getRaw()
-            let tableCString: CString = CString(tableCp.pointer)
-            let wildCString: CString = CString(wildCp.pointer)
+            let tableCString: CString = LibC.mallocCString(table)
+            let wildCString: CString = LibC.mallocCString(wild)
             let ret: CPointer<Unit> = mysql_list_fields(mysql, tableCString, wildCString)
-            table.releaseRaw(tableCp)
-            wild.releaseRaw(wildCp)
+            LibC.free(tableCString)
+            LibC.free(wildCString)
             return ret
         }
     }
@@ -279,10 +270,9 @@ public class MysqlRecordApi {
      */
     public func mysqlQuery(q: String): Int32 {
         unsafe {
-            let str: CPointerHandle<UInt8> = q.getRaw()
-            let cstr: CString = CString(str.pointer)
+            let cstr: CString = LibC.mallocCString(q)
             let ret: Int32 = mysql_query(mysql, cstr)
-            q.releaseRaw(str)
+            LibC.free(cstr)
             return ret
         }
     }
@@ -291,15 +281,13 @@ public class MysqlRecordApi {
      * 查询语句
      *
      * 参数 q - sql语句
-     * 参数 length - sql语句长度
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlSendQuery(q: String, length: UInt64): Int32 {
+    public func mysqlSendQuery(q: String): Int32 {
         unsafe {
-            let str: CPointerHandle<UInt8> = q.getRaw()
-            let cstr: CString = CString(str.pointer)
-            let ret: Int32 = mysql_send_query(mysql, cstr, length)
-            q.releaseRaw(str)
+            let cstr: CString = LibC.mallocCString(q)
+            let ret: Int32 = mysql_send_query(mysql, cstr, UInt64(cstr.size()))
+            LibC.free(cstr)
             return ret
         }
     }
@@ -308,15 +296,13 @@ public class MysqlRecordApi {
      * 执行语句
      *
      * 参数 q - sql语句
-     * 参数 length - sql语句的字节长度
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlRealQuery(q: String, length: UInt64): Int32 {
+    public func mysqlRealQuery(q: String): Int32 {
         unsafe {
-            let str: CPointerHandle<UInt8> = q.getRaw()
-            let cstr: CString = CString(str.pointer)
-            let ret: Int32 = mysql_real_query(mysql, cstr, length)
-            q.releaseRaw(str)
+            let cstr: CString = LibC.mallocCString(q)
+            let ret: Int32 = mysql_real_query(mysql, cstr, UInt64(cstr.size()))
+            LibC.free(cstr)
             return ret
         }
     }
@@ -595,7 +581,7 @@ public class MysqlStmtApi {
     public init(mysqlStatement: MysqlStatement) {
         stmt = mysqlStatement.stmt
     }
-    
+
     /*
      * 最近调用的MySQL准备语句的错误消息功能
      *

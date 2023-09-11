@@ -44,7 +44,7 @@ public class RecordTest {
     public func RecordTest02(): Unit {
         let record = MysqlRecordApi(con)
         let sql = "SELECT 'testtestets!' AS message"
-        let res = record.mysqlSendQuery(sql, UInt64(sql.size))
+        let res = record.mysqlSendQuery(sql)
         let val = record.mysqlStoreResult()
         record.mysqlFreeResult(val)
         @Assert(0, res)
@@ -54,7 +54,7 @@ public class RecordTest {
     public func RecordTest03(): Unit {
         let record = MysqlRecordApi(con)
         let sql = "SELECT 'deeeeeeedededa' AS message"
-        let res = record.mysqlRealQuery(sql, UInt64(sql.size))
+        let res = record.mysqlRealQuery(sql)
         let val = record.mysqlStoreResult()
         record.mysqlFreeResult(val)
         @Assert(0, res)
@@ -71,7 +71,7 @@ public class RecordTest {
     public func RecordTest05(): Unit {
         let record = MysqlRecordApi(con)
         let sql = "SELECT 'Hello, World!','asd' AS message;"
-        record.mysqlRealQuery(sql, UInt64(sql.size))
+        record.mysqlRealQuery(sql)
         let val = record.mysqlStoreResult()
         let res = record.mysqlAffectedRows()
         record.mysqlFreeResult(val)
@@ -82,7 +82,7 @@ public class RecordTest {
     public func RecordTest06(): Unit {
         let record = MysqlRecordApi(con)
         let sql = "SELECT 'Hello, World!','asd' AS message;"
-        record.mysqlRealQuery(sql, UInt64(sql.size))
+        record.mysqlRealQuery(sql)
         let val = record.mysqlStoreResult()
         let res = record.mysqlNumFields(val)
         record.mysqlFreeResult(val)
@@ -93,7 +93,7 @@ public class RecordTest {
     public func RecordTest07(): Unit {
         let record = MysqlRecordApi(con)
         let sql = "SELECT 'Hello, World!','asd' AS message;"
-        record.mysqlRealQuery(sql, UInt64(sql.size))
+        record.mysqlRealQuery(sql)
         let val = record.mysqlStoreResult()
         let res = record.mysqlEof(val)
         record.mysqlFreeResult(val)
@@ -104,7 +104,7 @@ public class RecordTest {
     public func RecordTest08(): Unit {
         let record = MysqlRecordApi(con)
         let sql = "SELECT 'Hello, World!','asd' AS message;"
-        record.mysqlRealQuery(sql, UInt64(sql.size))
+        record.mysqlRealQuery(sql)
         let val = record.mysqlStoreResult()
         let res = unsafe { record.mysqlFetchRow(val).read(1).toString() }
         record.mysqlFreeResult(val)

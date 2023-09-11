@@ -92,12 +92,11 @@ public class MysqlConnection <: Connection {
      */
     public override func prepareStatement(sql: String): MysqlStatement {
         unsafe {
-            let sqlCp: CPointerHandle<UInt8> = sql.getRaw()
-            let sqlCString: CString = CString(sqlCp.pointer)
+            let sqlCString: CString = LibC.mallocCString(sql)
 
             // 准备要执行的语句
-            let stmtPrepare: Int32 = mysql_stmt_prepare(stmt, sqlCString, UInt64(sql.size))
-            sql.releaseRaw(sqlCp)
+            let stmtPrepare: Int32 = mysql_stmt_prepare(stmt, sqlCString, UInt64(sqlCString.size()))
+            LibC.free(sqlCString)
             if (stmtPrepare != 0) {
                 // 发生错误为非零值
                 throw SqlException(mysql_stmt_error(stmt).toString())

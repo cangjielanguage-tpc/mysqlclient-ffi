@@ -23,16 +23,15 @@ public class MysqlTransaction <: Transaction {
         get() {
             unsafe {
                 let sql = "SELECT @@transaction_isolation"
-                let sqlstr: CPointerHandle<UInt8> = sql.getRaw()
-                let sqlcstr: CString = CString(sqlstr.pointer)
+                let sqlcstr: CString = LibC.mallocCString(sql)
                 if (mysql_query(mysql, sqlcstr) != 0) {
-                    sql.releaseRaw(sqlstr)
+                    LibC.free(sqlcstr)
                     throw SqlException(mysql_error(mysql).toString())
                 }
                 let res: CPointer<Unit> = mysql_use_result(mysql)
                 let row: CPointer<CString> = mysql_fetch_row(res)
                 let tmp: String = row.read().toString()
-                sql.releaseRaw(sqlstr)
+                LibC.free(sqlcstr)
                 mysql_free_result(res)
                 match (tmp.toAsciiLower()) {
                     case "chaos" => return TransactionIsoLevel.Chaos
@@ -56,13 +55,12 @@ public class MysqlTransaction <: Transaction {
                     case TransactionIsoLevel.Serializable => "SET SESSION TRANSACTION ISOLATION LEVEL SERIALIZABLE"
                     case _ => throw SqlException("unsupport TransactionIsoLevel Type: ${value}")
                 }
-                let sqlstr: CPointerHandle<UInt8> = sql.getRaw()
-                let sqlcstr: CString = CString(sqlstr.pointer)
+                let sqlcstr: CString = LibC.mallocCString(sql)
                 if (mysql_query(mysql, sqlcstr) != 0) {
-                    sql.releaseRaw(sqlstr)
+                    LibC.free(sqlcstr)
                     throw SqlException(mysql_error(mysql).toString())
                 }
-                sql.releaseRaw(sqlstr)
+                LibC.free(sqlcstr)
             }
         }
     }
@@ -76,16 +74,15 @@ public class MysqlTransaction <: Transaction {
         get() {
             unsafe {
                 let sql = "SELECT @@transaction_read_only"
-                let sqlstr: CPointerHandle<UInt8> = sql.getRaw()
-                let sqlcstr: CString = CString(sqlstr.pointer)
+                let sqlcstr: CString = LibC.mallocCString(sql)
                 if (mysql_query(mysql, sqlcstr) != 0) {
-                    sql.releaseRaw(sqlstr)
+                    LibC.free(sqlcstr)
                     throw SqlException(mysql_error(mysql).toString())
                 }
                 let res: CPointer<Unit> = mysql_use_result(mysql)
                 let row: CPointer<CString> = mysql_fetch_row(res)
                 let tmp: String = row.read().toString()
-                sql.releaseRaw(sqlstr)
+                LibC.free(sqlcstr)
                 mysql_free_result(res)
                 match (tmp.toAsciiLower()) {
                     case "0" => return TransactionAccessMode.ReadWrite
@@ -102,13 +99,12 @@ public class MysqlTransaction <: Transaction {
                     case TransactionAccessMode.ReadOnly => sql = "SET SESSION transaction_read_only = ON"
                     case _ => throw SqlException("error")
                 }
-                let sqlstr: CPointerHandle<UInt8> = sql.getRaw()
-                let sqlcstr: CString = CString(sqlstr.pointer)
+                let sqlcstr: CString = LibC.mallocCString(sql)
                 if (mysql_query(mysql, sqlcstr) != 0) {
-                    sql.releaseRaw(sqlstr)
+                    LibC.free(sqlcstr)
                     throw SqlException(mysql_error(mysql).toString())
                 }
-                sql.releaseRaw(sqlstr)
+                LibC.free(sqlcstr)
             }
         }
     }
