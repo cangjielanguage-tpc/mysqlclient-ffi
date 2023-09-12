@@ -112,7 +112,7 @@ main(): Int64 {
 
     // 通过connectionString和选项打开数据源
     let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-        "HOST=localhost;USER=root;PASSWD=123456;DB=db_test;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
         arr
     )
 
@@ -260,6 +260,7 @@ main(): Int64 {
     mysqlQueryResult = mysqlStatement.query(arrDb)
 
     // 获取数据
+    arrDb = [id, name]
     isBool = mysqlQueryResult.next(arrDb)
     if (!isBool) {
         println("pass26")

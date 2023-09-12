@@ -50,7 +50,7 @@ public class ConStatusTest {
     @TestCase
     public func ConStatusTest03(): Unit {
         let server = MysqlServerApi(con)
-        server.mysqlShutdown(0) //关闭服务器，返回broken，已断开连接
+        server.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT) //关闭服务器，返回broken，已断开连接
         let connstatus = con.state
         let res = match (connstatus) {
             case ConnectionState.Broken => 0
@@ -62,7 +62,7 @@ public class ConStatusTest {
     @TestCase
     public func ConStatusTest04(): Unit {
         let server = MysqlServerApi(con)
-        server.mysqlShutdown(0) //关闭服务器
+        server.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT) //关闭服务器
         let connstatus = con.isClosed() //已关闭
         let res = match (connstatus) {
             case true => 0

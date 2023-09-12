@@ -438,6 +438,165 @@ public class SqlNullableDateTime <: SqlNullableDbType{
 }
 ```
 
+### 枚举
+
+#### 介绍
+
+枚举
+
+#### 主要接口
+
+##### public enum MysqlStmtAttrType <: Equatable<MysqlStmtAttrType>
+
+```cangjie
+public enum MysqlStmtAttrType <: Equatable<MysqlStmtAttrType> {
+    | STMT_ATTR_UPDATE_MAX_LENGTH
+    | STMT_ATTR_CURSOR_TYPE
+    | STMT_ATTR_PREFETCH_ROWS
+
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
+    public operator func ==(that: MysqlStmtAttrType): Bool
+
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
+    public operator func !=(that: MysqlStmtAttrType): Bool
+}
+```
+
+##### public enum MysqlSetOption <: Equatable<MysqlSetOption>
+
+```cangjie
+public enum MysqlSetOption <: Equatable<MysqlSetOption>{
+    | MYSQL_OPTION_MULTI_STATEMENTS_ON
+    | MYSQL_OPTION_MULTI_STATEMENTS_OFF
+
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
+    public operator func ==(that: MysqlSetOption): Bool
+
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
+    public operator func !=(that: MysqlSetOption): Bool
+}
+```
+
+##### public enum MysqlSetOption <: Equatable<MysqlSetOption>
+
+```cangjie
+public enum MysqlOption <: Equatable<MysqlOption>{
+    | MYSQL_OPT_CONNECT_TIMEOUT
+    | MYSQL_OPT_COMPRESS
+    | MYSQL_OPT_NAMED_PIPE
+    | MYSQL_INIT_COMMAND
+    | MYSQL_READ_DEFAULT_FILE
+    | MYSQL_READ_DEFAULT_GROUP
+    | MYSQL_SET_CHARSET_DIR
+    | MYSQL_SET_CHARSET_NAME
+    | MYSQL_OPT_LOCAL_INFILE
+    | MYSQL_OPT_PROTOCOL
+    | MYSQL_SHARED_MEMORY_BASE_NAME
+    | MYSQL_OPT_READ_TIMEOUT
+    | MYSQL_OPT_WRITE_TIMEOUT
+    | MYSQL_OPT_USE_RESULT
+    | MYSQL_REPORT_DATA_TRUNCATION
+    | MYSQL_OPT_RECONNECT
+    | MYSQL_PLUGIN_DIR
+    | MYSQL_DEFAULT_AUTH
+    | MYSQL_OPT_BIND
+    | MYSQL_OPT_SSL_KEY
+    | MYSQL_OPT_SSL_CERT
+    | MYSQL_OPT_SSL_CA
+    | MYSQL_OPT_SSL_CAPATH
+    | MYSQL_OPT_SSL_CIPHER
+    | MYSQL_OPT_SSL_CRL
+    | MYSQL_OPT_SSL_CRLPATH
+    | MYSQL_OPT_CONNECT_ATTR_RESET
+    | MYSQL_OPT_CONNECT_ATTR_ADD
+    | MYSQL_OPT_CONNECT_ATTR_DELETE
+    | MYSQL_SERVER_PUBLIC_KEY
+    | MYSQL_ENABLE_CLEARTEXT_PLUGIN
+    | MYSQL_OPT_CAN_HANDLE_EXPIRED_PASSWORDS
+    | MYSQL_OPT_MAX_ALLOWED_PACKET
+    | MYSQL_OPT_NET_BUFFER_LENGTH
+    | MYSQL_OPT_TLS_VERSION
+    | MYSQL_OPT_SSL_MODE
+    | MYSQL_OPT_GET_SERVER_PUBLIC_KEY
+    | MYSQL_OPT_RETRY_COUNT
+    | MYSQL_OPT_OPTIONAL_RESULTSET_METADATA
+    | MYSQL_OPT_SSL_FIPS_MODE
+    | MYSQL_OPT_TLS_CIPHERSUITES
+    | MYSQL_OPT_COMPRESSION_ALGORITHMS
+    | MYSQL_OPT_ZSTD_COMPRESSION_LEVEL
+    | MYSQL_OPT_LOAD_DATA_LOCAL_DIR
+    | MYSQL_OPT_USER_PASSWORD
+    | MYSQL_OPT_SSL_SESSION_DATA
+
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
+    public operator func ==(that: MysqlOption): Bool
+
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
+    public operator func !=(that: MysqlOption): Bool
+}
+```
+
+##### public enum MysqlSetOption <: Equatable<MysqlSetOption>
+
+```cangjie
+public enum MysqlShutdownLevel <: Equatable<MysqlShutdownLevel>{
+    | SHUTDOWN_DEFAULT
+    | SHUTDOWN_WAIT_CONNECTIONS
+    | SHUTDOWN_WAIT_TRANSACTIONS
+    | SHUTDOWN_WAIT_UPDATES
+    | SHUTDOWN_WAIT_ALL_BUFFERS
+    | SHUTDOWN_WAIT_CRITICAL_BUFFERS
+    | KILL_QUERY
+    | KILL_CONNECTION
+
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
+    public operator func ==(that: MysqlShutdownLevel): Bool
+
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
+    public operator func !=(that: MysqlShutdownLevel): Bool
+}
+```
+
 ## 非CDBC接口扩展
 
 ### 字符集接口
@@ -547,6 +706,13 @@ public class MysqlInfoApi {
      * 返回值 UInt32 - 错误号
      */
     public func mysqlErrno(): UInt32
+
+    /*
+     * 最近调用的 MySQL 函数的错误信息
+     *
+     * 返回值 String - 错误信息
+     */
+    public func mysqlError(): String
 
     /*
      * 最近调用的 MySQL 函数的 SQLSTATE 值
@@ -665,7 +831,7 @@ public class MysqlRecordApi {
      * 参数 length - sql语句长度
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlSendQuery(q: String, length: UInt64): Int32
+    public func mysqlSendQuery(q: String): Int32
 
     /*
      * 执行语句
@@ -674,7 +840,7 @@ public class MysqlRecordApi {
      * 参数 length - sql语句的字节长度
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlRealQuery(q: String, length: UInt64): Int32
+    public func mysqlRealQuery(q: String): Int32
 
     /*
      * 检索和存储整个结果集
@@ -778,7 +944,7 @@ public class MysqlServerApi {
      * 参数 shutdownLevel - 关闭方式
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlShutdown(shutdownLevel: Int32): Int32
+    public func mysqlShutdown(shutdownLevel: MysqlShutdownLevel): Int32
 
     /*
      * 刷新或重置表和缓存
@@ -879,6 +1045,13 @@ public class MysqlStmtApi {
      * 参数 mysqlStatement - 预执行
      */
     public init(mysqlStatement: MysqlStatement)
+
+    /*
+     * 最近调用的MySQL准备语句的错误消息功能
+     *
+     * 返回值 String - 错误消息
+     */
+    public func mysqlStmtError(): String
 
     /*
      * 在服务器端重置语句缓冲区
