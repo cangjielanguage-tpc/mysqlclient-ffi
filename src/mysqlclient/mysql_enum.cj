@@ -19,6 +19,12 @@ public enum MysqlStmtAttrType <: Equatable<MysqlStmtAttrType> {
         return -1
     }
 
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
     public operator func ==(that: MysqlStmtAttrType): Bool {
         match ((this, that)) {
             case (STMT_ATTR_UPDATE_MAX_LENGTH, STMT_ATTR_UPDATE_MAX_LENGTH) => true
@@ -28,6 +34,12 @@ public enum MysqlStmtAttrType <: Equatable<MysqlStmtAttrType> {
         }
     }
 
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
     public operator func !=(that: MysqlStmtAttrType): Bool {
         return !(this == that)
     }
@@ -48,6 +60,12 @@ public enum MysqlSetOption <: Equatable<MysqlSetOption> {
         return -1
     }
 
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
     public operator func ==(that: MysqlSetOption): Bool {
         match ((this, that)) {
             case (MYSQL_OPTION_MULTI_STATEMENTS_ON, MYSQL_OPTION_MULTI_STATEMENTS_ON) => true
@@ -56,6 +74,12 @@ public enum MysqlSetOption <: Equatable<MysqlSetOption> {
         }
     }
 
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
     public operator func !=(that: MysqlSetOption): Bool {
         return !(this == that)
     }
@@ -252,6 +276,12 @@ public enum MysqlOption <: Equatable<MysqlOption> {
         return -1
     }
 
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
     public operator func ==(that: MysqlOption): Bool {
         match ((this, that)) {
             case (MYSQL_OPT_CONNECT_TIMEOUT, MYSQL_OPT_CONNECT_TIMEOUT) => true
@@ -304,7 +334,83 @@ public enum MysqlOption <: Equatable<MysqlOption> {
         }
     }
 
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
     public operator func !=(that: MysqlOption): Bool {
+        return !(this == that)
+    }
+}
+
+/*--------------------- C中枚举 enum mysql_enum_shutdown_level ---------------------*/
+public enum MysqlShutdownLevel <: Equatable<MysqlShutdownLevel> {
+    | SHUTDOWN_DEFAULT
+    | SHUTDOWN_WAIT_CONNECTIONS
+    | SHUTDOWN_WAIT_TRANSACTIONS
+    | SHUTDOWN_WAIT_UPDATES
+    | SHUTDOWN_WAIT_ALL_BUFFERS
+    | SHUTDOWN_WAIT_CRITICAL_BUFFERS
+    | KILL_QUERY
+    | KILL_CONNECTION
+
+    func toInt32(): Int32 {
+        if (this == SHUTDOWN_DEFAULT) {
+            return 0
+        }
+        if (this == SHUTDOWN_WAIT_CONNECTIONS) {
+            return 1
+        }
+        if (this == SHUTDOWN_WAIT_TRANSACTIONS) {
+            return 2
+        }
+        if (this == SHUTDOWN_WAIT_UPDATES) {
+            return 8
+        }
+        if (this == SHUTDOWN_WAIT_ALL_BUFFERS) {
+            return 16
+        }
+        if (this == SHUTDOWN_WAIT_CRITICAL_BUFFERS) {
+            return 17
+        }
+        if (this == KILL_QUERY) {
+            return 254
+        }
+        if (this == KILL_CONNECTION) {
+            return 255
+        }
+        return -1
+    }
+
+    /*
+     * 枚举是否相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否相等
+     */
+    public operator func ==(that: MysqlShutdownLevel): Bool {
+        match ((this, that)) {
+            case (SHUTDOWN_DEFAULT, SHUTDOWN_DEFAULT) => true
+            case (SHUTDOWN_WAIT_CONNECTIONS, SHUTDOWN_WAIT_CONNECTIONS) => true
+            case (SHUTDOWN_WAIT_TRANSACTIONS, SHUTDOWN_WAIT_TRANSACTIONS) => true
+            case (SHUTDOWN_WAIT_UPDATES, SHUTDOWN_WAIT_UPDATES) => true
+            case (SHUTDOWN_WAIT_ALL_BUFFERS, SHUTDOWN_WAIT_ALL_BUFFERS) => true
+            case (SHUTDOWN_WAIT_CRITICAL_BUFFERS, SHUTDOWN_WAIT_CRITICAL_BUFFERS) => true
+            case (KILL_QUERY, KILL_QUERY) => true
+            case (KILL_CONNECTION, KILL_CONNECTION) => true
+            case _ => false
+        }
+    }
+
+    /*
+     * 枚举是否不相等
+     *
+     * 参数 that - 枚举
+     * 返回值 Bool - 是否不相等
+     */
+    public operator func !=(that: MysqlShutdownLevel): Bool {
         return !(this == that)
     }
 }

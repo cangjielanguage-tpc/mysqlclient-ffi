@@ -441,9 +441,9 @@ public class MysqlServerApi {
      * 参数 shutdownLevel - 关闭方式
      * 返回值 Int32 - 返回状态
      */
-    public func mysqlShutdown(shutdownLevel: Int32): Int32 {
+    public func mysqlShutdown(shutdownLevel: MysqlShutdownLevel): Int32 {
         unsafe {
-            return mysql_shutdown(mysql, shutdownLevel)
+            return mysql_shutdown(mysql, shutdownLevel.toInt32())
         }
     }
 

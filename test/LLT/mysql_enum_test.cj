@@ -12,6 +12,7 @@ main(): Int64 {
     mysqlEnumTest.mysqlEnumTest01()
     mysqlEnumTest.mysqlEnumTest02()
     mysqlEnumTest.mysqlEnumTest03()
+    mysqlEnumTest.mysqlEnumTest04()
 
     return 0
 }
@@ -134,5 +135,32 @@ public class MysqlEnumTest {
         @Assert(true, mysqlOption45 == mysqlOption45)
         @Assert(true, mysqlOption46 == mysqlOption46)
         @Assert(true, mysqlOption45 != mysqlOption46)
+    }
+
+    @TestCase
+    public func mysqlEnumTest04(): Unit {
+        let mysqlShutdownLevel1: MysqlShutdownLevel = MysqlShutdownLevel.SHUTDOWN_DEFAULT
+        let mysqlShutdownLevel2: MysqlShutdownLevel = MysqlShutdownLevel.SHUTDOWN_WAIT_CONNECTIONS
+        let mysqlShutdownLevel3: MysqlShutdownLevel = MysqlShutdownLevel.SHUTDOWN_WAIT_TRANSACTIONS
+        let mysqlShutdownLevel4: MysqlShutdownLevel = MysqlShutdownLevel.SHUTDOWN_WAIT_UPDATES
+        let mysqlShutdownLevel5: MysqlShutdownLevel = MysqlShutdownLevel.SHUTDOWN_WAIT_ALL_BUFFERS
+        let mysqlShutdownLevel6: MysqlShutdownLevel = MysqlShutdownLevel.SHUTDOWN_WAIT_CRITICAL_BUFFERS
+        let mysqlShutdownLevel7: MysqlShutdownLevel = MysqlShutdownLevel.KILL_QUERY
+        let mysqlShutdownLevel8: MysqlShutdownLevel = MysqlShutdownLevel.KILL_CONNECTION
+        @Assert(true, mysqlShutdownLevel1 == mysqlShutdownLevel1)
+        @Assert(true, mysqlShutdownLevel2 == mysqlShutdownLevel2)
+        @Assert(true, mysqlShutdownLevel3 == mysqlShutdownLevel3)
+        @Assert(true, mysqlShutdownLevel4 == mysqlShutdownLevel4)
+        @Assert(true, mysqlShutdownLevel5 == mysqlShutdownLevel5)
+        @Assert(true, mysqlShutdownLevel6 == mysqlShutdownLevel6)
+        @Assert(true, mysqlShutdownLevel7 == mysqlShutdownLevel7)
+        @Assert(true, mysqlShutdownLevel8 == mysqlShutdownLevel8)
+        @Assert(true, mysqlShutdownLevel1 != mysqlShutdownLevel2)
+        @Assert(true, mysqlShutdownLevel1 != mysqlShutdownLevel3)
+        @Assert(true, mysqlShutdownLevel1 != mysqlShutdownLevel4)
+        @Assert(true, mysqlShutdownLevel1 != mysqlShutdownLevel5)
+        @Assert(true, mysqlShutdownLevel1 != mysqlShutdownLevel6)
+        @Assert(true, mysqlShutdownLevel1 != mysqlShutdownLevel7)
+        @Assert(true, mysqlShutdownLevel1 != mysqlShutdownLevel8)
     }
 }

@@ -112,25 +112,45 @@ public class MysqlDatasource <: Datasource {
         let portUInt32: UInt32 = UInt32.parse(arrList[4])
         let clientFlagUInt32: UInt64 = UInt64.parse(arrList[6])
         unsafe {
-            let hostCp: CPointerHandle<UInt8> = arrList[0].getRaw()
-            let userCp: CPointerHandle<UInt8> = arrList[1].getRaw()
-            let pwdCp: CPointerHandle<UInt8> = arrList[2].getRaw()
-            let dbCp: CPointerHandle<UInt8> = arrList[3].getRaw()
-            let unixSocketCp: CPointerHandle<UInt8> = arrList[5].getRaw()
-            let hostCString: CString = CString(hostCp.pointer)
-            let userCString: CString = CString(userCp.pointer)
-            let pwdCString: CString = CString(pwdCp.pointer)
-            let dbCString: CString = CString(dbCp.pointer)
-            let unixSocketCString: CString = CString(unixSocketCp.pointer)
+            var hostCString: CString = CString(CPointer<UInt8>())
+            if (arrList[0].size != 0) {
+                hostCString = LibC.mallocCString(arrList[0])
+            }
+            var userCString: CString = CString(CPointer<UInt8>())
+            if (arrList[1].size != 0) {
+                userCString = LibC.mallocCString(arrList[1])
+            }
+            var pwdCString: CString = CString(CPointer<UInt8>())
+            if (arrList[2].size != 0) {
+                pwdCString = LibC.mallocCString(arrList[2])
+            }
+            var dbCString: CString = CString(CPointer<UInt8>())
+            if (arrList[3].size != 0) {
+                dbCString = LibC.mallocCString(arrList[3])
+            }
+            var unixSocketCString: CString = CString(CPointer<UInt8>())
+            if (arrList[5].size != 0) {
+                unixSocketCString = LibC.mallocCString(arrList[5])
+            }
 
             // 	连接到MySQL服务器
             mysql = mysql_real_connect(mysql, hostCString, userCString, pwdCString, dbCString, portUInt32,
                 unixSocketCString, clientFlagUInt32)
-            arrList[0].releaseRaw(hostCp)
-            arrList[1].releaseRaw(userCp)
-            arrList[2].releaseRaw(pwdCp)
-            arrList[3].releaseRaw(dbCp)
-            arrList[5].releaseRaw(unixSocketCp)
+            if (arrList[0].size != 0) {
+                LibC.free(hostCString)
+            }
+            if (arrList[1].size != 0) {
+                LibC.free(userCString)
+            }
+            if (arrList[2].size != 0) {
+                LibC.free(pwdCString)
+            }
+            if (arrList[3].size != 0) {
+                LibC.free(dbCString)
+            }
+            if (arrList[5].size != 0) {
+                LibC.free(unixSocketCString)
+            }
             if (mysql.isNull()) {
                 throw SqlException("Connect Failed!")
             }
