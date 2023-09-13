@@ -80,11 +80,7 @@ public class MysqlQueryResult <: QueryResult {
                                 freeQueryCPointer(values.size, bindsCp)
                                 throw SqlException(mysql_stmt_error(stmt).toString())
                             }
-                        } else {
-                            bindsCp.write(i, mysqlBind)
                         }
-                    } else {
-                        bindsCp.write(i, mysqlBind)
                     }
                 }
             } else if (intFetch == 1) {

@@ -67,7 +67,7 @@ public class MysqlQueryResultTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("timeValue2", mysqlColumnInfos[2].name)
-        @Assert("SqlTime", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableTime", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(10, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

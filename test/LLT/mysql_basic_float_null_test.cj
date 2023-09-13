@@ -107,7 +107,7 @@ public class MysqlFloatTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("value2", mysqlColumnInfos[2].name)
-        @Assert("SqlReal", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableReal", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(12, mysqlColumnInfos[2].length)
         @Assert(31, mysqlColumnInfos[2].scale)

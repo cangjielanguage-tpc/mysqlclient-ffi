@@ -91,14 +91,14 @@ public class MysqlBlobTest {
 
         // @Assert(2, mysqlColumnInfos.size)
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
 
         @Assert("name", mysqlColumnInfos[1].name)
-        @Assert("SqlBlob", mysqlColumnInfos[1].typeName)
+        @Assert("SqlNullableBlob", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(65535, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
@@ -178,14 +178,14 @@ public class MysqlBlobTest {
         @Assert(2, mysqlColumnInfos.size)
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
 
         @Assert("name", mysqlColumnInfos[1].name)
-        @Assert("SqlBlob", mysqlColumnInfos[1].typeName)
+        @Assert("SqlNullableBlob", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(65535, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)

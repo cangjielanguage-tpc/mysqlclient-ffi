@@ -107,7 +107,7 @@ public class MysqlsmallIntTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("value2", mysqlColumnInfos[2].name)
-        @Assert("SqlSmallInt", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableSmallInt", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(6, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

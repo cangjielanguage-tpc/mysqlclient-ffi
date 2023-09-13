@@ -175,8 +175,8 @@ public class MysqlStatement <: Statement {
 
                     // field.flags为单数表示非空
                     var mysqlColumnInfo: MysqlColumnInfo = MysqlColumnInfo(field.name.toString(),
-                        mysqlType(field.types), Int64(field.max_length), Int64(field.length), Int64(field.decimals),
-                        field.flags % 2 != 0)
+                        mysqlType(field.types, field.flags % 2 != 0), Int64(field.max_length), Int64(field.length),
+                        Int64(field.decimals), field.flags % 2 != 0)
                     mysqlColumnInfos[i] = mysqlColumnInfo
                 }
 
@@ -772,47 +772,91 @@ func setDateTime(value: Option<DateTime>, sqlType: Int32): MYSQL_BIND {
     return mysqlBind
 }
 
-func mysqlType(types: Int32): String {
+func mysqlType(types: Int32, isNull: Bool): String {
     if (types == MYSQL_TYPE_DECIMAL) {
         return "MYSQL_TYPE_DECIMAL"
     }
     if (types == MYSQL_TYPE_TINY) {
-        return "SqlByte"
+        if (!isNull) {
+            return "SqlNullableByte"
+        } else {
+            return "SqlByte"
+        }
     }
     if (types == MYSQL_TYPE_SHORT) {
-        return "SqlSmallInt"
+        if (!isNull) {
+            return "SqlNullableSmallInt"
+        } else {
+            return "SqlSmallInt"
+        }
     }
     if (types == MYSQL_TYPE_LONG) {
-        return "SqlInteger"
+        if (!isNull) {
+            return "SqlNullableInteger"
+        } else {
+            return "SqlInteger"
+        }
     }
     if (types == MYSQL_TYPE_FLOAT) {
-        return "SqlReal"
+        if (!isNull) {
+            return "SqlNullableReal"
+        } else {
+            return "SqlReal"
+        }
     }
     if (types == MYSQL_TYPE_DOUBLE) {
-        return "SqlDouble"
+        if (!isNull) {
+            return "SqlNullableDouble"
+        } else {
+            return "SqlDouble"
+        }
     }
     if (types == MYSQL_TYPE_NULL) {
         return "MYSQL_TYPE_NULL"
     }
     if (types == MYSQL_TYPE_TIMESTAMP) {
-        return "SqlTimestamp"
+        if (!isNull) {
+            return "SqlNullableTimestamp"
+        } else {
+            return "SqlTimestamp"
+        }
     }
     if (types == MYSQL_TYPE_LONGLONG) {
-        return "SqlBigInt"
+        if (!isNull) {
+            return "SqlNullableBigInt"
+        } else {
+            return "SqlBigInt"
+        }
     }
     if (types == MYSQL_TYPE_INT24) {
-        return "SqlInteger"
+        if (!isNull) {
+            return "SqlNullableInteger"
+        } else {
+            return "SqlInteger"
+        }
     }
     if (types == MYSQL_TYPE_DATE) {
-        return "SqlDate"
+        if (!isNull) {
+            return "SqlNullableDate"
+        } else {
+            return "SqlDate"
+        }
     }
     if (types == MYSQL_TYPE_TIME) {
-        return "SqlTime"
+        if (!isNull) {
+            return "SqlNullableTime"
+        } else {
+            return "SqlTime"
+        }
     }
 
     // 自定义类型
     if (types == MYSQL_TYPE_DATETIME) {
-        return "SqlDateTime"
+        if (!isNull) {
+            return "SqlNullableDateTime"
+        } else {
+            return "SqlDateTime"
+        }
     }
     if (types == MYSQL_TYPE_YEAR) {
         return "MYSQL_TYPE_YEAR"
@@ -857,22 +901,46 @@ func mysqlType(types: Int32): String {
         return "MYSQL_TYPE_SET"
     }
     if (types == MYSQL_TYPE_TINY_BLOB) {
-        return "SqlBlob"
+        if (!isNull) {
+            return "SqlNullableBlob"
+        } else {
+            return "SqlBlob"
+        }
     }
     if (types == MYSQL_TYPE_MEDIUM_BLOB) {
-        return "SqlBlob"
+        if (!isNull) {
+            return "SqlNullableBlob"
+        } else {
+            return "SqlBlob"
+        }
     }
     if (types == MYSQL_TYPE_LONG_BLOB) {
-        return "SqlClob"
+        if (!isNull) {
+            return "SqlNullableClob"
+        } else {
+            return "SqlClob"
+        }
     }
     if (types == MYSQL_TYPE_BLOB) {
-        return "SqlBlob"
+        if (!isNull) {
+            return "SqlNullableBlob"
+        } else {
+            return "SqlBlob"
+        }
     }
     if (types == MYSQL_TYPE_VAR_STRING) {
-        return "SqlVarchar"
+        if (!isNull) {
+            return "SqlNullableVarchar"
+        } else {
+            return "SqlVarchar"
+        }
     }
     if (types == MYSQL_TYPE_STRING) {
-        return "SqlChar"
+        if (!isNull) {
+            return "SqlNullableChar"
+        } else {
+            return "SqlChar"
+        }
     }
     if (types == MYSQL_TYPE_GEOMETRY) {
         return "MYSQL_TYPE_GEOMETRY"

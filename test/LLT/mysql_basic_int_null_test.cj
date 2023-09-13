@@ -107,7 +107,7 @@ public class MysqlIntTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("value2", mysqlColumnInfos[2].name)
-        @Assert("SqlInteger", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableInteger", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(11, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

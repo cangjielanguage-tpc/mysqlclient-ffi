@@ -112,7 +112,7 @@ public class MysqlDateTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("dateValue2", mysqlColumnInfos[2].name)
-        @Assert("SqlDate", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableDate", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(10, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)
