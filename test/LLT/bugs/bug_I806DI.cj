@@ -26,7 +26,7 @@ main(): Int64 {
 
     let retInt32: Int32 = mysqlRecordApi.mysqlQuery("")
     @Assert(1, retInt32)
-    
+
     mysqlConnection.close()
 
     return 0

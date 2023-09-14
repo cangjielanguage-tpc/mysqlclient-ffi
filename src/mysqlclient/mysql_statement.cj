@@ -19,7 +19,7 @@ public class MysqlStatement <: Statement {
     }
 
     /*
-     * 预执行sql语句中，占位的参数个数（不支持）
+     * 预执行 sql 语句中，占位参数的列信息（不支持）
      */
     public override prop parameterColumnInfos: Array<ColumnInfo> {
         get() {

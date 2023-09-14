@@ -209,7 +209,6 @@ public class MysqlBinaryTest {
         @Assert(true, isBool)
         @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
 
-
         var dataD1 = Array<Byte>(50, item: 84)
         var bufD1 = (arrDb[1] as SqlBinary).getOrThrow().value
         @Assert(String.fromUtf8(dataD1), String.fromUtf8(bufD1))

@@ -496,28 +496,19 @@ public class MysqlSslApi {
      */
     public func mysqlSslSet(keyString: String, cert: String, ca: String, capath: String, cipher: String): Bool {
         unsafe {
-            let keyCp: CPointerHandle<UInt8> = keyString.getRaw()
-            let keyCString: CString = CString(keyCp.pointer)
-
-            let certCp: CPointerHandle<UInt8> = cert.getRaw()
-            let certCString: CString = CString(certCp.pointer)
-
-            let caCp: CPointerHandle<UInt8> = ca.getRaw()
-            let caCString: CString = CString(caCp.pointer)
-
-            let capathCp: CPointerHandle<UInt8> = capath.getRaw()
-            let capathCString: CString = CString(capathCp.pointer)
-
-            let cipherCp: CPointerHandle<UInt8> = cipher.getRaw()
-            let cipherCString: CString = CString(cipherCp.pointer)
+            let keyCString: CString = LibC.mallocCString(keyString)
+            let certCString: CString = LibC.mallocCString(cert)
+            let caCString: CString = LibC.mallocCString(ca)
+            let capathCString: CString = LibC.mallocCString(capath)
+            let cipherCString: CString = LibC.mallocCString(cipher)
 
             let ret: Bool = mysql_ssl_set(mysql, keyCString, certCString, caCString, capathCString, cipherCString)
-
-            keyString.releaseRaw(keyCp)
-            cert.releaseRaw(certCp)
-            ca.releaseRaw(caCp)
-            capath.releaseRaw(capathCp)
-            cipher.releaseRaw(cipherCp)
+            
+            LibC.free(keyCString)
+            LibC.free(certCString)
+            LibC.free(caCString)
+            LibC.free(capathCString)
+            LibC.free(cipherCString)
 
             return ret
         }

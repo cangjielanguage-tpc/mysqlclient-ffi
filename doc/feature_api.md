@@ -35,6 +35,11 @@ public class MysqlDriver <: Driver {
      */
      public override prop version: String
 
+    /**
+     * 指示驱动程序是否与连接池亲和。(不支持)
+     */
+     public override prop preferredPooling: Bool
+
     /*
      * 通过connectionString和选项打开数据源
      *
@@ -58,6 +63,11 @@ public class MysqlDriver <: Driver {
 
 ```cangjie
 public class MysqlDatasource <: Datasource {
+    /*
+     * 设置连接选项(不支持)
+     */
+    public override func setOption(key: String, value: String): Unit
+
     /*
      * 连接前设置选项
      *
@@ -96,6 +106,16 @@ public class MysqlDatasource <: Datasource {
      * 返回值 Connection - 数据库连接实例
      */
     public override func connect(): MysqlConnection
+
+    /*
+     * 关闭资源 （不支持）
+     */
+    public override func close(): Unit
+
+    /*
+     * 判断资源是否关闭（不支持）
+     */
+    public override func isClosed(): Bool
 }
 ```
 
@@ -115,6 +135,11 @@ public class MysqlConnection <: Connection {
      * 描述与数据源连接的当前状态
      */
     public override prop state: ConnectionState
+
+    /**
+     * 返回连接到的数据源元数据(不支持)
+     */
+    public override func getMetaData(): Map<String, String>
 
     /*
      * 设置连接选项
@@ -145,9 +170,6 @@ public class MysqlConnection <: Connection {
 
     /*
      * 判断资源是否关闭
-     * 无原生接口，要判断一个连接是否已经关闭，可以使用 mysql_ping() 函数，它会尝试与服务器进行通信，并在连接断开时自动重连。
-     * 如果 mysql_ping() 返回 0，表示连接正常；如果返回非 0 值，表示连接已经关闭或出现错误2。
-     * 另外，也可以使用 mysql_get_host_info() 函数来获取连接的信息，如果返回 NULL 或空字符串，表示连接已经关闭或无效2。
      *
      * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
@@ -173,9 +195,19 @@ sql语句预执行
 ```cangjie
 public class MysqlStatement <: Statement {
     /*
+     * 预执行 sql 语句中，占位参数的列信息（不支持）
+     */
+    public override prop parameterColumnInfos: Array<ColumnInfo>
+
+    /*
      * 预执行sql语句中，占位的参数个数
      */
     public prop parameterCount: Int64
+
+    /**
+     * 设置预执行sql语句选项(不支持)
+     */
+    public override func setOption(key: String, value: String): Unit
 
     /**
      * 设置预执行sql语句选项
@@ -213,6 +245,11 @@ public class MysqlStatement <: Statement {
      * 关闭资源
      */
     public override func close(): Unit
+
+    /*
+     * 判断资源是否关闭(不支持)
+     */
+    public override func isClosed(): Bool
 }
 ```
 
@@ -253,6 +290,11 @@ public class MysqlUpdateResult <: UpdateResult {
 ```cangjie
 public class MysqlQueryResult <: QueryResult {
     /*
+     * 返回结果集的列信息，比如列名，列类型，列长度，是否允许数据库Null值等（不支持）
+     */
+    public override prop columnInfos: Array<ColumnInfo>
+
+    /*
      * 返回结果集的列信息，比如列名，列类型，列长度，是否允许数据库Null值等
      */
     public prop mysqlColumnInfos: Array<MysqlColumnInfo>
@@ -270,6 +312,11 @@ public class MysqlQueryResult <: QueryResult {
      * 关闭资源
      */
     public override func close(): Unit
+
+    /*
+     * 判断资源是否关闭(不支持)
+     */
+    public override func isClosed(): Bool
 }
 ```
 
@@ -315,12 +362,6 @@ public class MysqlColumnInfo <: ColumnInfo {
 
     /**
      * 获取列值大小。
-     * 对于数值数据，这是最大精度。
-     * 对于字符数据，这是以字符为单位的长度。
-     * 对于日期时间数据类型，这是字符串表示形式的最大字符长度。
-     * 对于二进制数据，这是以字节为单位的长度。
-     * 对于RowID数据类型，这是以字节为单位的长度。
-     * 对于列大小不适用的数据类型，返回0。
      */
     public override prop length: Int64
 
@@ -362,25 +403,39 @@ public class MysqlTransaction <: Transaction {
     public mut override prop accessMode: TransactionAccessMode
 
     /*
+     * 数据库事务延迟模式。(不支持)
+     */
+    public mut override prop deferrableMode: TransactionDeferrableMode
+
+    /*
      * 开始数据库事务。
-     * 异常 SqlException - 提交事务时服务器端发生错误。
-     * 异常 SqlException - 事务已提交或回滚或连接已断开。
      */
     public override func begin(): Unit
 
     /*
      * 提交数据库事务。
-     * 异常 SqlException - 提交事务时服务器端发生错误。
-     * 异常 SqlException - 事务已提交或回滚或连接已断开。
      */
     public override func commit(): Unit
 
     /*
      * 从挂起状态回滚事务。
-     * 异常 SqlException - 回滚事务时服务器端发生错误。
-     * 异常 SqlException - 事务已提交或回滚或连接已断开。
      */
     public override func rollback(): Unit
+
+    /*
+     * 在事务中创建一个指定名称的保存点，可用于回滚事务的一部分。(不支持)
+     */
+    public override func save(savePointName: String): Unit
+
+    /*
+     * 回滚事务至指定保存点名称。(不支持)
+     */
+    public override func rollback(savepointName: String): Unit
+
+    /*
+     * 销毁先前在当前事务中定义的保存点。这允许系统在事务结束之前回收一些资源。(不支持)
+     */
+    public override func release(savePointName: String): Unit
 }
 ```
 
@@ -1143,3 +1198,368 @@ public class MysqlthreadApi {
     public func mysqlThreadEnd(): Unit
 }
 ```
+
+#### 示例
+
+#### public class MysqlCharSetApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            rray<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    let mysqlCharSetApi: MysqlCharSetApi = MysqlCharSetApi(mysqlConnection)
+    @Assert("utf8mb4", mysqlCharSetApi.mysqlCharacterSetName())
+
+    var ret: Int32 = mysqlCharSetApi.mysqlSetCharacterSet("utf8")
+    @Assert(true, ret == 0)
+    @Assert("utf8mb3", mysqlCharSetApi.mysqlCharacterSetName())
+
+    ret = mysqlCharSetApi.mysqlSetCharacterSet("ascii")
+    @Assert(true, ret == 0)
+    @Assert("ascii", mysqlCharSetApi.mysqlCharacterSetName())
+
+    ret = mysqlCharSetApi.mysqlSetCharacterSet("gbk")
+    @Assert(true, ret == 0)
+    @Assert("gbk", mysqlCharSetApi.mysqlCharacterSetName())
+
+    ret = mysqlCharSetApi.mysqlSetCharacterSet("utf8mb4")
+    @Assert(true, ret == 0)
+    @Assert("utf8mb4", mysqlCharSetApi.mysqlCharacterSetName())
+
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlConnectionApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    let mysqlConnectionApi: MysqlConnectionApi = MysqlConnectionApi(mysqlConnection)
+    let ret: Int32 = mysqlConnectionApi.mysqlSelectDb("mysql")
+    @Assert(0, ret)
+
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlInfoApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{ 
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+    let mysqlInfoApi: MysqlInfoApi = MysqlInfoApi(mysqlConnection)
+    let retErrno: UInt32 = mysqlInfoApi.mysqlErrno()
+    @Assert(0, retErrno)
+    let strError: String = mysqlInfoApi.mysqlError()
+    @Assert("", strError)
+    let strState: String = mysqlInfoApi.mysqlSqlstate()
+    @Assert("00000", strState)
+    let retCount: UInt32 = mysqlInfoApi.mysqlWarningCount()
+    @Assert(0, retCount)
+    let strInfo: String = mysqlInfoApi.mysqlInfo()
+    @Assert("", strInfo)
+    let retInfo: Int32 = mysqlInfoApi.mysqlDumpDebugInfo()
+    @Assert(0, retInfo)
+
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlListApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
+    let mysqlRecordApi: MysqlRecordApi = MysqlRecordApi(mysqlConnection)
+    let cp1: CPointer<Unit> = mysqlListApi.mysqlListDbs("information_schema")
+    let retFields: UInt32 = mysqlRecordApi.mysqlNumFields(cp1)
+    @Assert(1, retFields)
+    let retEof: Bool = mysqlRecordApi.mysqlEof(cp1)
+    @Assert(true, retEof)
+    let retRows: UInt64 = mysqlRecordApi.mysqlNumRows(cp1)
+    @Assert(1, retRows)
+    unsafe {
+        for (i in 0..retRows) {
+            var cpCString: CPointer<CString> = mysqlRecordApi.mysqlFetchRow(cp1)
+            for (j in 0..retFields) {
+                var cString: CString = cpCString.read(Int64(j))
+                if (i == 0) {
+                    @Assert("information_schema", cString.toString())
+                }
+            }
+        }
+    }
+    mysqlRecordApi.mysqlFreeResult(cp1)
+
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlRecordApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    let mysqlRecordApi: MysqlRecordApi = MysqlRecordApi(mysqlConnection)
+
+    let retInt32: Int32 = mysqlRecordApi.mysqlQuery("")
+    @Assert(1, retInt32)
+
+    // 关闭链接
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlServerApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    let mysqlServerApi: MysqlServerApi = MysqlServerApi(mysqlConnection)
+
+    var cpCtringArgv: CPointer<CString> = CPointer<CString>()
+    var cpCtringGroups: CPointer<CString> = CPointer<CString>()
+
+    var ret: Int32 = mysqlServerApi.mysqlServerInit(10, cpCtringArgv, cpCtringGroups)
+    @Assert(0, ret)
+
+    mysqlServerApi.mysqlServerEnd()
+
+    ret = mysqlServerApi.mysqlRefresh(0)
+    @Assert(0, ret)
+
+    ret = mysqlServerApi.mysqlKill(0)
+    @Assert(1, ret)
+
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlSslApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    let mysqlSslApi: MysqlSslApi = MysqlSslApi(mysqlConnection)
+
+    var isBool: Bool = mysqlSslApi.mysqlSslSet("", "", "", "", "")
+    @Assert(false, isBool)
+
+    var strCipher: String = mysqlSslApi.mysqlGetSslCipher()
+    @Assert("", strCipher)
+
+    isBool = mysqlSslApi.mysqlGetSslSessionReused()
+    @Assert(false, isBool)
+
+    mysqlSslApi.mysqlGetSslSessionData(0, CPointer<UInt32>())
+
+    isBool = mysqlSslApi.mysqlFreeSslSessionData(CPointer<Unit>())
+    @Assert(true, isBool)
+
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlStmtApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    // 删除t_test2名称数据表
+    var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
+    mysqlStatement1.update()
+
+    // 创建t_test2名称数据表
+    var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
+        "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)"
+    )
+    mysqlStatement2.update()
+
+    // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
+    var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
+        "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)"
+    )
+    mysqlStatement3.update()
+
+    let mysqlStmtApi: MysqlStmtApi = MysqlStmtApi(mysqlStatement3)
+
+    var retBool: Bool = mysqlStmtApi.mysqlStmtReset()
+    @Assert(false, retBool)
+
+    var retStr: String = mysqlStmtApi.mysqlStmtError()
+    @Assert("", retStr)
+
+    var retUInt32: UInt32 = mysqlStmtApi.mysqlStmtErrno()
+    @Assert(0, retUInt32)
+
+    retStr = mysqlStmtApi.mysqlStmtSqlstate()
+    @Assert("00000", retStr)
+
+    var retUInt64: UInt64 = mysqlStmtApi.mysqlStmtNumRows()
+    @Assert(0, retUInt64)
+
+    retUInt64 = mysqlStmtApi.mysqlStmtInsertId()
+    @Assert(0, retUInt64)
+
+    var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
+    mysqlStatement9.update()
+
+    mysqlConnection.close()
+}
+```
+
+#### public class MysqlthreadApi
+
+```cangjie
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+
+main():Int64{
+    // 初始化数据库驱动
+    let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+    // 通过connectionString和选项打开数据源
+    let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        Array<(String, String)>()
+    )
+
+    // 返回一个可用的链接
+    let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+    let mysqlthreadApi: MysqlthreadApi = MysqlthreadApi(mysqlConnection)
+
+    let ret1 = mysqlthreadApi.mysqlThreadId()
+    mysqlthreadApi.mysqlThreadEnd()
+
+    let retBool = mysqlthreadApi.mysqlThreadInit()
+    let ret2 = mysqlthreadApi.mysqlThreadId()
+
+    @Assert(ret1, ret2)
+    @Assert(false, retBool)
+
+    mysqlConnection.close()
+}
+```
+
