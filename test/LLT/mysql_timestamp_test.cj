@@ -111,7 +111,7 @@ public class MysqlTimestampTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("timestampValue2", mysqlColumnInfos[2].name)
-        @Assert("SqlTimestamp", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableTimestamp", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(19, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

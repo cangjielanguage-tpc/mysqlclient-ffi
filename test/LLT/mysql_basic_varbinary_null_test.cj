@@ -114,7 +114,7 @@ public class MySqlVarBinaryTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("value2", mysqlColumnInfos[2].name)
-        @Assert("SqlVarchar", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableVarchar", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(50, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

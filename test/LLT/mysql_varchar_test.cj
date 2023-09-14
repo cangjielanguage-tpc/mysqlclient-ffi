@@ -146,7 +146,7 @@ public class MysqlVarcharTest {
         @Assert(true, mysqlColumnInfos1[1].nullable)
 
         @Assert("varcharValue2", mysqlColumnInfos1[2].name)
-        @Assert("SqlVarchar", mysqlColumnInfos1[2].typeName)
+        @Assert("SqlNullableVarchar", mysqlColumnInfos1[2].typeName)
         @Assert(0, mysqlColumnInfos1[2].displaySize)
         @Assert(200, mysqlColumnInfos1[2].length)
         @Assert(0, mysqlColumnInfos1[2].scale)

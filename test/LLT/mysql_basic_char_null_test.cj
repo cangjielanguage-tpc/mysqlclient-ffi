@@ -107,7 +107,7 @@ public class MysqlCharTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("value2", mysqlColumnInfos[2].name)
-        @Assert("SqlChar", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableChar", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(200, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

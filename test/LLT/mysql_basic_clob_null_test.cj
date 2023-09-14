@@ -126,7 +126,7 @@ public class MysqlIntTest {
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("value2", mysqlColumnInfos[2].name)
-        @Assert("SqlBlob", mysqlColumnInfos[2].typeName)
+        @Assert("SqlNullableBlob", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(4294967295, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

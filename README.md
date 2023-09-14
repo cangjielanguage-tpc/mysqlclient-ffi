@@ -177,7 +177,7 @@ main(): Int64 {
     if (mysqlColumnInfos[0].name.equals("id")) {
         println("pass8")
     }
-    if (mysqlColumnInfos[0].typeName.equals("SqlBigInt")) {
+    if (mysqlColumnInfos[0].typeName.equals("SqlNullableBigInt")) {
         println("pass9")
     }
     if (mysqlColumnInfos[0].displaySize == 0) {
@@ -195,7 +195,7 @@ main(): Int64 {
     if (mysqlColumnInfos[1].name.equals("name")) {
         println("pass14")
     }
-    if (mysqlColumnInfos[1].typeName.equals("SqlVarchar")) {
+    if (mysqlColumnInfos[1].typeName.equals("SqlNullableVarchar")) {
         println("pass15")
     }
     if (mysqlColumnInfos[1].displaySize == 0) {

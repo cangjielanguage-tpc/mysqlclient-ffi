@@ -88,14 +88,14 @@ public class MysqlBinaryTest {
         @Assert(2, mysqlColumnInfos.size)
         
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
         
         @Assert("name", mysqlColumnInfos[1].name)
-        @Assert("SqlChar", mysqlColumnInfos[1].typeName)
+        @Assert("SqlNullableChar", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(50, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
