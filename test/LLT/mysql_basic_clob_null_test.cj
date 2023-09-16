@@ -77,7 +77,6 @@ public class MysqlIntTest {
         stream11.write(Array<Byte>(5, item: 88))
         var data11: SqlClob = SqlClob(stream11)
 
-
         let stream22 = ByteArrayStream()
         stream22.write(Array<Byte>(5, item: 87))
         var data22: SqlNullableClob = SqlNullableClob(stream22)
@@ -208,7 +207,6 @@ public class MysqlIntTest {
         stream2222.write(Array<Byte>(5, item: 83))
         data2 = SqlNullableClob(stream2222)
 
-        
         arrDb = [data1, data2, id]
 
         // 执行更新语句

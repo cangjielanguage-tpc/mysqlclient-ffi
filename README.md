@@ -6,7 +6,7 @@
 <img alt="" src="https://img.shields.io/badge/release-v0.0.1-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/build-pass-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/cjc-v0.39.7-brightgreen" style="display: inline-block;" />
-<img alt="" src="https://img.shields.io/badge/cjcov-84.1%25-brightgreen" style="display: inline-block;" />
+<img alt="" src="https://img.shields.io/badge/cjcov-91.2%25-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/project-open-brightgreen" style="display: inline-block;" />
 </p>
 
@@ -38,7 +38,9 @@
 ├─ README.md
 ├─ README.OpenSource
 ├─ lib
-│   └─ libmysqlclient.so
+│   ├─ libmysqlclient.so
+│   ├─ libmysqlclient.so.21
+│   └─ libmysqlclient.so.21.2.33
 ├─ doc
 │   ├─ assets
 │   └─ feature_api.md
@@ -70,12 +72,11 @@
 
 ```shell
 git clone https://gitee.com/HW-PLLab/mysqlclient-ffi.git;
-git clone https://gitee.com/HW-PLLab/testJekins.git;
-cd html4cj;
-cp -r ../testJekins/src/ci_test .;
 
-python3 ci_test/main.py build   ---> 编译
-python3 ci_test/main.py test;   ---> 执行 test/LLT 用例 
+cd mysqlclient-ffi;
+
+cjpm build -V   ---> 编译
+cjpm test - V   ---> 执行 test/LLT 用例 
 ```
 
 #### Window环境编译
@@ -87,7 +88,7 @@ git clone https://gitee.com/HW-PLLab/mysqlclient-ffi.git;
 ```
 
 ```cmd
-cd html4cj
+cd mysqlclient-ffi
 cjpm build -V   ---> 编译
 cjpm test - V   ---> 执行 test/LLT 用例 
 ```

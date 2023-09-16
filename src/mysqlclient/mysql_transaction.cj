@@ -124,8 +124,6 @@ public class MysqlTransaction <: Transaction {
 
     /*
      * 开始数据库事务。
-     * 异常 SqlException - 提交事务时服务器端发生错误。
-     * 异常 SqlException - 事务已提交或回滚或连接已断开。
      */
     public override func begin(): Unit {
         unsafe {
@@ -139,8 +137,6 @@ public class MysqlTransaction <: Transaction {
 
     /*
      * 提交数据库事务。
-     * 异常 SqlException - 提交事务时服务器端发生错误。
-     * 异常 SqlException - 事务已提交或回滚或连接已断开。
      */
     public override func commit(): Unit {
         unsafe {
@@ -154,8 +150,6 @@ public class MysqlTransaction <: Transaction {
 
     /*
      * 从挂起状态回滚事务。
-     * 异常 SqlException - 回滚事务时服务器端发生错误。
-     * 异常 SqlException - 事务已提交或回滚或连接已断开。
      */
     public override func rollback(): Unit {
         unsafe {

@@ -126,9 +126,6 @@ public class MysqlConnection <: Connection {
 
     /*
      * 判断资源是否关闭
-     * 无原生接口，要判断一个连接是否已经关闭，可以使用 mysql_ping() 函数，它会尝试与服务器进行通信，并在连接断开时自动重连。
-     * 如果 mysql_ping() 返回 0，表示连接正常；如果返回非 0 值，表示连接已经关闭或出现错误2。
-     * 另外，也可以使用 mysql_get_host_info() 函数来获取连接的信息，如果返回 NULL 或空字符串，表示连接已经关闭或无效2。
      *
      * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
