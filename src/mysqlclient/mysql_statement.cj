@@ -69,11 +69,11 @@ public class MysqlStatement <: Statement {
 
             // 设置预准备语句的属性值
             let isBool: Bool = mysql_stmt_attr_set(stmt, option.toInt32(), argCPointer1)
+            LibC.free<Byte>(argCPointer)
             if (isBool) {
                 // 发生错误为非零值
                 throw SqlException(mysql_stmt_error(stmt).toString())
             }
-            LibC.free<Byte>(argCPointer)
         }
     }
 
@@ -91,11 +91,11 @@ public class MysqlStatement <: Statement {
 
             // 设置预准备语句的属性值
             let isBool: Bool = mysql_stmt_attr_set(stmt, option.toInt32(), argCPointer1)
+            LibC.free<UInt64>(argCPointer)
             if (isBool) {
                 // 发生错误为非零值
                 throw SqlException(mysql_stmt_error(stmt).toString())
             }
-            LibC.free<UInt64>(argCPointer)
         }
     }
 
