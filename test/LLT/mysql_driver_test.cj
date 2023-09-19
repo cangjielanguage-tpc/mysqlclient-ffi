@@ -24,6 +24,13 @@ main(): Int64 {
     mysqlDriverTest.mysqlDriverTest11()
     mysqlDriverTest.mysqlDriverTest12()
     mysqlDriverTest.mysqlDriverTest13()
+    mysqlDriverTest.mysqlDriverTest14()
+    mysqlDriverTest.mysqlDriverTest15()
+
+    mysqlDriverTest.mysqlDriverTest16()
+    mysqlDriverTest.mysqlDriverTest17()
+    mysqlDriverTest.mysqlDriverTest18()
+    mysqlDriverTest.mysqlDriverTest19()
 
     return 0
 }
@@ -172,5 +179,104 @@ public class MysqlDriverTest {
         } catch (e: SqlException) {
             @Assert(true, e.message.contains("Url is error"))
         }
+    }
+
+    @TestCase
+    public func mysqlDriverTest14(): Unit {
+        // 初始化数据库驱动
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+        var isBool: Bool = false
+        try {
+            mysqlDriver.open(
+                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=;CLIENT_FLAG=0"
+            )
+        } catch (e: SqlException) {
+            isBool = true
+            @Assert(true, e.message.contains("Url is error!"))
+        }
+        @Assert(true, isBool)
+    }
+
+    @TestCase
+    public func mysqlDriverTest15(): Unit {
+        // 初始化数据库驱动
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+        var isBool: Bool = false
+        try {
+            mysqlDriver.open(
+                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=3306;CLIENT_FLAG="
+            )
+        } catch (e: SqlException) {
+            isBool = true
+            @Assert(true, e.message.contains("Url is error!"))
+        }
+        @Assert(true, isBool)
+    }
+
+    @TestCase
+    public func mysqlDriverTest16(): Unit {
+        // 初始化数据库驱动
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+        var isBool: Bool = false
+        try {
+            mysqlDriver.open(
+                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=;CLIENT_FLAG="
+            )
+        } catch (e: SqlException) {
+            isBool = true
+            @Assert(true, e.message.contains("Url is error!"))
+        }
+        @Assert(true, isBool)
+    }
+
+    @TestCase
+    public func mysqlDriverTest17(): Unit {
+        // 初始化数据库驱动
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+        var isBool: Bool = false
+
+        try {
+            mysqlDriver.open(
+                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=q;UNIX_SOCKET=;CLIENT_FLAG=0"
+            )
+        } catch (e: SqlException) {
+            isBool = true
+            @Assert(true, e.message.contains("Url is error!"))
+        }
+        @Assert(true, isBool)
+    }
+
+    @TestCase
+    public func mysqlDriverTest18(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        var isBool: Bool = false
+        try {
+            mysqlDriver.open(
+                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=p"
+            )
+        } catch (e: SqlException) {
+            isBool = true
+            @Assert(true, e.message.contains("Url is error!"))
+        }
+        @Assert(true, isBool)
+    }
+
+    @TestCase
+    public func mysqlDriverTest19(): Unit {
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+        var isBool: Bool = false
+        try {
+            mysqlDriver.open(
+                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=a;UNIX_SOCKET=;CLIENT_FLAG=p"
+            )
+        } catch (e: SqlException) {
+            isBool = true
+            @Assert(true, e.message.contains("Url is error!"))
+        }
+        @Assert(true, isBool)
     }
 }
