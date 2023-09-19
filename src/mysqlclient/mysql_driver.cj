@@ -126,6 +126,13 @@ public class MysqlDriver <: Driver {
         arrList[4] = portString
         arrList[5] = unixSocketString
         arrList[6] = clientFlagString
+        try {
+            UInt32.parse(arrList[4])
+            UInt64.parse(arrList[6])
+        } catch (e: IllegalArgumentException) {
+            (e)
+            throw SqlException("Url is error!")
+        }
         return arrList
     }
 }
