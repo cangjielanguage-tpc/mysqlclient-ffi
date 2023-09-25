@@ -37,10 +37,6 @@
 ├─ LICENSE
 ├─ README.md
 ├─ README.OpenSource
-├─ lib
-│   ├─ libmysqlclient.so
-│   ├─ libmysqlclient.so.21
-│   └─ libmysqlclient.so.21.2.33
 ├─ doc
 │   ├─ assets
 │   └─ feature_api.md
@@ -54,9 +50,9 @@
 - `doc`  文档目录，用于存放API接口等文档
 - `src`  源码目录
 - `test` 测试目录
+- `test DOC` 演示样例
 - `test HLT` HLT用例
 - `test LLT` LLT用例
-- `lib` 依赖的so包
 
 ### 接口说明
 
@@ -66,31 +62,97 @@
 
 ### 编译
 
-#### linux环境编译
+1、本项目基于 mysqlclient8.0.33 开发，需要依赖 mysqlclient，下载地址 https://downloads.mysql.com/archives/community/
 
-编译描述和具体shell命令
+2、克隆 mysqlclient-ffi 项目
 
 ```shell
-git clone https://gitee.com/HW-PLLab/mysqlclient-ffi.git;
-
-cd mysqlclient-ffi;
-
-cjpm build -V   ---> 编译
-cjpm test - V   ---> 执行 test/LLT 用例 
+git clone https://gitee.com/HW-PLLab/mysqlclient-ffi.git
 ```
 
-#### Window环境编译
+3、切换目录
 
-编译描述和具体cmd命令
-
-```git bash here
-git clone https://gitee.com/HW-PLLab/mysqlclient-ffi.git;
+```shell
+cd mysqlclient-ffi
 ```
+
+4、在当前目录新建 lib 文件夹
+
+5、迁移lib
+
+linux 环境下 将 libmysqlclient.so libmysqlclient.so.21 libmysqlclient.so.21.2.33三个so复制到lib中,目录结构如下
+
+```shell
+├─ lib
+│   ├─ libmysqlclient.so
+│   ├─ libmysqlclient.so.21
+│   └─ libmysqlclient.so.21.2.33
+```
+
+libmysqlclient.so libmysqlclient.so.21 libmysqlclient.so.21.2.33 三个文件通常在 /usr/lib/mysql/ 目录下或者在 /usr/lib/x86_64-linux-gnu/ 目录下
+
+如果没有运行如下指令，再去目录下寻找so包
+
+```shell
+sudo apt-get install libmysqlclient-dev
+```
+
+window 环境下 将 libmysql.dll复制两份到lib中，一份保持原样，一份修改名称为libmysqlclient.dll，,目录结构如下
+
+```shell
+├─ lib
+│   ├─ libmysql.dll
+│   └─ libmysqlclient.dll
+```
+
+libmysql.dll 通常在mysql安装目录 lib 目录下
+
+6、编译
+
+```shell
+cjpm build -V
+```
+
+编译结果
+
+```shell
+cjpm build success
+```
+
+7、运行示例
+
+示例文件在 test/DOC/mysql_examples.cj 
+
+linux 运行指令，其中的 [path]是本地路径，e.g /[path]/mysqlclient-ffi 改成 /home/cangjie/cjdemo/mysqlclient-ffi
+
+```shell
+cjc  --import-path /[path]/mysqlclient-ffi --import-path /[path]/mysqlclient-ffi/build --import-path /[path]/mysqlclient-ffi/build  -L /[path]/mysqlclient-ffi/build -L /[path]/mysqlclient-ffi/build/bin -L /[path]/mysqlclient-ffi/build/mysqlclient -l mysqlclient_mysqlclient -l mysqlclient /[path]/mysqlclient-ffi/test/DOC/examples/mysql_examples.cj -O2 -o /[path]/mysqlclient-ffi/build/mysqlclient/
+```
+
+windows 运行指令，其中的 [path]是本地路径，e.g [path]\mysqlclient-ffi 改成 D:\Cangjie\mysqlclient-ffi
 
 ```cmd
-cd mysqlclient-ffi
-cjpm build -V   ---> 编译
-cjpm test - V   ---> 执行 test/LLT 用例 
+cjc --import-path [path]\mysqlclient-ffi --import-path [path]\mysqlclient-ffi\build --import-path [path]\mysqlclient-ffi\build -L [path]\mysqlclient-ffi\build -L [path]\mysqlclient-ffi\build\bin -L [path]\mysqlclient-ffi\build\mysqlclient -l mysql -l mysqlclient -l mysqlclient_mysqlclient  [path]\mysqlclient-ffi\test\DOC\examples\mysql_examples.cj -O2 -o [path]\mysqlclient-ffi\build\mysqlclient\
+```
+
+8、切换运行目录
+
+```shell
+cd build/mysqlclient/
+```
+
+9、运行执行文件
+
+linux 运行
+
+```shell
+./main
+```
+
+windows 运行
+
+```cmd
+./main.exe
 ```
 
 ### 功能示例

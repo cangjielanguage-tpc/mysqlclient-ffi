@@ -2,10 +2,13 @@
 	"cjc_version": "0.39.7",
 	"organization": "cangjie",
 	"name": "mysqlclient",
-	"description": "",
+	"description": "mysqlclient",
 	"version": "0.0.1",
 	"requires": {},
-	"package_requires": {},
+	"package_requires": {
+	  "path_option": [],
+	  "package_option": {}
+	},
 	"foreign_requires": {
 		"mysqlclient": {
 			"path": "./lib/",
