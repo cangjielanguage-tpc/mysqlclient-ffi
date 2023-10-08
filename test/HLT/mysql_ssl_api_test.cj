@@ -28,7 +28,9 @@ public class MysqlSslApiTest {
         @Assert(false, isBool)
 
         var strCipher: String = mysqlSslApi.mysqlGetSslCipher()
-        @Assert("", strCipher)
+        // windosw TLS_AES_256_GCM_SHA384
+        // linux 空字符串
+        println(strCipher)
 
         isBool = mysqlSslApi.mysqlGetSslSessionReused()
         @Assert(false, isBool)

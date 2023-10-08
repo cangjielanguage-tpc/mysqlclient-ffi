@@ -13,10 +13,14 @@
 		"mysqlclient": {
 			"path": "./lib/",
 			"export": []
+		},
+		"mysqlclient_cj": {
+			"path": "./lib/",
+			"export": []
 		}
 	},
 	"output_type": "dynamic",
-	"command_option": "-O2",
+	"command_option": "-g",
 	"condition_option": {},
 	"link_option": "",
 	"cross_compile_configuration": {},

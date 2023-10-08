@@ -1,0 +1,41 @@
+# Makefile for mysqlclient_cj
+
+CC=cc
+
+CFLAGS=-O
+
+SFLAGS=-O
+LDFLAGS=
+LDSHARED=$(CC)
+STRIP=
+
+SHAREDLIB=libmysqlclient_cj.so
+LDIR=../../lib
+
+SHELL=/bin/sh
+
+SRCDIR=
+INC=
+
+SRCS=$(wildcard $(SRCDIR)*.c)
+OBJS=$(notdir $(patsubst %.c, %.o, $(SRCS)))
+
+%.o: $(SRCDIR)%.c
+	$(CC) $(CFLAGS) $(INC) -c -o $@ $<
+
+$(SHAREDLIB): $(OBJS)
+	$(shell mkdir -p $(dir $(SHAREDLIB)))
+	$(LDSHARED) $(CFLAGS) -o $@ $(OBJS) $(LDSHAREDLIBC) $(LDFLAGS)
+	$(STRIP) -s $(SHAREDLIB)
+
+all: $(SHAREDLIB)
+
+clean:
+	rm -f *.o $(SHAREDLIB)
+
+distclean: clean
+	rm -f Makefile configure.log
+	@if [ -f Makefile.in ]; then \
+	printf 'all:\n\t-@echo "Please use ./configure first.  Thank you."\n' > Makefile ; \
+	printf '\ndistclean:\n\tmake -f Makefile.in distclean\n' >> Makefile ; \
+	touch -r $(SRCDIR)Makefile.in Makefile ; fi
