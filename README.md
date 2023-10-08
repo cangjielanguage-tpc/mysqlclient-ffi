@@ -5,7 +5,7 @@
 <p align="center">
 <img alt="" src="https://img.shields.io/badge/release-v0.0.1-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/build-pass-brightgreen" style="display: inline-block;" />
-<img alt="" src="https://img.shields.io/badge/cjc-v0.39.7-brightgreen" style="display: inline-block;" />
+<img alt="" src="https://img.shields.io/badge/cjc-v0.39.8-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/cjcov-91.2%25-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/project-open-brightgreen" style="display: inline-block;" />
 </p>
@@ -40,17 +40,22 @@
 ├─ doc
 │   ├─ assets
 │   └─ feature_api.md
+├─ libmysqlclient_c
 ├─ src
 │  └─ mysqlclient
 └─ test
+    ├─ DOC
+    ├─ FUZZ
     ├─ HLT
     └─ LLT
 ```
 
 - `doc`  文档目录，用于存放API接口等文档
+- `libmysqlclient_c`  需要自行编译的c文件
 - `src`  源码目录
 - `test` 测试目录
 - `test DOC` 演示样例
+- `test FUZZ` FUZZ用例
 - `test HLT` HLT用例
 - `test LLT` LLT用例
 
@@ -107,16 +112,29 @@ window 环境下 将 libmysql.dll复制两份到lib中，一份保持原样，�
 
 libmysql.dll 通常在mysql安装目录 lib 目录下
 
-6、编译
+6、编译mysqlclient_cj和项目
+
+linux 环境下运行 build_linux.sh 文件
+
+最终目录结构如下
 
 ```shell
-cjpm build -V
+├─ lib
+│   ├─ libmysqlclient_cj.so
+│   ├─ libmysqlclient.so
+│   ├─ libmysqlclient.so.21
+│   └─ libmysqlclient.so.21.2.33
 ```
 
-编译结果
+window 环境下运行 build_win.bat 文件
+
+最终目录结构如下
 
 ```shell
-cjpm build success
+├─ lib
+│   ├─ libmysql.dll
+│   ├─ libmysqlclient.dll
+│   └─ libmysqlclient_cj.dll
 ```
 
 7、运行示例
