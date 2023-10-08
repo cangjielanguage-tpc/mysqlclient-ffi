@@ -107,7 +107,7 @@ foreign func mysql_stmt_execute(stmt: CPointer<Unit>): Int32
  * bool mysql_stmt_bind_param(MYSQL_STMT *stmt, MYSQL_BIND *bind)
  */
 @C
-foreign func mysql_stmt_bind_param(stmt: CPointer<Unit>, bind: CPointer<MYSQL_BIND>): Bool
+foreign func mysql_stmt_bind_param(stmt: CPointer<Unit>, bind: CPointer<Unit>): Bool
 
 /*
  * 上次更新、删除或插入语句更改/删除/插入的行数
@@ -121,13 +121,13 @@ foreign func mysql_stmt_affected_rows(stmt: CPointer<Unit>): UInt64
  * int mysql_stmt_fetch_column(MYSQL_STMT *stmt, MYSQL_BIND *bind, unsigned int column, unsigned long offset)
  */
 @C
-foreign func mysql_stmt_fetch_column(stmt: CPointer<Unit>, bind: CPointer<MYSQL_BIND>, column: UInt32, offset: UInt64): Int32
+foreign func mysql_stmt_fetch_column(stmt: CPointer<Unit>, bind: CPointer<Unit>, column: UInt32, offset: UIntNative): Int32
 
 /*
  * 将应用程序数据缓冲区与结果集中的列相关联
  * bool mysql_stmt_bind_result(MYSQL_STMT *stmt, MYSQL_BIND *bind)
  */
-foreign func mysql_stmt_bind_result(stmt: CPointer<Unit>, bind: CPointer<MYSQL_BIND>): Bool
+foreign func mysql_stmt_bind_result(stmt: CPointer<Unit>, bind: CPointer<Unit>): Bool
 
 /*
  * 获取下一个结果集行并返回所有绑定列的数据
@@ -569,3 +569,255 @@ foreign func realloc(ptr: CPointer<Unit>, size: UInt64): CPointer<Unit>
  */
 @C
 foreign func malloc(size: UIntNative): CPointer<Unit>
+
+/*--------------------- 自定义API,统一Linux和Windows ---------------------*/
+/*
+ * 初始化MYSQL_BIND
+ * MYSQL_BIND *init_bind(int size)
+ */
+foreign func init_bind(size: Int64): CPointer<Unit>
+
+/*
+ * 设置String类型的值
+ * void set_string(MYSQL_BIND *mysqlBind, int64_t index, char *value)
+ */
+foreign func set_string(bind: CPointer<Unit>, index: Int64, value: CString): Unit
+
+/*
+ * 设置Bytes类型的值
+ * void set_bytes(MYSQL_BIND *mysqlBind, int64_t index,char *value,int64_t length)
+ */
+foreign func set_bytes(bind: CPointer<Unit>, index: Int64, value: CPointer<UInt8>, length: Int64): Unit
+
+/*
+ * 设置Clob类型的值
+ * void set_clob(MYSQL_BIND *mysqlBind, int64_t index,char *value,int64_t length)
+ */
+foreign func set_clob(bind: CPointer<Unit>, index: Int64, value: CPointer<UInt8>, length: Int64): Unit
+
+/*
+ * 设置Clob类型的值
+ * void set_blob(MYSQL_BIND *mysqlBind, int64_t index,char *value,int64_t length)
+ */
+foreign func set_blob(bind: CPointer<Unit>, index: Int64, value: CPointer<UInt8>, length: Int64): Unit
+
+/*
+ * 设置Bool类型的值
+ * void set_bool(MYSQL_BIND *mysqlBind, int64_t index,bool value)
+ */
+foreign func set_bool(bind: CPointer<Unit>, index: Int64, value: Int8): Unit
+
+/*
+ * 设置Int8类型的值
+ * void set_int8(MYSQL_BIND *mysqlBind, int64_t index,signed char value)
+ */
+foreign func set_int8(bind: CPointer<Unit>, index: Int64, value: Int8): Unit
+
+/*
+ * 设置Int16类型的值
+ * void set_int16(MYSQL_BIND *mysqlBind, int64_t index,short value)
+ */
+foreign func set_int16(bind: CPointer<Unit>, index: Int64, value: Int16): Unit
+
+/*
+ * 设置Int32类型的值
+ * void set_int32(MYSQL_BIND *mysqlBind, int64_t index,int32_t value)
+ */
+foreign func set_int32(bind: CPointer<Unit>, index: Int64, value: Int32): Unit
+
+/*
+ * 设置Int64类型的值
+ * void set_int64(MYSQL_BIND *mysqlBind, int64_t index,int64_t value)
+ */
+foreign func set_int64(bind: CPointer<Unit>, index: Int64, value: Int64): Unit
+
+/*
+ * 设置Float32类型的值
+ * void set_float32(MYSQL_BIND *mysqlBind, int64_t index,float value)
+ */
+foreign func set_float32(bind: CPointer<Unit>, index: Int64, value: Float32): Unit
+
+/*
+ * 设置Float64类型的值
+ * void set_float64(MYSQL_BIND *mysqlBind, int64_t index,double value)
+ */
+foreign func set_float64(bind: CPointer<Unit>, index: Int64, value: Float64): Unit
+
+/*
+ * 设置Date类型的值
+ * void set_date(MYSQL_BIND *mysqlBind, int64_t index,uint32_t year,uint32_t monthValue,uint32_t dayOfMonth)
+ */
+foreign func set_date(bind: CPointer<Unit>, index: Int64, year: UInt32, monthValue: UInt32, dayOfMonth: UInt32): Unit
+
+/*
+ * 设置Time类型的值
+ * void set_time(MYSQL_BIND *mysqlBind, int64_t index,uint32_t hour,uint32_t minute,uint32_t second)
+ */
+foreign func set_time(bind: CPointer<Unit>, index: Int64, hour: UInt32, minute: UInt32, second: UInt32): Unit
+
+/*
+ * 设置Timestamp类型的值
+ * void set_timestamp(MYSQL_BIND *mysqlBind, int64_t index,uint32_t year,uint32_t monthValue,uint32_t dayOfMonth,uint32_t hour,uint32_t minute,uint32_t second)
+ */
+foreign func set_timestamp(
+    bind: CPointer<Unit>,
+    index: Int64,
+    year: UInt32,
+    monthValue: UInt32,
+    dayOfMonth: UInt32,
+    hour: UInt32,
+    minute: UInt32,
+    second: UInt32
+): Unit
+
+/*
+ * 设置setDateTime类型的值
+ * void set_date_time(MYSQL_BIND *mysqlBind, int64_t index,uint32_t year,uint32_t monthValue,uint32_t dayOfMonth,uint32_t hour,uint32_t minute,uint32_t second)
+ */
+foreign func set_date_time(
+    bind: CPointer<Unit>,
+    index: Int64,
+    year: UInt32,
+    monthValue: UInt32,
+    dayOfMonth: UInt32,
+    hour: UInt32,
+    minute: UInt32,
+    second: UInt32
+): Unit
+
+/*
+ * 设置NULL类型的值,空指针
+ * void set_null(MYSQL_BIND *mysqlBind, int64_t index)
+ */
+foreign func set_null(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 释放内存
+ * void free_mysql_cj(MYSQL_BIND *mysqlBind, int64_t index)
+ */
+foreign func free_mysql_cj(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取String类型数据
+ * void get_string(MYSQL_BIND *bind, int64_t index, int64_t length)
+ */
+foreign func get_string(bind: CPointer<Unit>, index: Int64, length: Int64): Unit
+
+/*
+ * 获取bytes类型数据
+ * void get_bytes(MYSQL_BIND *bind, int64_t index, int64_t length)
+ */
+foreign func get_bytes(bind: CPointer<Unit>, index: Int64, length: Int64): Unit
+
+/*
+ * 获取clob类型数据
+ * void get_clob(MYSQL_BIND *bind, int64_t index, int64_t length)
+ */
+foreign func get_clob(bind: CPointer<Unit>, index: Int64, length: Int64): Unit
+
+/*
+ * 获取blob类型数据
+ * void get_blob(MYSQL_BIND *bind, int64_t index, int64_t length)
+ */
+foreign func get_blob(bind: CPointer<Unit>, index: Int64, length: Int64): Unit
+
+/*
+ * 获取bool类型数据
+ * void get_bool(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_bool(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取int8类型数据
+ * void get_int8(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_int8(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取int16类型数据
+ * void get_int16(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_int16(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取int32类型数据
+ * void get_int32(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_int32(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取int64类型数据
+ * void get_int64(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_int64(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取float32类型数据
+ * void get_float32(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_float32(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取float64类型数据
+ * void get_float64(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_float64(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取date类型数据
+ * void get_date(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_date(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取time类型数据
+ * void get_time(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_time(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取timestamp类型数据
+ * void get_timestamp(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_timestamp(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取dateTime类型数据
+ * void get_date_time(MYSQL_BIND *bind, int64_t index)
+ */
+foreign func get_date_time(bind: CPointer<Unit>, index: Int64): Unit
+
+/*
+ * 获取MYSQL_BIND中的buffer,buffer_type,is_null,用作仓颉端处理，转换成SqlDbType
+ * void *get_sql_buffer(MYSQL_BIND *bind, int64_t index, enum enum_field_types *buffer_type, bool *is_null,int64_t *length)
+ */
+@C
+foreign func get_sql_buffer(
+    bind: CPointer<Unit>,
+    index: Int64,
+    buffer_type: CPointer<Unit>,
+    is_null: CPointer<Unit>,
+    length: CPointer<Int64>
+): CPointer<Unit>
+
+/*
+ * 处理time
+ * void get_sql_time(MYSQL_TIME *time,unsigned int *year, unsigned int *month, unsigned int *day, unsigned int *hour, unsigned int *minute, unsigned int *second)
+ */
+@C
+foreign func get_sql_time(
+    time: CPointer<Unit>,
+    year: CPointer<UInt32>,
+    month: CPointer<UInt32>,
+    day: CPointer<UInt32>,
+    hour: CPointer<UInt32>,
+    minute: CPointer<UInt32>,
+    second: CPointer<UInt32>
+): Unit
+
+/*
+ * 获取数据库表头信息
+ * bool get_res_data(MYSQL_RES *mysql_res_list, int64_t length, MYSQL_COLUMN_INFO *info)
+ */
+@C
+foreign func get_res_data(mysql_res_list: CPointer<Unit>, length: Int64, info: CPointer<MYSQL_COLUMN_INFO>): Unit
