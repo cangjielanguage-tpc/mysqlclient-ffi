@@ -29,7 +29,18 @@ make
 
 # mysqlclient
 cd  ${lib_path}/
+
 echo start build mysqlclient
+
+echo start cjpm clean
+cjpm clean
+echo end cjpm clean
+
+echo start cjpm build -V
 cjpm build -V
+echo end cjpm build -V
+
 cp ${lib_path}/lib/*.so ${lib_path}/build/mysqlclient/
+cp ${lib_path}/lib/*.so.21 ${lib_path}/build/mysqlclient/
+cp ${lib_path}/lib/*.so.21.2.33 ${lib_path}/build/mysqlclient/
 echo end build mysqlclient

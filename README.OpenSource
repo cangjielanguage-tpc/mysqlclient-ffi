@@ -6,6 +6,6 @@
         "Version Number": "v8.0.33",
         "Owner" : "",
         "Upstream URL": "",
-        "Description": "HTML Parser"
+        "Description": "The C API provides low-level access to the MySQL client/server protocol and enables C programs to access database contents."
     }
 ]
