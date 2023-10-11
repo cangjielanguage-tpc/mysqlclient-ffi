@@ -24,7 +24,7 @@ public class MysqlDatasourceTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             Array<(String, String)>()
         )
         mysqlDatasource.setOption("1111", "222222")
@@ -39,7 +39,7 @@ public class MysqlDatasourceTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             Array<(String, String)>()
         )
 
@@ -58,7 +58,7 @@ public class MysqlDatasourceTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=wwww;PASSWD=1122222;DB=sssssss;PORT=1;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=wwww;PASSWD=1122222;DB=sssssss;PORT=1;UNIX_SOCKET=;CLIENT_FLAG=0",
             Array<(String, String)>()
         )
         try {
