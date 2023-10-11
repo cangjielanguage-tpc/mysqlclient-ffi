@@ -114,7 +114,7 @@ libmysql.dll 通常在mysql安装目录 lib 目录下
 
 6、编译mysqlclient_cj和项目
 
-linux 环境下运行 build_linux.sh 文件
+linux 环境下运行 build_linux.sh 文件,arrch64 环境运行 build_aarch64.sh 文件。
 
 最终目录结构如下
 
@@ -193,7 +193,7 @@ main(): Int64 {
 
     // 通过connectionString和选项打开数据源
     let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-        "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+        "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
         arr
     )
 

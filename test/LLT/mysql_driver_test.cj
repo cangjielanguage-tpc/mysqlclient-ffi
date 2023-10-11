@@ -136,7 +136,7 @@ public class MysqlDriverTest {
         @Assert(false, mysqlDriver.preferredPooling)
         try {
             mysqlDriver.open(
-                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=",
+                "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=",
                 Array<(String, String)>()
             )
             @Assert(0, 1)
@@ -189,7 +189,7 @@ public class MysqlDriverTest {
         var isBool: Bool = false
         try {
             mysqlDriver.open(
-                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=;CLIENT_FLAG=0"
+                "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=;CLIENT_FLAG=0"
             )
         } catch (e: SqlException) {
             isBool = true
@@ -206,7 +206,7 @@ public class MysqlDriverTest {
         var isBool: Bool = false
         try {
             mysqlDriver.open(
-                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=3306;CLIENT_FLAG="
+                "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=3306;CLIENT_FLAG="
             )
         } catch (e: SqlException) {
             isBool = true
@@ -223,7 +223,7 @@ public class MysqlDriverTest {
         var isBool: Bool = false
         try {
             mysqlDriver.open(
-                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=;CLIENT_FLAG="
+                "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=;UNIX_SOCKET=;CLIENT_FLAG="
             )
         } catch (e: SqlException) {
             isBool = true
@@ -241,7 +241,7 @@ public class MysqlDriverTest {
 
         try {
             mysqlDriver.open(
-                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=q;UNIX_SOCKET=;CLIENT_FLAG=0"
+                "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=q;UNIX_SOCKET=;CLIENT_FLAG=0"
             )
         } catch (e: SqlException) {
             isBool = true
@@ -256,7 +256,7 @@ public class MysqlDriverTest {
         var isBool: Bool = false
         try {
             mysqlDriver.open(
-                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=p"
+                "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=p"
             )
         } catch (e: SqlException) {
             isBool = true
@@ -271,7 +271,7 @@ public class MysqlDriverTest {
         var isBool: Bool = false
         try {
             mysqlDriver.open(
-                "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=a;UNIX_SOCKET=;CLIENT_FLAG=p"
+                "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=a;UNIX_SOCKET=;CLIENT_FLAG=p"
             )
         } catch (e: SqlException) {
             isBool = true

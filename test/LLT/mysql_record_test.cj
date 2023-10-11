@@ -9,7 +9,7 @@ from std import time.*
 let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
 let arr: Array<(String, String)> = Array<(String, String)>()
 let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-    "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+    "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
     arr
 )
 let con: MysqlConnection = mysqlDatasource.connect()

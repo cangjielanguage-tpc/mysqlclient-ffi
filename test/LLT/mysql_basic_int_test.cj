@@ -58,7 +58,7 @@ public class MysqlIntTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             arr
         )
 
@@ -114,7 +114,7 @@ public class MysqlIntTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             arr
         )
 
@@ -160,7 +160,7 @@ public class MysqlIntTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             arr
         )
 
@@ -303,7 +303,7 @@ public class MysqlIntTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             arr
         )
 
@@ -367,7 +367,7 @@ public class MysqlIntTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             arr
         )
 
@@ -442,7 +442,7 @@ public class MysqlIntTest {
 
         // 通过connectionString和选项打开数据源
         let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
             arr
         )
 
