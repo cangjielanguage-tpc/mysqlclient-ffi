@@ -1,115 +1,260 @@
+/*
+ * Copyright (c) Huawei Technologies Co., Ltd. 2023-2023. All rights reserved.
+ * Description: MYSQL for Cangjie API
+ * Author: pwx1229727
+ * Create: 2023-10-12
+ * Notes: 2023-10-12 Create
+ */
+
 #include <stdlib.h>
 #include <limits.h>
 #include <string.h>
 #include <stdarg.h>
 #include <stddef.h>
 #include <stdio.h>
-#include <mysql.h>
-#include <mysql_client_info_cj.h>
+#include "include/mysql.h"
+#include "include/mysql_client_info_cj.h"
 
+#define INT8_SIZE 1
+#define INT16_SIZE 2
+#define INT32_SIZE 4
+#define INT64_SIZE 8
+
+/*---------------------- 内部方法 ----------------------*/
+bool set_bytes_blob_clob(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
+{
+    if (length == 0) {
+        bind[index].buffer = NULL;
+    } else {
+        bind[index].buffer = malloc(length);
+        if (bind[index].buffer == NULL) {
+            return false;
+        }
+        int code = memcpy_s(bind[index].buffer, length, value, length);
+        if (code != 0) {
+            return false;
+        }
+    }
+    bind[index].buffer_length = length;
+    return true;
+}
+
+bool set_bytes_blob(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
+{
+    bind[index].buffer_type = MYSQL_TYPE_LONG_BLOB;
+    return set_bytes_blob_clob(bind, index, value, length);
+}
+
+bool get_all_time_data(MYSQL_BIND *bind, int64_t index)
+{
+    MYSQL_TIME *value = (MYSQL_TIME *)calloc(1, sizeof(MYSQL_TIME));
+    if (value == NULL) {
+        return false;
+    }
+    bind[index].buffer = value;
+    bind[index].buffer_length = sizeof(MYSQL_TIME);
+    return true;
+}
+
+bool get_all_int8_bool(MYSQL_BIND *bind, int64_t index)
+{
+    bind[index].buffer_type = MYSQL_TYPE_TINY;
+    bool *value = (bool *)calloc(1, sizeof(bool));
+    if (value == NULL) {
+        return false;
+    }
+    bind[index].buffer = value;
+    bind[index].buffer_length = INT8_SIZE;
+    return true;
+}
+
+bool get_all_bytes_clob_blob(MYSQL_BIND *bind, int64_t index, int64_t length)
+{
+    if (length <= 0) {
+        return false;
+    }
+    char *value = (char *)calloc(length, sizeof(char));
+    if (value == NULL) {
+        return false;
+    }
+    bind[index].buffer = value;
+    bind[index].buffer_length = length;
+    return true;
+}
+
+bool get_all_bytes_blob(MYSQL_BIND *bind, int64_t index, int64_t length)
+{
+    bind[index].buffer_type = MYSQL_TYPE_BLOB;
+    if (!get_all_bytes_clob_blob(bind, index, length)) {
+        return false;
+    }
+    return true;
+}
+
+bool get_all_data(MYSQL_BIND *bind, int64_t index)
+{
+    bind[index].length = malloc(sizeof(unsigned long));
+    if (bind[index].length == NULL) {
+        return false;
+    }
+    bool *is_null = (bool *)calloc(1, sizeof(bool));
+    if (is_null == NULL) {
+        return false;
+    }
+    bind[index].is_null = is_null;
+    bool *error = (bool *)calloc(1, sizeof(bool));
+    if (error == NULL) {
+        return false;
+    }
+    bind[index].error = error;
+    return true;
+}
+
+/*---------------------- 初始化 ----------------------*/
 MYSQL_BIND *init_bind(int64_t size)
 {
+    if (size == 0) {
+        return NULL;
+    }
     MYSQL_BIND *bind = (MYSQL_BIND *)calloc(size, sizeof(MYSQL_BIND));
+    if (bind == NULL) {
+        return NULL;
+    }
     return bind;
 }
 
 /*---------------------- 插入数据进入数据库 ----------------------*/
-void set_string(MYSQL_BIND *bind, int64_t index, char *value)
+bool set_string(MYSQL_BIND *bind, int64_t index, char *value)
 {
     bind[index].buffer_type = MYSQL_TYPE_STRING;
-    bind[index].buffer = malloc(strlen(value) + 1);
-    strcpy(bind[index].buffer, value);
-    bind[index].buffer_length = strlen(value) + 1;
+    int strLength = strlen(value) + 1;
+    bind[index].buffer = malloc(strLength);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
+    int code = strcpy_s(bind[index].buffer, strLength, value);
+    if (code != 0) {
+        return false;
+    }
+    bind[index].buffer_length = strLength;
+    return true;
 }
 
-void set_bytes(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
+bool set_bytes(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
 {
-    bind[index].buffer_type = MYSQL_TYPE_BLOB;
-    bind[index].buffer = malloc(length);
-    memcpy(bind[index].buffer, value, length);
-    bind[index].buffer_length = length;
+    return set_bytes_blob(bind, index, value, length);
 }
 
-void set_clob(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
+bool set_clob(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
 {
     bind[index].buffer_type = MYSQL_TYPE_LONG_BLOB;
-    bind[index].buffer = malloc(length);
-    memcpy(bind[index].buffer, value, length);
-    bind[index].buffer_length = length;
+    return set_bytes_blob_clob(bind, index, value, length);
 }
 
-void set_blob(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
+bool set_blob(MYSQL_BIND *bind, int64_t index, char *value, int64_t length)
 {
-    bind[index].buffer_type = MYSQL_TYPE_BLOB;
-    bind[index].buffer = malloc(length);
-    memcpy(bind[index].buffer, value, length);
-    bind[index].buffer_length = length;
+    return set_bytes_blob(bind, index, value, length);
 }
 
-void set_bool(MYSQL_BIND *bind, int64_t index, int8_t value)
+bool set_bool(MYSQL_BIND *bind, int64_t index, int8_t value)
 {
     bind[index].buffer_type = MYSQL_TYPE_TINY;
-    bind[index].buffer = malloc(1);
+    bind[index].buffer = malloc(INT8_SIZE);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
     *(int8_t *)bind[index].buffer = value;
+    return true;
 }
 
-void set_int8(MYSQL_BIND *bind, int64_t index, int8_t value)
+bool set_int8(MYSQL_BIND *bind, int64_t index, int8_t value)
 {
     bind[index].buffer_type = MYSQL_TYPE_TINY;
-    bind[index].buffer = malloc(1);
+    bind[index].buffer = malloc(INT8_SIZE);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
     *(int8_t *)bind[index].buffer = value;
+    return true;
 }
 
-void set_int16(MYSQL_BIND *bind, int64_t index, short value)
+bool set_int16(MYSQL_BIND *bind, int64_t index, short value)
 {
     bind[index].buffer_type = MYSQL_TYPE_SHORT;
-    bind[index].buffer = malloc(2);
+    bind[index].buffer = malloc(INT16_SIZE);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
     *(short *)bind[index].buffer = value;
+    return true;
 }
 
-void set_int32(MYSQL_BIND *bind, int64_t index, int32_t value)
+bool set_int32(MYSQL_BIND *bind, int64_t index, int32_t value)
 {
     bind[index].buffer_type = MYSQL_TYPE_LONG;
-    bind[index].buffer = malloc(4);
+    bind[index].buffer = malloc(INT32_SIZE);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
     *(int32_t *)bind[index].buffer = value;
+    return true;
 }
 
-void set_int64(MYSQL_BIND *bind, int64_t index, int64_t value)
+bool set_int64(MYSQL_BIND *bind, int64_t index, int64_t value)
 {
     bind[index].buffer_type = MYSQL_TYPE_LONGLONG;
-    bind[index].buffer = malloc(8);
+    bind[index].buffer = malloc(INT64_SIZE);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
     *(int64_t *)bind[index].buffer = value;
+    return true;
 }
 
-void set_float32(MYSQL_BIND *bind, int64_t index, float value)
+bool set_float32(MYSQL_BIND *bind, int64_t index, float value)
 {
     bind[index].buffer_type = MYSQL_TYPE_FLOAT;
-    bind[index].buffer = malloc(4);
+    bind[index].buffer = malloc(INT32_SIZE);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
     *(float *)bind[index].buffer = value;
+    return true;
 }
 
-void set_float64(MYSQL_BIND *bind, int64_t index, double value)
+bool set_float64(MYSQL_BIND *bind, int64_t index, double value)
 {
     bind[index].buffer_type = MYSQL_TYPE_DOUBLE;
-    bind[index].buffer = malloc(8);
+    bind[index].buffer = malloc(INT64_SIZE);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
     *(double *)bind[index].buffer = value;
+    return true;
 }
 
-void set_date(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t month_value, uint32_t day_of_month)
+bool set_date(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t month_value, uint32_t day_of_month)
 {
     bind[index].buffer_type = MYSQL_TYPE_DATE;
     MYSQL_TIME *time = (MYSQL_TIME *)malloc(sizeof(MYSQL_TIME));
+    if (time == NULL) {
+        return false;
+    }
     time->year = year;
     time->month = month_value;
     time->day = day_of_month;
     time->time_type = MYSQL_TIMESTAMP_DATE;
     bind[index].buffer = time;
+    return true;
 }
 
-void set_time(MYSQL_BIND *bind, int64_t index, uint32_t hour, uint32_t minute, uint32_t second)
+bool set_time(MYSQL_BIND *bind, int64_t index, uint32_t hour, uint32_t minute, uint32_t second)
 {
     bind[index].buffer_type = MYSQL_TYPE_TIME;
     MYSQL_TIME *time = (MYSQL_TIME *)malloc(sizeof(MYSQL_TIME));
+    if (time == NULL) {
+        return false;
+    }
     time->year = 0;
     time->month = 0;
     time->day = 0;
@@ -120,12 +265,17 @@ void set_time(MYSQL_BIND *bind, int64_t index, uint32_t hour, uint32_t minute, u
     time->neg = false;
     time->time_type = MYSQL_TIMESTAMP_TIME;
     bind[index].buffer = time;
+    return true;
 }
 
-void set_timestamp(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t month_value, uint32_t day_of_month, uint32_t hour, uint32_t minute, uint32_t second)
+bool set_timestamp(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t month_value, uint32_t day_of_month,
+                   uint32_t hour, uint32_t minute, uint32_t second)
 {
     bind[index].buffer_type = MYSQL_TYPE_TIMESTAMP;
     MYSQL_TIME *time = (MYSQL_TIME *)malloc(sizeof(MYSQL_TIME));
+    if (time == NULL) {
+        return false;
+    }
     time->year = year;
     time->month = month_value;
     time->day = day_of_month;
@@ -136,12 +286,17 @@ void set_timestamp(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t mont
     time->neg = false;
     time->time_type = MYSQL_TIMESTAMP_DATETIME;
     bind[index].buffer = time;
+    return true;
 }
 
-void set_date_time(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t monthValue, uint32_t dayOfMonth, uint32_t hour, uint32_t minute, uint32_t second)
+bool set_date_time(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t monthValue, uint32_t dayOfMonth,
+                   uint32_t hour, uint32_t minute, uint32_t second)
 {
     bind[index].buffer_type = MYSQL_TYPE_DATETIME;
     MYSQL_TIME *time = (MYSQL_TIME *)malloc(sizeof(MYSQL_TIME));
+    if (time == NULL) {
+        return false;
+    }
     time->year = year;
     time->month = monthValue;
     time->day = dayOfMonth;
@@ -152,245 +307,203 @@ void set_date_time(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t mont
     time->neg = false;
     time->time_type = MYSQL_TIMESTAMP_DATETIME;
     bind[index].buffer = time;
+    return true;
 }
 
-void set_null(MYSQL_BIND *bind, int64_t index)
+bool set_null(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_NULL;
     bind[index].is_null = malloc(1);
+    if (bind[index].is_null == NULL) {
+        return false;
+    }
     *(bool *)bind[index].is_null = true;
     bind[index].is_null_value = true;
     bind[index].buffer = NULL;
+    return true;
 }
 
 void free_mysql_cj(MYSQL_BIND *bind, int64_t size)
 {
-    for (size_t i = 0; i < size; i++)
-    {
-        if (bind[i].buffer != NULL)
-        {
+    for (size_t i = 0; i < size; i++) {
+        if (bind[i].buffer != NULL) {
             free(bind[i].buffer);
         }
-        if (bind[i].is_null != NULL)
-        {
+        if (bind[i].is_null != NULL) {
             free(bind[i].is_null);
         }
-        if (bind[i].error != NULL)
-        {
+        if (bind[i].error != NULL) {
             free(bind[i].error);
         }
-        if (bind[i].length != NULL)
-        {
+        if (bind[i].length != NULL) {
             free(bind[i].length);
         }
     }
-    if (bind != NULL)
-    {
+    if (bind != NULL) {
         free(bind);
     }
 }
 
 /*---------------------- 从数据库获取数据 ----------------------*/
-void get_string(MYSQL_BIND *bind, int64_t index, int64_t length)
+bool get_string(MYSQL_BIND *bind, int64_t index, int64_t length)
 {
     bind[index].buffer_type = MYSQL_TYPE_STRING;
-    char *value = (char *)calloc(length + 1, sizeof(char));
+    int strLength = length + 1;
+    if (strLength <= 0) {
+        return false;
+    }
+    char *value = (char *)calloc(strLength, sizeof(char));
+    if (value == NULL) {
+        return false;
+    }
     bind[index].buffer = value;
-    bind[index].buffer_length = length + 1;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    bind[index].buffer_length = strLength;
+    return get_all_data(bind, index);
 }
 
-void get_bytes(MYSQL_BIND *bind, int64_t index, int64_t length)
+bool get_bytes(MYSQL_BIND *bind, int64_t index, int64_t length)
 {
-    bind[index].buffer_type = MYSQL_TYPE_BLOB;
-    char *value = (char *)calloc(length, sizeof(char));
-    bind[index].buffer = value;
-    bind[index].buffer_length = length;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_bytes_blob(bind, index, length)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_clob(MYSQL_BIND *bind, int64_t index, int64_t length)
+bool get_clob(MYSQL_BIND *bind, int64_t index, int64_t length)
 {
     bind[index].buffer_type = MYSQL_TYPE_LONG_BLOB;
-    char *value = (char *)calloc(length, sizeof(char));
-    bind[index].buffer = value;
-    bind[index].buffer_length = length;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_bytes_clob_blob(bind, index, length)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_blob(MYSQL_BIND *bind, int64_t index, int64_t length)
+bool get_blob(MYSQL_BIND *bind, int64_t index, int64_t length)
 {
-    bind[index].buffer_type = MYSQL_TYPE_BLOB;
-    char *value = (char *)calloc(length, sizeof(char));
-    bind[index].buffer = value;
-    bind[index].buffer_length = length;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_bytes_blob(bind, index, length)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_bool(MYSQL_BIND *bind, int64_t index)
+bool get_bool(MYSQL_BIND *bind, int64_t index)
 {
-    bind[index].buffer_type = MYSQL_TYPE_TINY;
-    bool *value = (bool *)calloc(1, sizeof(bool));
-    bind[index].buffer = value;
-    bind[index].buffer_length = 1;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_int8_bool(bind, index)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_int8(MYSQL_BIND *bind, int64_t index)
+bool get_int8(MYSQL_BIND *bind, int64_t index)
 {
-    bind[index].buffer_type = MYSQL_TYPE_TINY;
-    int8_t *value = (int8_t *)calloc(1, sizeof(int8_t));
-    bind[index].buffer = value;
-    bind[index].buffer_length = 1;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_int8_bool(bind, index)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_int16(MYSQL_BIND *bind, int64_t index)
+bool get_int16(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_SHORT;
     short *value = (short *)calloc(1, sizeof(short));
+    if (value == NULL) {
+        return false;
+    }
     bind[index].buffer = value;
-    bind[index].buffer_length = 2;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    bind[index].buffer_length = INT16_SIZE;
+    return get_all_data(bind, index);
 }
 
-void get_int32(MYSQL_BIND *bind, int64_t index)
+bool get_int32(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_LONG;
     int32_t *value = (int32_t *)calloc(1, sizeof(int32_t));
+    if (value == NULL) {
+        return false;
+    }
     bind[index].buffer = value;
-    bind[index].buffer_length = 4;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    bind[index].buffer_length = INT32_SIZE;
+    return get_all_data(bind, index);
 }
 
-void get_int64(MYSQL_BIND *bind, int64_t index)
+bool get_int64(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_LONGLONG;
     int64_t *value = (int64_t *)calloc(1, sizeof(int64_t));
+    if (value == NULL) {
+        return false;
+    }
     bind[index].buffer = value;
-    bind[index].buffer_length = 8;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    bind[index].buffer_length = INT64_SIZE;
+    return get_all_data(bind, index);
 }
 
-void get_float32(MYSQL_BIND *bind, int64_t index)
+bool get_float32(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_FLOAT;
     float *value = (float *)calloc(1, sizeof(float));
+    if (value == NULL) {
+        return false;
+    }
     bind[index].buffer = value;
-    bind[index].buffer_length = 4;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    bind[index].buffer_length = INT32_SIZE;
+    return get_all_data(bind, index);
 }
 
-void get_float64(MYSQL_BIND *bind, int64_t index)
+bool get_float64(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_DOUBLE;
     double *value = (double *)calloc(1, sizeof(double));
+    if (value == NULL) {
+        return false;
+    }
     bind[index].buffer = value;
-    bind[index].buffer_length = 8;
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    bind[index].buffer_length = INT64_SIZE;
+    return get_all_data(bind, index);
 }
 
-void get_date(MYSQL_BIND *bind, int64_t index)
+bool get_date(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_DATE;
-    MYSQL_TIME *value = (MYSQL_TIME *)calloc(1, sizeof(MYSQL_TIME));
-    bind[index].buffer = value;
-    bind[index].buffer_length = sizeof(MYSQL_TIME);
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_time_data(bind, index)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_time(MYSQL_BIND *bind, int64_t index)
+bool get_time(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_TIME;
-    MYSQL_TIME *value = (MYSQL_TIME *)calloc(1, sizeof(MYSQL_TIME));
-    bind[index].buffer = value;
-    bind[index].buffer_length = sizeof(MYSQL_TIME);
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_time_data(bind, index)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_timestamp(MYSQL_BIND *bind, int64_t index)
+bool get_timestamp(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_TIMESTAMP;
-    MYSQL_TIME *value = (MYSQL_TIME *)calloc(1, sizeof(MYSQL_TIME));
-    bind[index].buffer = value;
-    bind[index].buffer_length = sizeof(MYSQL_TIME);
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_time_data(bind, index)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
-void get_date_time(MYSQL_BIND *bind, int64_t index)
+bool get_date_time(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_DATETIME;
-    MYSQL_TIME *value = (MYSQL_TIME *)calloc(1, sizeof(MYSQL_TIME));
-    bind[index].buffer = value;
-    bind[index].buffer_length = sizeof(MYSQL_TIME);
-    bind[index].length = malloc(sizeof(unsigned long));
-    bool *is_null = (bool *)calloc(1, sizeof(bool));
-    bind[index].is_null = is_null;
-    bool *error = (bool *)calloc(1, sizeof(bool));
-    bind[index].error = error;
+    if (!get_all_time_data(bind, index)) {
+        return false;
+    }
+    return get_all_data(bind, index);
 }
 
 /*---------------------- 对获取的数据进行处理 ----------------------*/
 /**
  * 获取MYSQL_BIND中的buffer,buffer_type,is_null,length,用作仓颉端处理，转换成SqlDbType
  */
-void *get_sql_buffer(MYSQL_BIND *bind, int64_t index, enum enum_field_types *buffer_type, bool *is_null, int64_t *length)
+void *get_sql_buffer(MYSQL_BIND *bind, int64_t index, enum enum_field_types *buffer_type, bool *is_null,
+                     int64_t *length)
 {
     enum enum_field_types buffer_type_value = bind[index].buffer_type;
     *buffer_type = buffer_type_value;
@@ -402,7 +515,8 @@ void *get_sql_buffer(MYSQL_BIND *bind, int64_t index, enum enum_field_types *buf
 /**
  * 处理time
  */
-void get_sql_time(MYSQL_TIME *time, unsigned int *year, unsigned int *month, unsigned int *day, unsigned int *hour, unsigned int *minute, unsigned int *second)
+void get_sql_time(MYSQL_TIME *time, unsigned int *year, unsigned int *month, unsigned int *day, unsigned int *hour,
+                  unsigned int *minute, unsigned int *second)
 {
     *year = time[0].year;
     *month = time[0].month;
@@ -420,12 +534,10 @@ bool get_res_data(MYSQL_RES *mysql_res_list, int64_t length, MYSQL_COLUMN_INFO *
 {
     MYSQL_RES mysql_res = mysql_res_list[0];
     MYSQL_FIELD *mysql_field_list = mysql_res.fields;
-    if (mysql_field_list == NULL)
-    {
+    if (mysql_field_list == NULL) {
         return false;
     }
-    for (int i = 0; i < length; i++)
-    {
+    for (int i = 0; i < length; i++) {
         MYSQL_FIELD mysql_field = mysql_field_list[i];
         MYSQL_COLUMN_INFO mysql_column_info;
         mysql_column_info.name_string = mysql_field.name;

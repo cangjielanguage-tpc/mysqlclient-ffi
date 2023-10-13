@@ -26,6 +26,14 @@ make
 # mysqlclient
 cd  ${lib_path}/
 echo start build mysqlclient
+
+echo start cjpm clean
+cjpm clean
+echo end cjpm clean
+
+echo start cjpm build -V
 cjpm build -V
+echo end cjpm build -V
+
 cp ${lib_path}/lib/*.dll ${lib_path}/build/release/mysqlclient/
 echo end build mysqlclient

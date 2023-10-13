@@ -22,6 +22,14 @@
 
 - 💪 对数据库内容增删改查
 
+### 支持
+
+| System            | Supported          |
+|-------------------|--------------------|
+| Windows           | Y                  |
+| Linux-arrch64     | Y                  |
+| Linux-x86         | Y                  |
+
 ## <img alt="" src="./doc/assets/readme-icon-framework.png" style="display: inline-block;" width=3%/> 软件架构
 
 ### 源码目录
@@ -69,6 +77,20 @@
 
 1、本项目基于 mysqlclient8.0.33 开发，需要依赖 mysqlclient，下载地址 https://downloads.mysql.com/archives/community/
 
+windows环境下需要msys2、mingw64、cmake
+
+下载msys2和mingw64
+
+msys2：https://github.com/msys2/msys2-installer/releases/download/2023-03-18/msys2-x86_64-20230318.exe
+
+mingw64：https://github.com/niXman/mingw-builds-binaries/releases/download/12.2.0-rt_v10-rev2/x86_64-12.2.0-release-posix-seh-msvcrt-rt_v10-rev2.7z
+
+将mingw64解压到msys2的根目录
+
+下载cmake：https://github.com/Kitware/CMake/releases/download/v3.26.3/cmake-3.26.3-windows-x86_64.zip
+
+将cmake解压到D盘
+
 2、克隆 mysqlclient-ffi 项目
 
 ```shell
@@ -102,7 +124,7 @@ libmysqlclient.so libmysqlclient.so.21 libmysqlclient.so.21.2.33 三个文件通
 sudo apt-get install libmysqlclient-dev
 ```
 
-window 环境下 将 libmysql.dll复制两份到lib中，一份保持原样，一份修改名称为libmysqlclient.dll，,目录结构如下
+window 环境下 将 libmysql.dll复制两份到lib中，一份保持原样，一份修改名称为libmysqlclient.dll,目录结构如下
 
 ```shell
 ├─ lib
@@ -114,7 +136,7 @@ libmysql.dll 通常在mysql安装目录 lib 目录下
 
 6、编译mysqlclient_cj和项目
 
-linux 环境下运行 build_linux.sh 文件,arrch64 环境运行 build_aarch64.sh 文件。
+linux-x86 环境下运行 build_linux.sh 文件,linux-arrch64 环境运行 build_aarch64.sh 文件
 
 最终目录结构如下
 
@@ -137,26 +159,46 @@ window 环境下运行 build_win.bat 文件
 │   └─ libmysqlclient_cj.dll
 ```
 
-7、运行示例
+7、编译示例文件
 
-示例文件在 test/DOC/mysql_examples.cj 
+示例文件在 test/DOC/mysql_examples.cj
 
-linux 运行指令，其中的 [path]是本地路径，e.g /[path]/mysqlclient-ffi 改成 /home/cangjie/cjdemo/mysqlclient-ffi
+linux 编译指令
 
 ```shell
-cjc  --import-path /[path]/mysqlclient-ffi --import-path /[path]/mysqlclient-ffi/build --import-path /[path]/mysqlclient-ffi/build  -L /[path]/mysqlclient-ffi/build -L /[path]/mysqlclient-ffi/build/bin -L /[path]/mysqlclient-ffi/build/mysqlclient -l mysqlclient_mysqlclient -l mysqlclient /[path]/mysqlclient-ffi/test/DOC/examples/mysql_examples.cj -O2 -o /[path]/mysqlclient-ffi/build/mysqlclient/
+cjc --import-path /[path]/mysqlclient-ffi/build -L /[path]/mysqlclient-ffi/build/mysqlclient -l mysqlclient_mysqlclient -l mysqlclient_cj /[path]/mysqlclient-ffi/test/DOC/mysql_examples.cj -O2 -o /[path]/mysqlclient-ffi/build/mysqlclient/
 ```
 
-windows 运行指令，其中的 [path]是本地路径，e.g [path]\mysqlclient-ffi 改成 D:\Cangjie\mysqlclient-ffi
+其中的 [path]是本地路径，例：
+
+```shell
+cjc --import-path /home/root/cj_project/mysqlclient-ffi/build -L /home/root/cj_project/mysqlclient-ffi/build/mysqlclient -l mysqlclient_mysqlclient -l mysqlclient_cj /home/root/cj_project/mysqlclient-ffi/test/DOC/mysql_examples.cj -O2 -o /home/root/cj_project/mysqlclient-ffi/build/mysqlclient/
+```
+
+windows 编译指令
 
 ```cmd
-cjc --import-path [path]\mysqlclient-ffi --import-path [path]\mysqlclient-ffi\build --import-path [path]\mysqlclient-ffi\build -L [path]\mysqlclient-ffi\build -L [path]\mysqlclient-ffi\build\bin -L [path]\mysqlclient-ffi\build\mysqlclient -l mysql -l mysqlclient -l mysqlclient_mysqlclient  [path]\mysqlclient-ffi\test\DOC\examples\mysql_examples.cj -O2 -o [path]\mysqlclient-ffi\build\mysqlclient\
+cjc --import-path [path]\mysqlclient-ffi\build\release -L [path]\mysqlclient-ffi\build\release\mysqlclient -l mysql -l mysqlclient -l mysqlclient_cj -l mysqlclient_mysqlclient [path]\mysqlclient-ffi\test\DOC\mysql_examples.cj -O2 -o [path]\mysqlclient-ffi\build\release\mysqlclient\
+```
+
+其中的 [path]是本地路径，例：
+
+```cmd
+cjc --import-path D:\cangjie\mysqlclient-ffi\build\release -L D:\cangjie\mysqlclient-ffi\build\release\mysqlclient -l mysql -l mysqlclient -l mysqlclient_cj -l mysqlclient_mysqlclient D:\cangjie\mysqlclient-ffi\test\DOC\mysql_examples.cj -O2 -o D:\cangjie\mysqlclient-ffi\build\release\mysqlclient\
 ```
 
 8、切换运行目录
 
+linux环境下
+
 ```shell
 cd build/mysqlclient/
+```
+
+windows环境下
+
+```shell
+cd build/release/mysqlclient/
 ```
 
 9、运行执行文件

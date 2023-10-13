@@ -49,9 +49,20 @@ public class MysqlQueryResult <: QueryResult {
      */
     public override func next(values: Array<SqlDbType>): Bool {
         unsafe {
-            var bindsCP: CPointer<Unit> = init_bind(values.size)
+            var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+            if (values.size > 0) {
+                bindsCP = init_bind(values.size)
+            }
+            if (bindsCP.isNull()) {
+                // 初始化失败，有可能内存不足导致的malloc失败
+                throw SqlException("Init Bind Failed!")
+            }
             for (i in 0..values.size) {
-                cjTypeToMysqlTypeQuery(values[i], bindsCP, i, resultCount[i].length)
+                var isBool: Bool = cjTypeToMysqlTypeQuery(values[i], bindsCP, i, resultCount[i].length)
+                if(!isBool){
+                    free_mysql_cj(bindsCP, i)
+                    throw SqlException("Malloc  Failed!")
+                }
             }
             let isBool: Bool = mysql_stmt_bind_result(stmt, bindsCP)
             if (isBool) {
@@ -60,14 +71,12 @@ public class MysqlQueryResult <: QueryResult {
             }
             var intFetch: Int32 = mysql_stmt_fetch(stmt)
             if (intFetch == 1) {
-                free_mysql_cj(bindsCP, values.size)
-
                 // 发生错误。
+                free_mysql_cj(bindsCP, values.size)
                 throw SqlException(mysql_stmt_error(stmt).toString())
             } else if (intFetch == 100) {
-                free_mysql_cj(bindsCP, values.size)
-
                 // 成功，不再存在数据。
+                free_mysql_cj(bindsCP, values.size)
                 return false
             } else if (intFetch == 101) {
                 // 发生数据截断。
@@ -77,7 +86,6 @@ public class MysqlQueryResult <: QueryResult {
             for (i in 0..values.size) {
                 values[i] = mysqlTypeTocjType(bindsCP, values[i], i)
             }
-
             free_mysql_cj(bindsCP, values.size)
 
             return true
@@ -708,7 +716,7 @@ func getSqlNullableDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sql
     }
 }
 
-func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType, bindsCP: CPointer<Unit>, index: Int64, length: Int64): Unit {
+func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType, bindsCP: CPointer<Unit>, index: Int64, length: Int64): Bool {
     unsafe {
         return match (sqlDbType) {
             // String----SqlChar----CHAR----CHAR----MYSQL_TYPE_STRING----char[]
