@@ -109,9 +109,21 @@ public class MysqlStatement <: Statement {
         let rows: Int64
         if (parameterCount == params.size) {
             unsafe {
-                var bindsCP: CPointer<Unit> = init_bind(params.size)
+                var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+                if(params.size > 0){
+                    bindsCP = init_bind(params.size)
+                }
+                if(bindsCP.isNull()){
+                    // 初始化失败，有可能内存不足导致的malloc失败
+                    throw SqlException("Init Bind Failed!")
+                }
                 for (i in 0..params.size) {
-                    cjTypeToMysqlType(bindsCP, i, params[i])
+                    var isBool: Bool = cjTypeToMysqlType(bindsCP, i, params[i])
+                    if(!isBool){
+                        println("i = ${i},isBool = ${isBool}")
+                        free_mysql_cj(bindsCP, i)
+                        throw SqlException("Malloc  Failed!")
+                    }
                 }
 
                 // 将应用程序数据缓冲区与prepared语句中的参数标记关联
@@ -151,9 +163,20 @@ public class MysqlStatement <: Statement {
     public override func query(params: Array<SqlDbType>): MysqlQueryResult {
         if (parameterCount == params.size) {
             unsafe {
-                var bindsCP: CPointer<Unit> = init_bind(params.size)
+                var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+                if(params.size > 0){
+                    bindsCP = init_bind(params.size)
+                }
+                if(bindsCP.isNull()){
+                    // 初始化失败，有可能内存不足导致的malloc失败
+                    throw SqlException("Init Bind Failed!")
+                }
                 for (i in 0..params.size) {
-                    cjTypeToMysqlType(bindsCP, i, params[i])
+                    var isBool: Bool = cjTypeToMysqlType(bindsCP, i, params[i])
+                    if(!isBool){
+                        free_mysql_cj(bindsCP, i)
+                        throw SqlException("Malloc  Failed!")
+                    }
                 }
 
                 // 将应用程序数据缓冲区与prepared语句中的参数标记关联
@@ -241,7 +264,7 @@ public class MysqlStatement <: Statement {
     }
 }
 
-func cjTypeToMysqlType(bindsCP: CPointer<Unit>, index: Int64, sqlDbType: SqlDbType): Unit {
+func cjTypeToMysqlType(bindsCP: CPointer<Unit>, index: Int64, sqlDbType: SqlDbType): Bool {
     return match (sqlDbType) {
         // String----SqlChar----CHAR----CHAR----MYSQL_TYPE_STRING----char[]
         case v: SqlChar => setString(bindsCP, index, v.value)
@@ -330,7 +353,7 @@ func cjTypeToMysqlType(bindsCP: CPointer<Unit>, index: Int64, sqlDbType: SqlDbTy
     }
 }
 
-func setString(bindsCP: CPointer<Unit>, index: Int64, value: Option<String>): Unit {
+func setString(bindsCP: CPointer<Unit>, index: Int64, value: Option<String>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -344,7 +367,7 @@ func setString(bindsCP: CPointer<Unit>, index: Int64, value: Option<String>): Un
     }
 }
 
-func setBytes(bindsCP: CPointer<Unit>, index: Int64, value: Option<Array<Byte>>): Unit {
+func setBytes(bindsCP: CPointer<Unit>, index: Int64, value: Option<Array<Byte>>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -359,7 +382,7 @@ func setBytes(bindsCP: CPointer<Unit>, index: Int64, value: Option<Array<Byte>>)
     }
 }
 
-func setClob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>): Unit {
+func setClob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>): Bool {
     match (value) {
         case Some(v) =>
             var arr: Array<Byte> = Array<Byte>(1, item: 0)
@@ -385,7 +408,7 @@ func setClob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>):
     }
 }
 
-func setBlob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>): Unit {
+func setBlob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>): Bool {
     match (value) {
         case Some(v) =>
             var arr: Array<Byte> = Array<Byte>(1, item: 0)
@@ -411,7 +434,7 @@ func setBlob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>):
     }
 }
 
-func setBool(bindsCP: CPointer<Unit>, index: Int64, value: Option<Bool>): Unit {
+func setBool(bindsCP: CPointer<Unit>, index: Int64, value: Option<Bool>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -428,7 +451,7 @@ func setBool(bindsCP: CPointer<Unit>, index: Int64, value: Option<Bool>): Unit {
     }
 }
 
-func setInt8(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int8>): Unit {
+func setInt8(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int8>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -441,7 +464,7 @@ func setInt8(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int8>): Unit {
     }
 }
 
-func setInt16(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int16>): Unit {
+func setInt16(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int16>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -454,7 +477,7 @@ func setInt16(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int16>): Unit
     }
 }
 
-func setInt32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int32>): Unit {
+func setInt32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int32>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -467,7 +490,7 @@ func setInt32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int32>): Unit
     }
 }
 
-func setInt64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int64>): Unit {
+func setInt64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int64>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -480,7 +503,7 @@ func setInt64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int64>): Unit
     }
 }
 
-func setFloat32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float32>): Unit {
+func setFloat32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float32>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -493,7 +516,7 @@ func setFloat32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float32>): 
     }
 }
 
-func setFloat64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float64>): Unit {
+func setFloat64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float64>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -506,7 +529,7 @@ func setFloat64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float64>): 
     }
 }
 
-func setDate(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Unit {
+func setDate(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -519,7 +542,7 @@ func setDate(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Un
     }
 }
 
-func setTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Unit {
+func setTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -532,7 +555,7 @@ func setTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Un
     }
 }
 
-func setTimestamp(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Unit {
+func setTimestamp(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {
@@ -554,7 +577,7 @@ func setTimestamp(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>
     }
 }
 
-func setDateTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Unit {
+func setDateTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
         case Some(v) =>
             unsafe {

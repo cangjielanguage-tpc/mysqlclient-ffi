@@ -47,3 +47,5 @@ report/
 module-resolve.json
 temp_ci_lib/
 lib/
+*.o
+libmysqlclient_c/*.o
