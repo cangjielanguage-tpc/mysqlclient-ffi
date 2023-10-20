@@ -11,6 +11,7 @@ public class MysqlDriver <: Driver {
      * 初始化驱动
      *
      * 参数 name - 驱动名称
+     * 异常 SqlException - 内存不足导致初始化失败
      */
     public init(name: String) {
         this.driverNmae = name
@@ -38,6 +39,8 @@ public class MysqlDriver <: Driver {
 
     /**
      * 驱动版本
+     *
+     * 异常 SqlException - 获取版本失败
      */
     public override prop version: String {
         get() {
@@ -70,6 +73,7 @@ public class MysqlDriver <: Driver {
      * 参数 connectionString - 数据库连接字符串
      * 参数 opts - key,value的tuple数组，打开数据源的选项
      * 返回值 Datasource - 数据源实例
+     * 异常 SqlException - connectionString连接内容不正确会导致异常
      */
     public override func open(connectionString: String, opts: Array<(String, String)>): MysqlDatasource {
         (opts)
