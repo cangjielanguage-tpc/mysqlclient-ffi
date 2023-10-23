@@ -107,6 +107,7 @@ public class MysqlDatasource <: Datasource {
      * 返回一个可用的连接
      *
      * 返回值 Connection - 数据库连接实例
+     * 异常 SqlException - 和mysql server连接失败会导致异常
      */
     public override func connect(): MysqlConnection {
         let portUInt32: UInt32 = UInt32.parse(arrList[4])

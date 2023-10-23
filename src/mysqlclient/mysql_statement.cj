@@ -56,6 +56,7 @@ public class MysqlStatement <: Statement {
      *
      * 参数 option - C中枚举 enum enum_stmt_attr_type
      * 参数 arg - 值
+     * 异常 SqlException - 参数设置错误。
      */
     public func setOption(option: MysqlStmtAttrType, arg: Bool): Unit {
         unsafe {
@@ -82,6 +83,7 @@ public class MysqlStatement <: Statement {
      *
      * 参数 option - C中枚举 enum enum_stmt_attr_type
      * 参数 arg - 值
+     * 异常 SqlException - 参数设置错误。
      */
     public func setOption(option: MysqlStmtAttrType, arg: UInt64): Unit {
         unsafe {
@@ -104,6 +106,7 @@ public class MysqlStatement <: Statement {
      *
      * 参数 params - 填充预执行语句中问号的数据。
      * 返回值 UpdateResult - 更新结果。
+     * 异常 SqlException - 传入参数错误。
      */
     public override func update(params: Array<SqlDbType>): MysqlUpdateResult {
         let rows: Int64
@@ -159,6 +162,7 @@ public class MysqlStatement <: Statement {
      *
      * 参数 params - 填充预执行语句中问号的数据。
      * 返回值 QueryResult - 查询结果。
+     * 异常 SqlException - 传入参数错误。
      */
     public override func query(params: Array<SqlDbType>): MysqlQueryResult {
         if (parameterCount == params.size) {
@@ -205,6 +209,8 @@ public class MysqlStatement <: Statement {
 
     /*
      * 关闭资源
+     *
+     * 异常 SqlException - 关闭资源失败。
      */
     public override func close(): Unit {
         unsafe {

@@ -189,6 +189,7 @@ public class TransactionTest {
         )
         let con: MysqlConnection = mysqlDatasource.connect()
         let transaction = con.createTransaction()
+        transaction.begin()
         transaction.save("savePointName")
         transaction.rollback("savePointName")
         transaction.release("savePointName")

@@ -72,6 +72,7 @@ public class MysqlConnection <: Connection {
      * 设置连接选项
      *
      * 参数 option - C中枚举 enum enum_mysql_set_option
+     * 异常 SqlException - 设置错误
      */
     public func setOption(option: MysqlSetOption): Unit {
         unsafe {
@@ -89,6 +90,7 @@ public class MysqlConnection <: Connection {
      *
      * 参数 sql - 预执行的 sql 语句，sql 语句的参数只支持 ? 符号占位符
      * 返回值 Statement - 一个可以执行 sql 语句的实例对象
+     * 异常 SqlException - 可能传入SQL语句错误
      */
     public override func prepareStatement(sql: String): MysqlStatement {
         unsafe {

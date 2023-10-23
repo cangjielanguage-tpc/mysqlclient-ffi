@@ -46,6 +46,7 @@ public class MysqlQueryResult <: QueryResult {
      *
      * 参数 values - 需要填充返回的数据
      * 返回值 Bool - 存在下一行则返回true，否则返回false
+     * 异常 SqlException - 传入参数错误
      */
     public override func next(values: Array<SqlDbType>): Bool {
         unsafe {
@@ -94,6 +95,8 @@ public class MysqlQueryResult <: QueryResult {
 
     /*
      * 关闭资源
+     *
+     * 异常 SqlException - 关闭资源失败。
      */
     public override func close(): Unit {
         unsafe {
