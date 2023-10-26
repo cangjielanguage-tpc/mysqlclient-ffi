@@ -43,29 +43,4 @@ public class MysqlServerApiTest {
 
         mysqlConnection.close()
     }
-
-    /*
-     * 无法自动化
-     */
-    @Skip
-    @TestCase
-    func mysqlServerApiTest002(): Unit {
-        // 初始化数据库驱动
-        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
-
-        // 通过connectionString和选项打开数据源
-        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
-            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
-            Array<(String, String)>()
-        )
-
-        // 返回一个可用的链接
-        let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
-
-        let mysqlServerApi: MysqlServerApi = MysqlServerApi(mysqlConnection)
-
-        mysqlServerApi.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT)
-
-        mysqlConnection.close()
-    }
 }

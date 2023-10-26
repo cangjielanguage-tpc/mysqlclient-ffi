@@ -1,0 +1,45 @@
+// 3rd_party_lib:mysqlclient-ffi/build/mysqlclient
+// 3rd_party_lib_ohos:mysqlclient-ffi/build/aarch64-linux-ohos/mysqlclient
+from mysqlclient import mysqlclient.*
+from std import unittest.*
+from std import unittest.testmacro.*
+from std import database.sql.*
+from std import time.*
+from std import math.*
+
+@C
+foreign func system(str : CString): CString
+
+@When[os == "windows"]
+var str = "net start mysql"
+@When[os != "windows"]
+var str = "service mysql start"
+
+@Test
+public class MysqlServerApiTest {
+    @TestCase
+    func mysqlServerApiTest002(): Unit {
+        // 初始化数据库驱动
+        let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
+
+        // 通过connectionString和选项打开数据源
+        let mysqlDatasource: MysqlDatasource = mysqlDriver.open(
+            "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
+            Array<(String, String)>()
+        )
+
+        // 返回一个可用的链接
+        let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+
+        let mysqlServerApi: MysqlServerApi = MysqlServerApi(mysqlConnection)
+
+        mysqlServerApi.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT)
+
+        unsafe{
+            let CStr: CString = LibC.mallocCString(str)
+            system(CStr)
+        }
+
+        mysqlConnection.close()
+    }
+}
