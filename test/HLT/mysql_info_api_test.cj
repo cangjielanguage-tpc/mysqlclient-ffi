@@ -1,6 +1,7 @@
 // 3rd_party_lib:mysqlclient-ffi/build/mysqlclient
 // 3rd_party_lib_ohos:mysqlclient-ffi/build/aarch64-linux-ohos/mysqlclient
 from mysqlclient import mysqlclient.*
+from std import database.sql.*
 from std import unittest.*
 from std import unittest.testmacro.*
 
@@ -85,7 +86,7 @@ public class MysqlInfoApi01Test {
         let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
         try {
             mysqlConnection.prepareStatement("drop")
-        } catch (e: Exception) {
+        } catch (e: SqlException) {
             (e)
         }
         let mysqlInfoApi: MysqlInfoApi = MysqlInfoApi(mysqlConnection)

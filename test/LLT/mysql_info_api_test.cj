@@ -99,7 +99,7 @@ public class MysqlInfoApi01Test {
         let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
         try {
             mysqlConnection.prepareStatement("drop")
-        } catch (e: Exception) {
+        } catch (e: SqlException) {
             (e)
         }
         let mysqlInfoApi: MysqlInfoApi = MysqlInfoApi(mysqlConnection)
