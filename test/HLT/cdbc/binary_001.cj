@@ -32,7 +32,6 @@ public class binary_001 {
         var queryResult = prepareStatement.query()
         var arr: Array<SqlDbType> = [SqlBinary([0, 11]), SqlNullableBinary(None)]
         queryResult.next(arr)
-        println(queryResult.columnInfos[0].typeName)
 
         // @Assert("SqlBinary", queryResult.columnInfos[0].typeName)
         match (arr[0]) {

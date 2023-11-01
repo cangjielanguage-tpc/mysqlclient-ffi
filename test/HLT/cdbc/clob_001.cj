@@ -22,7 +22,7 @@ public class OdbcTest {
         @Assert(0, rowCount.rowCount)
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         var str = ByteArrayStream(20)
-        str.write("上了飞机".toUtf8Array())
+        str.write("上了飞机".toArray())
         rowCount = prepareStatement.update([SqlClob(str), SqlNullableClob(None)])
         @Assert(1, rowCount.rowCount)
         prepareStatement = conn.prepareStatement("select * from test")
@@ -33,22 +33,21 @@ public class OdbcTest {
         // @Assert("SqlClob", queryResult.columnInfos[0].typeName)
         match (arr[0]) {
             case v: SqlClob =>
-                var a = Array<UInt8>(v.value.length, item: 0)
+                var a = Array<UInt8>(12, item: 0)
                 v.value.read(a)
-                @Assert("上了飞机".toUtf8Array().toString(), a.toString())
+                @Assert("上了飞机".toArray().toString(), a.toString())
             case _ => @Assert("abc", "123")
         }
 
         // @Assert("SqlNullableClob", queryResult.columnInfos[1].typeName)
         match (arr[1]) {
-            case v: SqlNullableClob =>
-                match (v.value) {
-                    case Some(v) =>
-                        var a = Array<UInt8>(v.length, item: 0)
-                        v.read(a)
-                        @Assert(None<Array<UInt8>>, a)
-                    case None => @Assert(None<String>, None<String>)
-                }
+            case v: SqlNullableClob => match (v.value) {
+                case Some(v) =>
+                    var a = Array<UInt8>(0, item: 0)
+                    v.read(a)
+                    @Assert(None<Array<UInt8>>, a)
+                case None => @Assert(None<String>, None<String>)
+            }
             case _ => @Assert("abc", "123")
         }
 

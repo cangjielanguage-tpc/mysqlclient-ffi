@@ -53,8 +53,7 @@ public class MysqlDateTimeTest {
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_date_time(id,dateTimeValue1,dateTimeValue2)  VALUES(?,?,?)"
-        )
+            "insert into  t_test_date_time(id,dateTimeValue1,dateTimeValue2)  VALUES(?,?,?)")
         @Assert(3, mysqlStatement3.parameterCount)
 
         let dateTime1: DateTime = DateTime.nowUTC()
@@ -90,8 +89,7 @@ public class MysqlDateTimeTest {
 
         // 查询语句预执行语句
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_date_time where id = 1"
-        )
+            "select * from t_test_date_time where id = 1")
         @Assert(0, mysqlStatement4.parameterCount)
         var mysqlQueryResult: MysqlQueryResult = mysqlStatement4.query()
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
@@ -147,8 +145,7 @@ public class MysqlDateTimeTest {
 
         // 删除语句预执行语句
         let mysqlStatement5: MysqlStatement = mysqlConnection.prepareStatement(
-            "delete from t_test_date_time where id = ?"
-        )
+            "delete from t_test_date_time where id = ?")
         @Assert(1, mysqlStatement5.parameterCount)
 
         id = SqlBigInt(1)
@@ -160,8 +157,7 @@ public class MysqlDateTimeTest {
 
         // 查询语句预执行语句
         let mysqlStatement6: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_date_time where id = 1"
-        )
+            "select * from t_test_date_time where id = 1")
 
         // 执行查询语句
         let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
@@ -177,8 +173,7 @@ public class MysqlDateTimeTest {
 
         // 更新语句预执行语句
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
-            "update t_test_date_time set dateTimeValue1 = ?, dateTimeValue2 = ?  where id = ?"
-        )
+            "update t_test_date_time set dateTimeValue1 = ?, dateTimeValue2 = ?  where id = ?")
         @Assert(3, mysqlStatement7.parameterCount)
 
         id = SqlBigInt(2)
@@ -194,8 +189,7 @@ public class MysqlDateTimeTest {
 
         // 查询语句预执行语句
         let mysqlStatement8: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_date_time where id = 2"
-        )
+            "select * from t_test_date_time where id = 2")
 
         // 执行查询语句
         var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()

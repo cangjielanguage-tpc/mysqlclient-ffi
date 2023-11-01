@@ -503,7 +503,7 @@ public class MysqlSslApi {
             let cipherCString: CString = LibC.mallocCString(cipher)
 
             let ret: Bool = mysql_ssl_set(mysql, keyCString, certCString, caCString, capathCString, cipherCString)
-            
+
             LibC.free(keyCString)
             LibC.free(certCString)
             LibC.free(caCString)

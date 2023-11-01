@@ -109,19 +109,16 @@ public class MysqlStmtApiTest {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)"
-        )
+            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)"
-        )
+            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_bigint where id = 1"
-        )
+            "select * from t_test_bigint where id = 1")
         mysqlStatement4.query()
 
         let mysqlStmtApi: MysqlStmtApi = MysqlStmtApi(mysqlStatement4)
@@ -160,19 +157,16 @@ public class MysqlStmtApiTest {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)"
-        )
+            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)"
-        )
+            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_bigint where id = 1"
-        )
+            "select * from t_test_bigint where id = 1")
         mysqlStatement4.query()
 
         let mysqlStmtApi: MysqlStmtApi = MysqlStmtApi(mysqlStatement1)
@@ -208,19 +202,16 @@ public class MysqlStmtApiTest {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)"
-        )
+            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)"
-        )
+            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_bigint where id = 1"
-        )
+            "select * from t_test_bigint where id = 1")
         mysqlStatement4.query()
 
         let mysqlStmtApi: MysqlStmtApi = MysqlStmtApi(mysqlStatement4)
@@ -259,19 +250,16 @@ public class MysqlStmtApiTest {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)"
-        )
+            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)"
-        )
+            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_bigint where id = 1"
-        )
+            "select * from t_test_bigint where id = 1")
         var mysqlQueryResult: MysqlQueryResult = mysqlStatement4.query()
         var id: SqlBigInt = SqlBigInt(3)
         var data1: SqlBigInt = SqlBigInt(1)
@@ -321,14 +309,12 @@ public class MysqlStmtApiTest {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)"
-        )
+            "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)"
-        )
+            "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
 
         let mysqlStmtApi: MysqlStmtApi = MysqlStmtApi(mysqlStatement3)

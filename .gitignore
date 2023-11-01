@@ -49,3 +49,4 @@ temp_ci_lib/
 lib/
 *.o
 libmysqlclient_c/*.o
+*.macrocall

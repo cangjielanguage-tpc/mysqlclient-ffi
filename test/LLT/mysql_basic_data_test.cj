@@ -70,8 +70,7 @@ public class MysqlBigintVarcharTest {
 
         // 插入数据预执行语句
         mysqlStatement = mysqlConnection.prepareStatement(
-            "insert into t_test(id, name, intt, char1, tiny, small, flo, dou)  VALUES(?,?,?,?,?,?,?,?)"
-        )
+            "insert into t_test(id, name, intt, char1, tiny, small, flo, dou)  VALUES(?,?,?,?,?,?,?,?)")
         @Assert(8, mysqlStatement.parameterCount)
 
         var id: SqlNullableBigInt = SqlNullableBigInt(1)
@@ -107,9 +106,7 @@ public class MysqlBigintVarcharTest {
         @Assert(1, mysqlUpdateResult.rowCount)
 
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         id = SqlNullableBigInt(2)
@@ -176,28 +173,28 @@ public class MysqlBigintVarcharTest {
         @Assert(31, mysqlColumnInfos[7].scale)
         @Assert(false, mysqlColumnInfos[7].nullable)
 
-        if (!mysqlColumnInfos[0].nullable || mysqlColumnInfos[0].typeName.equals("SqlBigInt")) {
+        if (!mysqlColumnInfos[0].nullable || mysqlColumnInfos[0].typeName == "SqlBigInt") {
             id = SqlNullableBigInt(0)
         }
-        if (!mysqlColumnInfos[1].nullable || mysqlColumnInfos[1].typeName.equals("SqlVarchar")) {
+        if (!mysqlColumnInfos[1].nullable || mysqlColumnInfos[1].typeName == "SqlVarchar") {
             name = SqlNullableVarchar("")
         }
-        if (!mysqlColumnInfos[2].nullable || mysqlColumnInfos[2].typeName.equals("SqlInteger")) {
+        if (!mysqlColumnInfos[2].nullable || mysqlColumnInfos[2].typeName == "SqlInteger") {
             intt = SqlNullableInteger(0)
         }
-        if (!mysqlColumnInfos[3].nullable || mysqlColumnInfos[3].typeName.equals("SqlChar")) {
+        if (!mysqlColumnInfos[3].nullable || mysqlColumnInfos[3].typeName == "SqlChar") {
             char1 = SqlNullableChar("")
         }
-        if (!mysqlColumnInfos[4].nullable || mysqlColumnInfos[4].typeName.equals("SqlByte")) {
+        if (!mysqlColumnInfos[4].nullable || mysqlColumnInfos[4].typeName == "SqlByte") {
             tiny = SqlNullableByte(0)
         }
-        if (!mysqlColumnInfos[5].nullable || mysqlColumnInfos[5].typeName.equals("SqlSmallInt")) {
+        if (!mysqlColumnInfos[5].nullable || mysqlColumnInfos[5].typeName == "SqlSmallInt") {
             small = SqlNullableSmallInt(0)
         }
-        if (!mysqlColumnInfos[6].nullable || mysqlColumnInfos[6].typeName.equals("SqlReal")) {
+        if (!mysqlColumnInfos[6].nullable || mysqlColumnInfos[6].typeName == "SqlReal") {
             flo = SqlNullableReal(0.0)
         }
-        if (!mysqlColumnInfos[7].nullable || mysqlColumnInfos[7].typeName.equals("SqlDouble")) {
+        if (!mysqlColumnInfos[7].nullable || mysqlColumnInfos[7].typeName == "SqlDouble") {
             dou = SqlNullableDouble(0.0)
         }
 
@@ -217,9 +214,7 @@ public class MysqlBigintVarcharTest {
         @Assert(0.0, (arrDb[7] as SqlNullableDouble).getOrThrow().value.getOrThrow())
 
         // 删除语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "delete from t_test where name = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         name = SqlNullableVarchar("lihao222")
@@ -230,9 +225,7 @@ public class MysqlBigintVarcharTest {
         @Assert(1, mysqlUpdateResult.rowCount)
 
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         id = SqlNullableBigInt(2)
@@ -247,9 +240,7 @@ public class MysqlBigintVarcharTest {
         @Assert(false, isBool)
 
         // 更新语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "update t_test set name = ?, intt = ? where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ?, intt = ? where id = ?")
         @Assert(3, mysqlStatement.parameterCount)
 
         name = SqlNullableVarchar("lihao333")
@@ -263,8 +254,7 @@ public class MysqlBigintVarcharTest {
 
         // 查询nullable----------------
         mysqlStatement = mysqlConnection.prepareStatement(
-            "update t_test set name = ?, intt = ?, char1 = ?, tiny = ?, small = ?, flo = ?, dou = ?  where id = ?"
-        )
+            "update t_test set name = ?, intt = ?, char1 = ?, tiny = ?, small = ?, flo = ?, dou = ?  where id = ?")
         @Assert(8, mysqlStatement.parameterCount)
 
         name = SqlNullableVarchar(None)
@@ -285,9 +275,7 @@ public class MysqlBigintVarcharTest {
         @Assert(1, mysqlUpdateResult.rowCount)
 
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         id = SqlNullableBigInt(1)

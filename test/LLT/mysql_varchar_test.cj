@@ -88,8 +88,7 @@ public class MysqlVarcharTest {
 
         // 插入数据预执行语句
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_varchar(id,varcharValue1,varcharValue2)  VALUES(?,?,?)"
-        )
+            "insert into  t_test_varchar(id,varcharValue1,varcharValue2)  VALUES(?,?,?)")
         @Assert(3, mysqlStatement1.parameterCount)
 
         // 插入一条数据
@@ -119,8 +118,7 @@ public class MysqlVarcharTest {
 
         // 查询语句预执行语句
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_varchar where id = ?"
-        )
+            "select * from t_test_varchar where id = ?")
         @Assert(1, mysqlStatement2.parameterCount)
 
         var id4: SqlBigInt = SqlBigInt(2)
@@ -165,16 +163,14 @@ public class MysqlVarcharTest {
 
         // 删除语句预执行语句
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "delete from t_test_varchar where id = 2"
-        )
+            "delete from t_test_varchar where id = 2")
         @Assert(0, mysqlStatement3.parameterCount)
         var mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult4.rowCount)
 
         // 查询语句预执行语句
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_varchar where id = ?"
-        )
+            "select * from t_test_varchar where id = ?")
         @Assert(1, mysqlStatement4.parameterCount)
         var id6: SqlBigInt = SqlBigInt(2)
         var arrDb6: Array<SqlDbType> = [id6]
@@ -188,14 +184,11 @@ public class MysqlVarcharTest {
 
         // 更新语句预执行语句
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
-            "update t_test_varchar set varcharValue1 = ?  where id = ?"
-        )
+            "update t_test_varchar set varcharValue1 = ?  where id = ?")
         @Assert(2, mysqlStatement7.parameterCount)
 
         var id9: SqlBigInt = SqlBigInt(1)
-        var varcharValueOne90: SqlVarchar = SqlVarchar(
-            "111111111111111111111111111111111111111111111111111111"
-        )
+        var varcharValueOne90: SqlVarchar = SqlVarchar("111111111111111111111111111111111111111111111111111111")
         var arrDb9: Array<SqlDbType> = [varcharValueOne90, id9]
 
         // 执行更新语句
@@ -204,8 +197,7 @@ public class MysqlVarcharTest {
 
         // 查询语句预执行语句
         let mysqlStatement8: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_varchar where id = 1"
-        )
+            "select * from t_test_varchar where id = 1")
 
         // 执行查询语句
         var mysqlQueryResult3: MysqlQueryResult = mysqlStatement8.query()
@@ -220,9 +212,7 @@ public class MysqlVarcharTest {
         @Assert(true, isBool10)
 
         // 删除t_test名称数据表
-        let mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement(
-            "drop table if exists t_test_varchar"
-        )
+        let mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_varchar")
         mysqlStatement9.update()
 
         // 释放预执行语句内存

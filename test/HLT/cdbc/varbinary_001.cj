@@ -18,8 +18,7 @@ public class OdbcTest {
         var rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
         prepareStatement = conn.prepareStatement(
-            "create table test(data VarBinary(20) NOT NULL, datanull VarBinary(20))"
-        )
+            "create table test(data VarBinary(20) NOT NULL, datanull VarBinary(20))")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")

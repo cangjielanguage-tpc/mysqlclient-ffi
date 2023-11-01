@@ -22,7 +22,6 @@ public class OdbcTest {
         @Assert(0, rowCount.rowCount)
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         rowCount = prepareStatement.update([SqlVarchar("萨菲罗斯经历过是"), SqlNullableVarchar(None)])
-        println(rowCount.rowCount)
         @Assert(1, rowCount.rowCount)
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()

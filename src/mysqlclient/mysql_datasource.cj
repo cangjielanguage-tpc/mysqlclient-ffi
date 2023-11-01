@@ -135,8 +135,16 @@ public class MysqlDatasource <: Datasource {
             }
 
             // 	连接到MySQL服务器
-            mysql = mysql_real_connect(mysql, hostCString, userCString, pwdCString, dbCString, portUInt32,
-                unixSocketCString, clientFlagUInt32)
+            mysql = mysql_real_connect(
+                mysql,
+                hostCString,
+                userCString,
+                pwdCString,
+                dbCString,
+                portUInt32,
+                unixSocketCString,
+                clientFlagUInt32
+            )
             if (arrList[0].size != 0) {
                 LibC.free(hostCString)
             }

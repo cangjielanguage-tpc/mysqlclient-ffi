@@ -108,8 +108,14 @@ public class MysqlColumnInfoTest {
 
     @TestCase
     public func mysqlColumnInfoTest08(): Unit {
-        let mysqlColumnInfo: MysqlColumnInfo = MysqlColumnInfo("name", "SqlVarchar", Int64.Max, Int64.Max, Int64.Max,
-            true)
+        let mysqlColumnInfo: MysqlColumnInfo = MysqlColumnInfo(
+            "name",
+            "SqlVarchar",
+            Int64.Max,
+            Int64.Max,
+            Int64.Max,
+            true
+        )
         @Assert("name", mysqlColumnInfo.name)
         @Assert("SqlVarchar", mysqlColumnInfo.typeName)
         @Assert(Int64.Max, mysqlColumnInfo.displaySize)

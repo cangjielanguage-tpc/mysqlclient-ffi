@@ -8,10 +8,11 @@ from std import time.*
 from std import math.*
 
 @C
-foreign func system(str : CString): CString
+foreign func system(str: CString): CString
 
 @When[os == "windows"]
 var str = "net start mysql"
+
 @When[os != "windows"]
 var str = "service mysql start"
 
@@ -35,7 +36,7 @@ public class MysqlServerApiTest {
 
         mysqlServerApi.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT)
 
-        unsafe{
+        unsafe {
             let CStr: CString = LibC.mallocCString(str)
             system(CStr)
         }

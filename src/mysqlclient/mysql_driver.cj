@@ -88,7 +88,7 @@ public class MysqlDriver <: Driver {
      * 返回值 Array<String> - 格式化之后的列表
      */
     private func openString(connectionString: String): Array<String> {
-        var arr: Array<String> = connectionString.split(';')
+        var arr: Array<String> = connectionString.split(";", removeEmpty: false)
         if (arr.size != 7) {
             throw SqlException("Url is error!")
         }
@@ -100,23 +100,23 @@ public class MysqlDriver <: Driver {
         var unixSocketString: String = ""
         var clientFlagString: String = ""
         for (i in 0..7) {
-            var list = arr[i].split('=')
+            var list = arr[i].split("=", removeEmpty: false)
             if (list.size != 2) {
                 throw SqlException("Url is error!")
             }
-            if (list[0].equals("HOST")) {
+            if (list[0] == "HOST") {
                 hostString = list[1]
-            } else if (list[0].equals("USER")) {
+            } else if (list[0] == "USER") {
                 userString = list[1]
-            } else if (list[0].equals("PASSWD")) {
+            } else if (list[0] == "PASSWD") {
                 pwdString = list[1]
-            } else if (list[0].equals("DB")) {
+            } else if (list[0] == "DB") {
                 dbString = list[1]
-            } else if (list[0].equals("PORT")) {
+            } else if (list[0] == "PORT") {
                 portString = list[1]
-            } else if (list[0].equals("UNIX_SOCKET")) {
+            } else if (list[0] == "UNIX_SOCKET") {
                 unixSocketString = list[1]
-            } else if (list[0].equals("CLIENT_FLAG")) {
+            } else if (list[0] == "CLIENT_FLAG") {
                 clientFlagString = list[1]
             } else {
                 throw SqlException("Url is error!")

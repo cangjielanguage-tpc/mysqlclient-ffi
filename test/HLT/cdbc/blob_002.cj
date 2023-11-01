@@ -5042,7 +5042,6 @@ public class blob_002 {
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         var str = ByteArrayStream(5000)
         str.write(arr1)
-        println(str.length)
         rowCount = prepareStatement.update([SqlBlob(str), SqlNullableBlob(None)])
         @Assert(1, rowCount.rowCount)
         prepareStatement = conn.prepareStatement("select * from test")
@@ -5052,21 +5051,20 @@ public class blob_002 {
         @Assert("SqlBlob", queryResult.columnInfos[0].typeName)
         match (arr[0]) {
             case v: SqlBlob =>
-                var a = Array<UInt8>(v.value.length, item: 0)
+                var a = Array<UInt8>(5000, item: 0)
                 v.value.read(a)
                 @Assert(arr1.toString(), a.toString())
             case _ => @Assert("abc", "123")
         }
         @Assert("SqlNullableBlob", queryResult.columnInfos[1].typeName)
         match (arr[1]) {
-            case v: SqlNullableBlob =>
-                match (v.value) {
-                    case Some(v) =>
-                        var a = Array<UInt8>(v.length, item: 0)
-                        v.read(a)
-                        @Assert(None<Array<UInt8>>, a)
-                    case None => @Assert(None<String>, None<String>)
-                }
+            case v: SqlNullableBlob => match (v.value) {
+                case Some(v) =>
+                    var a = Array<UInt8>(0, item: 0)
+                    v.read(a)
+                    @Assert(None<Array<UInt8>>, a)
+                case None => @Assert(None<String>, None<String>)
+            }
             case _ => @Assert("abc", "123")
         }
 

@@ -60,7 +60,7 @@ public class MysqlQueryResult <: QueryResult {
             }
             for (i in 0..values.size) {
                 var isBool: Bool = cjTypeToMysqlTypeQuery(values[i], bindsCP, i, resultCount[i].length)
-                if(!isBool){
+                if (!isBool) {
                     free_mysql_cj(bindsCP, i)
                     throw SqlException("Malloc  Failed!")
                 }
@@ -536,8 +536,11 @@ func getSqlDate(buffer: CPointer<Unit>): SqlDbType {
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-        let dateTime: DateTime = DateTime.of(year: Int64(yearCp.read()), month: Int64(monthCp.read()),
-            dayOfMonth: Int64(dayCp.read()))
+        let dateTime: DateTime = DateTime.of(
+            year: Int64(yearCp.read()),
+            month: Int64(monthCp.read()),
+            dayOfMonth: Int64(dayCp.read())
+        )
         LibC.free<UInt32>(yearCp)
         LibC.free<UInt32>(monthCp)
         LibC.free<UInt32>(dayCp)
@@ -561,8 +564,11 @@ func getSqlNullableDate(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-            let dateTime: DateTime = DateTime.of(year: Int64(yearCp.read()), month: Int64(monthCp.read()),
-                dayOfMonth: Int64(dayCp.read()))
+            let dateTime: DateTime = DateTime.of(
+                year: Int64(yearCp.read()),
+                month: Int64(monthCp.read()),
+                dayOfMonth: Int64(dayCp.read())
+            )
             LibC.free<UInt32>(yearCp)
             LibC.free<UInt32>(monthCp)
             LibC.free<UInt32>(dayCp)
@@ -583,8 +589,14 @@ func getSqlTime(buffer: CPointer<Unit>): SqlDbType {
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-        let dateTime: DateTime = DateTime.of(year: 1970, month: 1, dayOfMonth: 1, hour: Int64(hourCp.read()),
-            minute: Int64(minuteCp.read()), second: Int64(secondCp.read()))
+        let dateTime: DateTime = DateTime.of(
+            year: 1970,
+            month: 1,
+            dayOfMonth: 1,
+            hour: Int64(hourCp.read()),
+            minute: Int64(minuteCp.read()),
+            second: Int64(secondCp.read())
+        )
         LibC.free<UInt32>(yearCp)
         LibC.free<UInt32>(monthCp)
         LibC.free<UInt32>(dayCp)
@@ -608,8 +620,14 @@ func getSqlNullableTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-            let dateTime: DateTime = DateTime.of(year: 1970, month: 1, dayOfMonth: 1, hour: Int64(hourCp.read()),
-                minute: Int64(minuteCp.read()), second: Int64(secondCp.read()))
+            let dateTime: DateTime = DateTime.of(
+                year: 1970,
+                month: 1,
+                dayOfMonth: 1,
+                hour: Int64(hourCp.read()),
+                minute: Int64(minuteCp.read()),
+                second: Int64(secondCp.read())
+            )
             LibC.free<UInt32>(yearCp)
             LibC.free<UInt32>(monthCp)
             LibC.free<UInt32>(dayCp)
@@ -630,9 +648,14 @@ func getSqlTimestamp(buffer: CPointer<Unit>): SqlDbType {
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-        let dateTime: DateTime = DateTime.of(year: Int64(yearCp.read()), month: Int64(monthCp.read()),
-            dayOfMonth: Int64(dayCp.read()), hour: Int64(hourCp.read()), minute: Int64(minuteCp.read()),
-            second: Int64(secondCp.read()))
+        let dateTime: DateTime = DateTime.of(
+            year: Int64(yearCp.read()),
+            month: Int64(monthCp.read()),
+            dayOfMonth: Int64(dayCp.read()),
+            hour: Int64(hourCp.read()),
+            minute: Int64(minuteCp.read()),
+            second: Int64(secondCp.read())
+        )
         LibC.free<UInt32>(yearCp)
         LibC.free<UInt32>(monthCp)
         LibC.free<UInt32>(dayCp)
@@ -656,9 +679,14 @@ func getSqlNullableTimestamp(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sq
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-            let dateTime: DateTime = DateTime.of(year: Int64(yearCp.read()), month: Int64(monthCp.read()),
-                dayOfMonth: Int64(dayCp.read()), hour: Int64(hourCp.read()), minute: Int64(minuteCp.read()),
-                second: Int64(secondCp.read()))
+            let dateTime: DateTime = DateTime.of(
+                year: Int64(yearCp.read()),
+                month: Int64(monthCp.read()),
+                dayOfMonth: Int64(dayCp.read()),
+                hour: Int64(hourCp.read()),
+                minute: Int64(minuteCp.read()),
+                second: Int64(secondCp.read())
+            )
             LibC.free<UInt32>(yearCp)
             LibC.free<UInt32>(monthCp)
             LibC.free<UInt32>(dayCp)
@@ -679,9 +707,14 @@ func getSqlDateTime(buffer: CPointer<Unit>): SqlDbType {
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-        let dateTime: DateTime = DateTime.of(year: Int64(yearCp.read()), month: Int64(monthCp.read()),
-            dayOfMonth: Int64(dayCp.read()), hour: Int64(hourCp.read()), minute: Int64(minuteCp.read()),
-            second: Int64(secondCp.read()))
+        let dateTime: DateTime = DateTime.of(
+            year: Int64(yearCp.read()),
+            month: Int64(monthCp.read()),
+            dayOfMonth: Int64(dayCp.read()),
+            hour: Int64(hourCp.read()),
+            minute: Int64(minuteCp.read()),
+            second: Int64(secondCp.read())
+        )
         LibC.free<UInt32>(yearCp)
         LibC.free<UInt32>(monthCp)
         LibC.free<UInt32>(dayCp)
@@ -705,9 +738,14 @@ func getSqlNullableDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sql
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
-            let dateTime: DateTime = DateTime.of(year: Int64(yearCp.read()), month: Int64(monthCp.read()),
-                dayOfMonth: Int64(dayCp.read()), hour: Int64(hourCp.read()), minute: Int64(minuteCp.read()),
-                second: Int64(secondCp.read()))
+            let dateTime: DateTime = DateTime.of(
+                year: Int64(yearCp.read()),
+                month: Int64(monthCp.read()),
+                dayOfMonth: Int64(dayCp.read()),
+                hour: Int64(hourCp.read()),
+                minute: Int64(minuteCp.read()),
+                second: Int64(secondCp.read())
+            )
             LibC.free<UInt32>(yearCp)
             LibC.free<UInt32>(monthCp)
             LibC.free<UInt32>(dayCp)
