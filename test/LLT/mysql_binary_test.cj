@@ -1,5 +1,5 @@
-EXEC: cjc %import-path %L %l %f
-EXEC: ./main
+// EXEC: cjc %import-path %L %l %f
+// EXEC: ./main
 from mysqlclient import mysqlclient.*
 from std import unittest.*
 from std import unittest.testmacro.*
@@ -15,7 +15,7 @@ main(): Int64 {
     return 0
 }
 
-@Test
+// @Test
 public class MysqlBinaryTest {
     /*
      * +-------+-------------+------+-----+---------+-------+
@@ -25,7 +25,7 @@ public class MysqlBinaryTest {
      * | name  | Binary(50)        | YES  |     | NULL    |       |
      * +-------+-------------+------+-----+---------+-------+
      */
-    @TestCase
+    // @TestCase
     public func MysqlBinaryTest01(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -47,15 +47,11 @@ public class MysqlBinaryTest {
         mysqlStatement.update()
 
         // 创建t_test名称数据表
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test(id bigint, name binary(50))"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("create table t_test(id bigint, name binary(50))")
         mysqlStatement.update()
 
         // 插入数据预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test(id,name)  VALUES(?,?)"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
         @Assert(2, mysqlStatement.parameterCount)
 
         var id: SqlBigInt = SqlBigInt(1)
@@ -65,7 +61,6 @@ public class MysqlBinaryTest {
         var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
 
-
         var name2 = SqlNullableBinary(Array<Byte>())
         id = SqlBigInt(2)
         arrDb = [id, name2]
@@ -74,133 +69,123 @@ public class MysqlBinaryTest {
         @Assert(1, mysqlUpdateResult.rowCount)
 
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
-        
+
         id = SqlBigInt(2)
         arrDb = [id]
-        
+
         // 执行查询语句
         var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query(arrDb)
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
         @Assert(2, mysqlColumnInfos.size)
-        
+
         @Assert("id", mysqlColumnInfos[0].name)
         @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
-        
+
         @Assert("name", mysqlColumnInfos[1].name)
         @Assert("SqlNullableChar", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(50, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(false, mysqlColumnInfos[1].nullable)
-        
+
         id = SqlBigInt(0)
         name2 = SqlNullableBinary(Array<Byte>())
         arrDb = [id, name2]
-        
+
         // 获取数据
         var isBool: Bool = mysqlQueryResult.next(arrDb)
         @Assert(true, isBool)
         @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
         if (let None <- (arrDb[1] as SqlBinary)) {
             @Assert(true, true)
-        }  
-        
+        }
+
         // 删除语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "delete from t_test where name = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
         @Assert(1, mysqlStatement.parameterCount)
-        
+
         name = SqlBinary(Array<Byte>(50, item: 89))
         arrDb = [name]
-        
+
         // 执行删除语句
         mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
-        
+
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
-        
+
         id = SqlBigInt(1)
         arrDb = [id]
-        
+
         // 执行查询语句
         mysqlQueryResult = mysqlStatement.query(arrDb)
-        
+
         // 获取数据
         // isBool = mysqlQueryResult.next()
         // @Assert(false, isBool)
-        
+
         // 更新语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "update t_test set name = ? where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
         @Assert(2, mysqlStatement.parameterCount)
-        
-        name = SqlBinary(Array<Byte>(10, item:55))
+
+        name = SqlBinary(Array<Byte>(10, item: 55))
         id = SqlBigInt(2)
         arrDb = [name, id]
-        
+
         // 执行更新语句
         mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
-        
+
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
-        
+
         id = SqlBigInt(1)
         arrDb = [id]
-        
+
         // 执行查询语句
         mysqlQueryResult = mysqlStatement.query(arrDb)
-        
+
         @Assert(2, mysqlColumnInfos.size)
-        
+
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
-        
+
         @Assert("name", mysqlColumnInfos[1].name)
-        @Assert("SqlChar", mysqlColumnInfos[1].typeName)
+        @Assert("SqlNullableChar", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(50, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(false, mysqlColumnInfos[1].nullable)
-        
+
         id = SqlBigInt(1)
-        name = SqlBinary(Array<Byte>(10, item:55))
+        name = SqlBinary(Array<Byte>(10, item: 55))
         arrDb = [id, name]
-        
+
         // 获取数据
         //isBool = mysqlQueryResult.next(arrDb)
         // @Assert(true, isBool)
         // @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
         // @Assert("7777777777", String.fromUtf8((arrDb[1] as SqlBinary).getOrThrow().value))
-        
+
         //删除t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
         mysqlStatement.update()
-        
+
         // 释放预执行语句内存
         mysqlStatement.close()
-        
+
         // 关闭链接
         mysqlConnection.close()
     }

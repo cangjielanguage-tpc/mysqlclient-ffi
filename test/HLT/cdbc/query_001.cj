@@ -27,7 +27,6 @@ public class OdbcTest {
         var queryResult = prepareStatement.query(SqlInteger(1))
         var arr: Array<SqlDbType> = [SqlInteger(3), SqlVarchar("1")]
         queryResult.next(arr)
-        println(queryResult.columnInfos[0].typeName)
         @Assert("SqlInteger", queryResult.columnInfos[0].typeName)
         match (arr[0]) {
             case v: SqlInteger => @Assert(1, v.value)

@@ -56,16 +56,14 @@ public class MysqlRecordApi03Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_time(id bigint not null, timeValue1 time not null, timeValue2 time)"
-        )
+            "create table t_test_time(id bigint not null, timeValue1 time not null, timeValue2 time)")
         mysqlStatement2.update()
 
         let mysqlRecordApi: MysqlRecordApi = MysqlRecordApi(mysqlConnection)
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_time(id,timeValue1,timeValue2)  VALUES(?,?,?)"
-        )
+            "insert into  t_test_time(id,timeValue1,timeValue2)  VALUES(?,?,?)")
         @Assert(3, mysqlStatement3.parameterCount)
         let dateTime1: DateTime = DateTime.of(year: 1, month: 1, dayOfMonth: 1, hour: 8, minute: 10, second: 30)
         var id: SqlBigInt = SqlBigInt(1)
@@ -204,8 +202,7 @@ public class MysqlRecordApi03Test {
         let mysqlRecordApi: MysqlRecordApi = MysqlRecordApi(mysqlConnection)
 
         let retInt32: Int32 = mysqlRecordApi.mysqlRealQuery(
-            "select * from t_test_timet_test_timet_test_timet_test_timet_test_time"
-        )
+            "select * from t_test_timet_test_timet_test_timet_test_timet_test_time")
         @Assert(1, retInt32)
 
         // 关闭链接
@@ -275,8 +272,7 @@ public class MysqlRecordApi03Test {
         let mysqlRecordApi: MysqlRecordApi = MysqlRecordApi(mysqlConnection)
 
         let retInt32: Int32 = mysqlRecordApi.mysqlRealQuery(
-            "create table t_test_time(id bigint not null, timeValue1 time not null, timeValue2 time)"
-        )
+            "create table t_test_time(id bigint not null, timeValue1 time not null, timeValue2 time)")
         @Assert(0, retInt32)
 
         // 关闭链接
@@ -521,8 +517,7 @@ public class MysqlRecordApi03Test {
         @Assert(0, retInt32)
 
         retInt32 = mysqlRecordApi.mysqlRealQuery(
-            "insert into t_test_varchar(id,varcharValue1,varcharValue2) values(0,'lihua','100')"
-        )
+            "insert into t_test_varchar(id,varcharValue1,varcharValue2) values(0,'lihua','100')")
         @Assert(0, retInt32)
 
         retInt32 = mysqlRecordApi.mysqlRealQuery("insert into t_test_varchar values(1,'liumei','99')")
@@ -538,8 +533,7 @@ public class MysqlRecordApi03Test {
         @Assert(0, retInt32)
 
         retInt32 = mysqlRecordApi.mysqlRealQuery(
-            "update t_test_varchar set varcharValue1='liumei', varcharValue2='98' where id=1"
-        )
+            "update t_test_varchar set varcharValue1='liumei', varcharValue2='98' where id=1")
         @Assert(0, retInt32)
 
         retInt32 = mysqlRecordApi.mysqlRealQuery("delete from t_test_varchar where id=1")
@@ -580,8 +574,7 @@ public class MysqlRecordApi03Test {
         @Assert(0, retInt32)
 
         retInt32 = mysqlRecordApi.mysqlRealQuery(
-            "insert into t_test_varchar(id,varcharValue1,varcharValue2) values(0,'lihua','100')"
-        )
+            "insert into t_test_varchar(id,varcharValue1,varcharValue2) values(0,'lihua','100')")
         @Assert(0, retInt32)
 
         retInt32 = mysqlRecordApi.mysqlRealQuery("insert into t_test_varchar values(1,'liumei','99')")

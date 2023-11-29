@@ -26,8 +26,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -89,8 +88,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -132,8 +130,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -175,8 +172,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -218,8 +214,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -261,8 +256,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -304,8 +298,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -347,8 +340,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -404,8 +396,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)
@@ -461,8 +452,7 @@ public class MysqlListApi04Test {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)"
-        )
+            "create table t_test_date(id bigint not null, dateValue1 date not null, dateValue2 date)")
         mysqlStatement2.update()
 
         let mysqlListApi: MysqlListApi = MysqlListApi(mysqlConnection)

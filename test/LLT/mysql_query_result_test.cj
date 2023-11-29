@@ -38,14 +38,11 @@ public class MysqlQueryResultTest {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_time(id bigint not null, timeValue1 time not null, timeValue2 time)"
-        )
+            "create table t_test_time(id bigint not null, timeValue1 time not null, timeValue2 time)")
         mysqlStatement2.update()
 
         // 查询语句预执行语句
-        var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_time where id = 1"
-        )
+        var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement("select * from t_test_time where id = 1")
 
         @Assert(0, mysqlStatement4.parameterCount)
         var mysqlQueryResult: MysqlQueryResult = mysqlStatement4.query()

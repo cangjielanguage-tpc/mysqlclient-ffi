@@ -5,7 +5,7 @@
 <p align="center">
 <img alt="" src="https://img.shields.io/badge/release-v0.0.1-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/build-pass-brightgreen" style="display: inline-block;" />
-<img alt="" src="https://img.shields.io/badge/cjc-v0.39.8-brightgreen" style="display: inline-block;" />
+<img alt="" src="https://img.shields.io/badge/cjc-v0.45.2-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/cjcov-91.2%25-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/project-open-brightgreen" style="display: inline-block;" />
 </p>
@@ -54,6 +54,7 @@
 └─ test
     ├─ DOC
     ├─ FUZZ
+    ├─ Reliability
     ├─ HLT
     └─ LLT
 ```
@@ -64,6 +65,7 @@
 - `test` 测试目录
 - `test DOC` 演示样例
 - `test FUZZ` FUZZ用例
+- `test Reliability` 并发用例
 - `test HLT` HLT用例
 - `test LLT` LLT用例
 
@@ -225,7 +227,7 @@ from std import time.*
 main(): Int64 {
     // 初始化数据库驱动
     let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
-    if (mysqlDriver.name.equals("mysql")) {
+    if (mysqlDriver.name == "mysql") {
         println("pass1")
     }
     if (mysqlDriver.version.size > 0) {
@@ -247,15 +249,11 @@ main(): Int64 {
     mysqlStatement.update()
 
     // 创建t_test名称数据表
-    mysqlStatement = mysqlConnection.prepareStatement(
-        "create table t_test(id bigint, name varchar(50))"
-    )
+    mysqlStatement = mysqlConnection.prepareStatement("create table t_test(id bigint, name varchar(50))")
     mysqlStatement.update()
 
     // 插入数据预执行语句
-    mysqlStatement = mysqlConnection.prepareStatement(
-        "insert into  t_test(id,name)  VALUES(?,?)"
-    )
+    mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
     if (mysqlStatement.parameterCount == 2) {
         println("pass3")
     }
@@ -281,9 +279,7 @@ main(): Int64 {
     }
 
     // 查询语句预执行语句
-    mysqlStatement = mysqlConnection.prepareStatement(
-        "select * from t_test where id = ?"
-    )
+    mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
     if (mysqlStatement.parameterCount == 1) {
         println("pass6")
     }
@@ -297,10 +293,10 @@ main(): Int64 {
     if (mysqlColumnInfos.size == 2) {
         println("pass7")
     }
-    if (mysqlColumnInfos[0].name.equals("id")) {
+    if (mysqlColumnInfos[0].name == "id") {
         println("pass8")
     }
-    if (mysqlColumnInfos[0].typeName.equals("SqlNullableBigInt")) {
+    if (mysqlColumnInfos[0].typeName == "SqlNullableBigInt") {
         println("pass9")
     }
     if (mysqlColumnInfos[0].displaySize == 0) {
@@ -315,10 +311,10 @@ main(): Int64 {
     if (!mysqlColumnInfos[0].nullable) {
         println("pass13")
     }
-    if (mysqlColumnInfos[1].name.equals("name")) {
+    if (mysqlColumnInfos[1].name == "name") {
         println("pass14")
     }
-    if (mysqlColumnInfos[1].typeName.equals("SqlNullableVarchar")) {
+    if (mysqlColumnInfos[1].typeName == "SqlNullableVarchar") {
         println("pass15")
     }
     if (mysqlColumnInfos[1].displaySize == 0) {
@@ -347,14 +343,12 @@ main(): Int64 {
     if ((arrDb[0] as SqlBigInt).getOrThrow().value == 2) {
         println("pass21")
     }
-    if ((arrDb[1] as SqlVarchar).getOrThrow().value.equals("lihao222")) {
+    if ((arrDb[1] as SqlVarchar).getOrThrow().value == "lihao222") {
         println("pass22")
     }
 
     // 删除语句预执行语句
-    mysqlStatement = mysqlConnection.prepareStatement(
-        "delete from t_test where name = ?"
-    )
+    mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
     if (mysqlStatement.parameterCount == 1) {
         println("pass23")
     }
@@ -369,9 +363,7 @@ main(): Int64 {
     }
 
     // 查询语句预执行语句
-    mysqlStatement = mysqlConnection.prepareStatement(
-        "select * from t_test where id = ?"
-    )
+    mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
     if (mysqlStatement.parameterCount == 1) {
         println("pass25")
     }
@@ -390,9 +382,7 @@ main(): Int64 {
     }
 
     // 更新语句预执行语句
-    mysqlStatement = mysqlConnection.prepareStatement(
-        "update t_test set name = ? where id = ?"
-    )
+    mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
     if (mysqlStatement.parameterCount == 2) {
         println("pass27")
     }
@@ -408,9 +398,7 @@ main(): Int64 {
     }
 
     // 查询语句预执行语句
-    mysqlStatement = mysqlConnection.prepareStatement(
-        "select * from t_test where id = ?"
-    )
+    mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
     if (mysqlStatement.parameterCount == 1) {
         println("pass29")
     }
@@ -436,7 +424,7 @@ main(): Int64 {
     if ((arrDb[0] as SqlBigInt).getOrThrow().value == 1) {
         println("pass32")
     }
-    if ((arrDb[1] as SqlVarchar).getOrThrow().value.equals("lihao333")) {
+    if ((arrDb[1] as SqlVarchar).getOrThrow().value == "lihao333") {
         println("pass33")
     }
 

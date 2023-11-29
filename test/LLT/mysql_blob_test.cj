@@ -47,15 +47,11 @@ public class MysqlBlobTest {
         mysqlStatement.update()
 
         // 创建t_test名称数据表
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test(id bigint, name blob)"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("create table t_test(id bigint, name blob)")
         mysqlStatement.update()
 
         // 插入数据预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test(id,name)  VALUES(?,?)"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
         @Assert(2, mysqlStatement.parameterCount)
 
         var id: SqlBigInt = SqlBigInt(1)
@@ -77,9 +73,7 @@ public class MysqlBlobTest {
         @Assert(1, mysqlUpdateResult.rowCount)
 
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         id = SqlBigInt(2)
@@ -117,9 +111,7 @@ public class MysqlBlobTest {
         }
 
         // 删除语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "delete from t_test where name = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         name = SqlBlob(stream)
@@ -130,9 +122,7 @@ public class MysqlBlobTest {
         @Assert(1, mysqlUpdateResult.rowCount)
 
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         id = SqlBigInt(2)
@@ -149,9 +139,7 @@ public class MysqlBlobTest {
         @Assert(false, isBool)
 
         // 更新语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "update t_test set name = ? where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
         @Assert(2, mysqlStatement.parameterCount)
 
         stream.write(Array<Byte>(10, item: 55))
@@ -164,9 +152,7 @@ public class MysqlBlobTest {
         @Assert(1, mysqlUpdateResult.rowCount)
 
         // 查询语句预执行语句
-        mysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test where id = ?"
-        )
+        mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
         id = SqlBigInt(1)

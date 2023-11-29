@@ -41,8 +41,7 @@ public class MysqlVarcharLongTest {
 
         // 删除t_test名称数据表
         var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement(
-            "drop table if exists t_test_varchar_long"
-        )
+            "drop table if exists t_test_varchar_long")
         mysqlStatement.update()
 
         mysqlStatement.close()
@@ -64,8 +63,7 @@ public class MysqlVarcharLongTest {
 
         // 创建t_test名称数据表
         var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_varchar_long(varcharValue1 varchar(5500) not null)"
-        )
+            "create table t_test_varchar_long(varcharValue1 varchar(5500) not null)")
         mysqlStatement.update()
 
         mysqlStatement.close()
@@ -88,8 +86,7 @@ public class MysqlVarcharLongTest {
 
         // 插入数据预执行语句
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement(
-            "insert into  t_test_varchar_long(varcharValue1)  VALUES(?)"
-        )
+            "insert into  t_test_varchar_long(varcharValue1)  VALUES(?)")
         @Assert(1, mysqlStatement1.parameterCount)
 
         // 插入一条数据
@@ -100,8 +97,7 @@ public class MysqlVarcharLongTest {
 
         // 插入一条数据
         // 长度过长bug
-        let longStr: String =
-            "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
+        let longStr: String = "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
         var varcharValueOne2: SqlVarchar = SqlVarchar(longStr)
         var arrDb2: Array<SqlDbType> = [varcharValueOne2]
         var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement1.update(arrDb2)
@@ -115,8 +111,7 @@ public class MysqlVarcharLongTest {
 
         // 查询语句预执行语句
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_varchar_long where varcharValue1 = ?"
-        )
+            "select * from t_test_varchar_long where varcharValue1 = ?")
         @Assert(1, mysqlStatement2.parameterCount)
 
         var varcharValueOne4: SqlVarchar = SqlVarchar(longStr)
@@ -142,8 +137,7 @@ public class MysqlVarcharLongTest {
 
         // 删除语句预执行语句
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
-            "delete from t_test_varchar_long where varcharValue1 = ?"
-        )
+            "delete from t_test_varchar_long where varcharValue1 = ?")
         @Assert(1, mysqlStatement3.parameterCount)
         var varcharValueOne6: SqlVarchar = SqlVarchar(longStr)
         var arrDb6: Array<SqlDbType> = [varcharValueOne6]
@@ -152,8 +146,7 @@ public class MysqlVarcharLongTest {
 
         // 查询语句预执行语句
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_varchar_long where varcharValue1 = ?"
-        )
+            "select * from t_test_varchar_long where varcharValue1 = ?")
         @Assert(1, mysqlStatement4.parameterCount)
         var varcharValueOne7: SqlVarchar = SqlVarchar(longStr)
         var arrDb7: Array<SqlDbType> = [varcharValueOne7]
@@ -165,8 +158,7 @@ public class MysqlVarcharLongTest {
 
         // 更新语句预执行语句
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
-            "update t_test_varchar_long set varcharValue1 = ?  where varcharValue1 = ?"
-        )
+            "update t_test_varchar_long set varcharValue1 = ?  where varcharValue1 = ?")
         @Assert(2, mysqlStatement7.parameterCount)
 
         var varcharValueOne9: SqlVarchar = SqlVarchar("lihao")
@@ -196,8 +188,7 @@ public class MysqlVarcharLongTest {
 
         // 删除t_test名称数据表
         let mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement(
-            "drop table if exists t_test_varchar_long"
-        )
+            "drop table if exists t_test_varchar_long")
         mysqlStatement9.update()
 
         // 释放预执行语句内存

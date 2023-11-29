@@ -113,16 +113,16 @@ public class MysqlStatement <: Statement {
         if (parameterCount == params.size) {
             unsafe {
                 var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
-                if(params.size > 0){
+                if (params.size > 0) {
                     bindsCP = init_bind(params.size)
                 }
-                if(bindsCP.isNull()){
+                if (bindsCP.isNull()) {
                     // 初始化失败，有可能内存不足导致的malloc失败
                     throw SqlException("Init Bind Failed!")
                 }
                 for (i in 0..params.size) {
                     var isBool: Bool = cjTypeToMysqlType(bindsCP, i, params[i])
-                    if(!isBool){
+                    if (!isBool) {
                         println("i = ${i},isBool = ${isBool}")
                         free_mysql_cj(bindsCP, i)
                         throw SqlException("Malloc  Failed!")
@@ -168,16 +168,16 @@ public class MysqlStatement <: Statement {
         if (parameterCount == params.size) {
             unsafe {
                 var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
-                if(params.size > 0){
+                if (params.size > 0) {
                     bindsCP = init_bind(params.size)
                 }
-                if(bindsCP.isNull()){
+                if (bindsCP.isNull()) {
                     // 初始化失败，有可能内存不足导致的malloc失败
                     throw SqlException("Init Bind Failed!")
                 }
                 for (i in 0..params.size) {
                     var isBool: Bool = cjTypeToMysqlType(bindsCP, i, params[i])
-                    if(!isBool){
+                    if (!isBool) {
                         free_mysql_cj(bindsCP, i)
                         throw SqlException("Malloc  Failed!")
                     }
@@ -245,8 +245,7 @@ public class MysqlStatement <: Statement {
                 item: MYSQL_COLUMN_INFO()
             )
             var cp: CPointerHandle<MYSQL_COLUMN_INFO> = acquireArrayRawData<MYSQL_COLUMN_INFO>(
-                cMysqlColumnInfos.toArray()
-            )
+                cMysqlColumnInfos.toArray())
             let bytesCPointer: CPointer<MYSQL_COLUMN_INFO> = cp.pointer
             get_res_data(metadataUnit, columnCountInt64, bytesCPointer)
             var mysqlColumnInfos: Array<MysqlColumnInfo> = Array<MysqlColumnInfo>(
@@ -361,30 +360,26 @@ func cjTypeToMysqlType(bindsCP: CPointer<Unit>, index: Int64, sqlDbType: SqlDbTy
 
 func setString(bindsCP: CPointer<Unit>, index: Int64, value: Option<String>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                let strCtring: CString = LibC.mallocCString(v)
-                set_string(bindsCP, index, strCtring)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            let strCtring: CString = LibC.mallocCString(v)
+            set_string(bindsCP, index, strCtring)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setBytes(bindsCP: CPointer<Unit>, index: Int64, value: Option<Array<Byte>>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                var cp: CPointerHandle<Byte> = acquireArrayRawData<Byte>(v)
-                let bytesCPointer: CPointer<UInt8> = cp.pointer
-                set_bytes(bindsCP, index, bytesCPointer, v.size)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            var cp: CPointerHandle<Byte> = acquireArrayRawData<Byte>(v)
+            let bytesCPointer: CPointer<UInt8> = cp.pointer
+            set_bytes(bindsCP, index, bytesCPointer, v.size)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
@@ -407,10 +402,9 @@ func setClob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>):
                 let bytesCPointer: CPointer<UInt8> = cp.pointer
                 set_clob(bindsCP, index, bytesCPointer, list.size)
             }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
@@ -433,175 +427,152 @@ func setBlob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>):
                 let bytesCPointer: CPointer<UInt8> = cp.pointer
                 set_blob(bindsCP, index, bytesCPointer, list.size)
             }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setBool(bindsCP: CPointer<Unit>, index: Int64, value: Option<Bool>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                if (v) {
-                    set_bool(bindsCP, index, 1)
-                } else {
-                    set_bool(bindsCP, index, 0)
-                }
+        case Some(v) => unsafe {
+            if (v) {
+                set_bool(bindsCP, index, 1)
+            } else {
+                set_bool(bindsCP, index, 0)
             }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setInt8(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int8>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_int8(bindsCP, index, v)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_int8(bindsCP, index, v)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setInt16(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int16>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_int16(bindsCP, index, v)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_int16(bindsCP, index, v)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setInt32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int32>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_int32(bindsCP, index, v)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_int32(bindsCP, index, v)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setInt64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Int64>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_int64(bindsCP, index, v)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_int64(bindsCP, index, v)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setFloat32(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float32>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_float32(bindsCP, index, v)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_float32(bindsCP, index, v)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setFloat64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float64>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_float64(bindsCP, index, v)
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_float64(bindsCP, index, v)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setDate(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_date(bindsCP, index, UInt32(v.year), UInt32(v.monthValue), UInt32(v.dayOfMonth))
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_date(bindsCP, index, UInt32(v.year), UInt32(v.monthValue), UInt32(v.dayOfMonth))
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_time(bindsCP, index, UInt32(v.hour), UInt32(v.minute), UInt32(v.second))
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_time(bindsCP, index, UInt32(v.hour), UInt32(v.minute), UInt32(v.second))
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setTimestamp(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_timestamp(
-                    bindsCP,
-                    index,
-                    UInt32(v.year),
-                    UInt32(v.monthValue),
-                    UInt32(v.dayOfMonth),
-                    UInt32(v.hour),
-                    UInt32(v.minute),
-                    UInt32(v.second)
-                )
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_timestamp(
+                bindsCP,
+                index,
+                UInt32(v.year),
+                UInt32(v.monthValue),
+                UInt32(v.dayOfMonth),
+                UInt32(v.hour),
+                UInt32(v.minute),
+                UInt32(v.second)
+            )
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 
 func setDateTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
-        case Some(v) =>
-            unsafe {
-                set_date_time(
-                    bindsCP,
-                    index,
-                    UInt32(v.year),
-                    UInt32(v.monthValue),
-                    UInt32(v.dayOfMonth),
-                    UInt32(v.hour),
-                    UInt32(v.minute),
-                    UInt32(v.second)
-                )
-            }
-        case None =>
-            unsafe {
-                set_null(bindsCP, index)
-            }
+        case Some(v) => unsafe {
+            set_date_time(
+                bindsCP,
+                index,
+                UInt32(v.year),
+                UInt32(v.monthValue),
+                UInt32(v.dayOfMonth),
+                UInt32(v.hour),
+                UInt32(v.minute),
+                UInt32(v.second)
+            )
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
     }
 }
 

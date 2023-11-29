@@ -34,7 +34,6 @@ public class MysqlListApi03Test {
                 var cpCString: CPointer<CString> = mysqlRecordApi.mysqlFetchRow(cp1)
                 for (j in 0..retFields) {
                     var cString: CString = cpCString.read(Int64(j))
-                    println(cString.toString())
                     if (i == 3) {
                         @Assert("mysql", cString.toString())
                     }
