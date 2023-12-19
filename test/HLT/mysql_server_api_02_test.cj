@@ -11,10 +11,16 @@ from std import math.*
 foreign func system(str: CString): CString
 
 @When[os == "windows"]
-var str = "net start mysql"
+var str1 = "net start mysql"
+
+@When[os == "windows"]
+var str2 = "net start mysql"
 
 @When[os != "windows"]
-var str = "service mysql start"
+var str1 = "service mysql start"
+
+@When[os != "windows"]
+var str2 = "docker restart some-mysql"
 
 @Test
 public class MysqlServerApiTest {
@@ -37,8 +43,12 @@ public class MysqlServerApiTest {
         mysqlServerApi.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT)
 
         unsafe {
-            let CStr: CString = LibC.mallocCString(str)
-            system(CStr)
+            let CStr1: CString = LibC.mallocCString(str1)
+            system(CStr1)
+        }        
+        unsafe {
+            let CStr2: CString = LibC.mallocCString(str2)
+            system(CStr2)
         }
 
         mysqlConnection.close()
