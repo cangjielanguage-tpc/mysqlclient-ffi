@@ -136,7 +136,7 @@ bool set_string(MYSQL_BIND *bind, int64_t index, char *value)
     if (code != 0) {
         return false;
     }
-    bind[index].buffer_length = strLength;
+    bind[index].buffer_length = strLength -1;
     return true;
 }
 
@@ -357,7 +357,7 @@ bool get_string(MYSQL_BIND *bind, int64_t index, int64_t length)
         return false;
     }
     bind[index].buffer = value;
-    bind[index].buffer_length = strLength;
+    bind[index].buffer_length = strLength - 1;
     return get_all_data(bind, index);
 }
 
