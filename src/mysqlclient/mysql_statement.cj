@@ -123,7 +123,6 @@ public class MysqlStatement <: Statement {
                 for (i in 0..params.size) {
                     var isBool: Bool = cjTypeToMysqlType(bindsCP, i, params[i])
                     if (!isBool) {
-                        println("i = ${i},isBool = ${isBool}")
                         free_mysql_cj(bindsCP, i)
                         throw SqlException("Malloc  Failed!")
                     }
