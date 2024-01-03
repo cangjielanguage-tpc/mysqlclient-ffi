@@ -4,8 +4,8 @@ package mysqlclient
  * 数据源
  */
 public class MysqlDatasource <: Datasource {
-    private var mysql: CPointer<Unit>
     private var arrList: Array<String>
+    private var optionList: HashMap<Int32, CPointer<Unit>> = HashMap<Int32, CPointer<Unit>>()
 
     /*
      * 初始化数据源
@@ -13,8 +13,7 @@ public class MysqlDatasource <: Datasource {
      * 参数 mysql - 初始化的mysql
      * 参数 arrList - 格式化之后的参数
      */
-    init(mysql: CPointer<Unit>, arrList: Array<String>) {
-        this.mysql = mysql
+    init(arrList: Array<String>) {
         this.arrList = arrList
     }
 
@@ -38,10 +37,7 @@ public class MysqlDatasource <: Datasource {
         unsafe {
             let sqlCString: CString = LibC.mallocCString(value)
             let valueCPointer: CPointer<Unit> = CPointer<Unit>(sqlCString.getChars())
-
-            // 连接前设置选项
-            mysql_options(mysql, key.toInt32(), valueCPointer)
-            LibC.free(sqlCString)
+            optionList.put(key.toInt32(), valueCPointer)
         }
     }
 
@@ -56,10 +52,7 @@ public class MysqlDatasource <: Datasource {
             let valueCPointer: CPointer<UInt32> = LibC.malloc<UInt32>()
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
-
-            // 连接前设置选项
-            mysql_options(mysql, key.toInt32(), valueCPointer1)
-            LibC.free<UInt32>(valueCPointer)
+            optionList.put(key.toInt32(), valueCPointer1)
         }
     }
 
@@ -74,10 +67,7 @@ public class MysqlDatasource <: Datasource {
             let valueCPointer: CPointer<UInt64> = LibC.malloc<UInt64>()
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
-
-            // 连接前设置选项
-            mysql_options(mysql, key.toInt32(), valueCPointer1)
-            LibC.free<UInt64>(valueCPointer)
+            optionList.put(key.toInt32(), valueCPointer1)
         }
     }
 
@@ -96,10 +86,7 @@ public class MysqlDatasource <: Datasource {
                 valueCPointer.write(0)
             }
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
-
-            // 连接前设置选项
-            mysql_options(mysql, key.toInt32(), valueCPointer1)
-            LibC.free<Byte>(valueCPointer)
+            optionList.put(key.toInt32(), valueCPointer1)
         }
     }
 
@@ -113,6 +100,29 @@ public class MysqlDatasource <: Datasource {
         let portUInt32: UInt32 = UInt32.parse(arrList[4])
         let clientFlagUInt32: UInt64 = UInt64.parse(arrList[6])
         unsafe {
+            let tCPointer: CPointer<Unit> = CPointer<Unit>()
+            // 获取或初始化结构MYSQL
+            var mysql: CPointer<Unit> = mysql_init(tCPointer)
+
+            if (mysql.isNull()) {
+                // 内存不足返回NULL
+                throw SqlException("Mysql Initialization Failed!")
+            }
+
+            // 对保存的设置内容进行处理设置
+            for (_ in 0..optionList.size) {
+                var hashMapIterator: HashMapIterator<Int32, CPointer<Unit>> = optionList.iterator()
+                var optionValue: Option<(Int32, CPointer<Unit>)> = hashMapIterator.next()
+                while (true) {
+                    match (optionValue) {
+                        case Some(v) =>
+                            mysql_options(mysql, v[0], v[1])
+                            LibC.free<Unit>(v[1])
+                        case None => break
+                    }
+                }
+            }
+
             var hostCString: CString = CString(CPointer<UInt8>())
             if (arrList[0].size != 0) {
                 hostCString = LibC.mallocCString(arrList[0])
@@ -163,8 +173,8 @@ public class MysqlDatasource <: Datasource {
             if (mysql.isNull()) {
                 throw SqlException("Connect Failed!")
             }
+            return MysqlConnection(mysql)
         }
-        return MysqlConnection(mysql)
     }
 
     /*

@@ -1,10 +1,14 @@
 package mysqlclient
 
+// 自动注册驱动
+let _ = {
+     => DriverManager.register("mysql", MysqlDriver("mysql"))
+}()
+
 /*
  * 数据库驱动
  */
 public class MysqlDriver <: Driver {
-    private var mysql: CPointer<Unit>
     private var driverNmae: String
 
     /*
@@ -15,15 +19,6 @@ public class MysqlDriver <: Driver {
      */
     public init(name: String) {
         this.driverNmae = name
-        let tCPointer: CPointer<Unit> = CPointer<Unit>()
-        unsafe {
-            // 获取或初始化结构MYSQL
-            mysql = mysql_init(tCPointer)
-            if (this.mysql.isNull()) {
-                // 内存不足返回NULL
-                throw SqlException("Mysql Initialization Failed!")
-            }
-        }
     }
 
     /**
@@ -78,7 +73,7 @@ public class MysqlDriver <: Driver {
     public override func open(connectionString: String, opts: Array<(String, String)>): MysqlDatasource {
         (opts)
         var arrList: Array<String> = openString(connectionString)
-        return MysqlDatasource(mysql, arrList)
+        return MysqlDatasource(arrList)
     }
 
     /*
