@@ -50,3 +50,4 @@ lib/
 *.o
 libmysqlclient_c/*.o
 *.macrocall
+.cache
