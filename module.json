@@ -20,7 +20,7 @@
 		}
 	},
 	"output_type": "dynamic",
-	"command_option": "-g",
+	"command_option": "-O2",
 	"condition_option": {},
 	"link_option": "",
 	"cross_compile_configuration": {},
