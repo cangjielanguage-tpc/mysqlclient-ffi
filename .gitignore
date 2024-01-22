@@ -51,3 +51,4 @@ lib/
 libmysqlclient_c/*.o
 *.macrocall
 .cache
+.vnext/
