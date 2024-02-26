@@ -686,6 +686,12 @@ foreign func set_date_time(
 ): Bool
 
 /*
+ * 设置Decimal类型的值
+ * void set_decimal(MYSQL_BIND *mysqlBind, int64_t index, char *value)
+ */
+foreign func set_decimal(bind: CPointer<Unit>, index: Int64, value: CString): Bool
+
+/*
  * 设置NULL类型的值,空指针
  * void set_null(MYSQL_BIND *mysqlBind, int64_t index)
  */
@@ -786,6 +792,12 @@ foreign func get_timestamp(bind: CPointer<Unit>, index: Int64): Bool
  * void get_date_time(MYSQL_BIND *bind, int64_t index)
  */
 foreign func get_date_time(bind: CPointer<Unit>, index: Int64): Bool
+
+/*
+ * 获取String类型数据
+ * void get_decimal(MYSQL_BIND *bind, int64_t index, int64_t length)
+ */
+foreign func get_decimal(bind: CPointer<Unit>, index: Int64, length: Int64): Bool
 
 /*
  * 获取MYSQL_BIND中的buffer,buffer_type,is_null,用作仓颉端处理，转换成SqlDbType

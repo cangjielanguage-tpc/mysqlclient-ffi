@@ -528,6 +528,52 @@ public class SqlNullableDateTime <: SqlNullableDbType{
 }
 ```
 
+##### public class SqlDecimal <: SqlDbType
+
+```cangjie
+public class SqlDecimal <: SqlDbType {
+    /*
+     * 初始化SQL数据类型
+     *
+     * 参数 decimal - 大数
+     */
+    public init(decimal: Decimal) 
+
+    /*
+     * 数据
+     */
+    public mut prop value: Decimal
+
+    /*
+     * 类型名称
+     */
+    public prop name: String
+}
+```
+
+##### public class SqlNullableDecimal <: SqlNullableDbType
+
+```cangjie
+public class SqlNullableDecimal <: SqlNullableDbType{
+    /*
+     * 初始化SQL数据类型
+     *
+     * 参数 decimal - 大数
+     */
+     public init(decimal: ?Decimal)
+
+    /*
+     * 数据
+     */
+    public mut prop value: ?Decimal
+
+    /*
+     * 类型名称
+     */
+    public prop name: String
+}
+```
+
 ### 枚举
 
 #### 介绍
