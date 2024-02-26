@@ -353,6 +353,11 @@ func cjTypeToMysqlType(bindsCP: CPointer<Unit>, index: Int64, sqlDbType: SqlDbTy
         case v: SqlDateTime => setDateTime(bindsCP, index, v.value)
         case v: SqlNullableDateTime => setDateTime(bindsCP, index, v.value)
 
+        // 自定义类
+        // DECIMAL----MYSQL_TYPE_NEWDECIMAL
+        case v: SqlDecimal => setDecimal(bindsCP, index, v.value)
+        case v: SqlNullableDecimal => setDecimal(bindsCP, index, v.value)
+
         case _ => throw SqlException("Unsupported data type.")
     }
 }
@@ -575,6 +580,18 @@ func setDateTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>)
     }
 }
 
+func setDecimal(bindsCP: CPointer<Unit>, index: Int64, value: Option<Decimal>): Bool {
+    match (value) {
+        case Some(v) => unsafe {
+            let strCtring: CString = LibC.mallocCString(v.toString())
+            set_decimal(bindsCP, index, strCtring)
+        }
+        case None => unsafe {
+            set_null(bindsCP, index)
+        }
+    }
+}
+
 func mysqlType(types: Int32, isNull: Bool): String {
     if (types == MYSQL_TYPE_DECIMAL) {
         return "MYSQL_TYPE_DECIMAL"
@@ -695,7 +712,11 @@ func mysqlType(types: Int32, isNull: Bool): String {
         return "MYSQL_TYPE_JSON"
     }
     if (types == MYSQL_TYPE_NEWDECIMAL) {
-        return "MYSQL_TYPE_NEWDECIMAL"
+        if (!isNull) {
+            return "SqlNullableDecimal"
+        } else {
+            return "SqlDecimal"
+        }
     }
     if (types == MYSQL_TYPE_ENUM) {
         return "MYSQL_TYPE_ENUM"

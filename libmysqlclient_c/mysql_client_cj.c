@@ -310,6 +310,22 @@ bool set_date_time(MYSQL_BIND *bind, int64_t index, uint32_t year, uint32_t mont
     return true;
 }
 
+bool set_decimal(MYSQL_BIND *bind, int64_t index, char *value)
+{
+    bind[index].buffer_type = MYSQL_TYPE_NEWDECIMAL;
+    int strLength = strlen(value) + 1;
+    bind[index].buffer = malloc(strLength);
+    if (bind[index].buffer == NULL) {
+        return false;
+    }
+    int code = strcpy_s(bind[index].buffer, strLength, value);
+    if (code != 0) {
+        return false;
+    }
+    bind[index].buffer_length = strLength -1;
+    return true;
+}
+
 bool set_null(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_NULL;
@@ -495,6 +511,22 @@ bool get_date_time(MYSQL_BIND *bind, int64_t index)
     if (!get_all_time_data(bind, index)) {
         return false;
     }
+    return get_all_data(bind, index);
+}
+
+bool get_decimal(MYSQL_BIND *bind, int64_t index, int64_t length)
+{
+    bind[index].buffer_type = MYSQL_TYPE_NEWDECIMAL;
+    int strLength = length + 1;
+    if (strLength <= 0) {
+        return false;
+    }
+    char *value = (char *)calloc(strLength, sizeof(char));
+    if (value == NULL) {
+        return false;
+    }
+    bind[index].buffer = value;
+    bind[index].buffer_length = strLength - 1;
     return get_all_data(bind, index);
 }
 

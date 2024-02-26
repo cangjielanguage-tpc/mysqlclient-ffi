@@ -6,3 +6,6 @@ from std import convert.*
 from std import database.sql.*
 from std import io.*
 from std import time.*
+from std import math.*
+from std import math.numeric.*
+

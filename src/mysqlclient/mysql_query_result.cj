@@ -207,6 +207,11 @@ func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64):
             case _: SqlDateTime => getSqlDateTime(bufferCp)
             case _: SqlNullableDateTime => getSqlNullableDateTime(bufferCp, isNullCp)
 
+            // 自定义类
+            // DECIMAL----MYSQL_TYPE_NEWDECIMAL
+            case _: SqlDecimal => getSqlDecimal(bufferCp)
+            case _: SqlNullableDecimal => getSqlNullableDecimal(bufferCp, isNullCp)
+
             case _ => throw SqlException("Unsupported data type.")
         }
         return sqlDbType
@@ -757,6 +762,27 @@ func getSqlNullableDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sql
     }
 }
 
+func getSqlDecimal(buffer: CPointer<Unit>): SqlDbType {
+    unsafe {
+        let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
+        let cstirng: CString = CString(valueCPointer)
+        return SqlDecimal(Decimal(cstirng.toString()))
+    }
+}
+
+func getSqlNullableDecimal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return SqlNullableDecimal(None)
+        } else {
+            let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
+            let cstirng: CString = CString(valueCPointer)
+            return SqlNullableDecimal(Decimal(cstirng.toString()))
+        }
+    }
+}
+
 func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType, bindsCP: CPointer<Unit>, index: Int64, length: Int64): Bool {
     unsafe {
         return match (sqlDbType) {
@@ -842,6 +868,11 @@ func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType, bindsCP: CPointer<Unit>, index
             // DATETIME----MYSQL_TYPE_DATETIME----MYSQL_TIME
             case _: SqlDateTime => get_date_time(bindsCP, index)
             case _: SqlNullableDateTime => get_date_time(bindsCP, index)
+
+            // 自定义类
+            // DECIMAL----MYSQL_TYPE_NEWDECIMAL
+            case _: SqlDecimal => get_decimal(bindsCP, index, length)
+            case _: SqlNullableDecimal => get_decimal(bindsCP, index, length)
 
             case _ => throw SqlException("Unsupported data type.")
         }
