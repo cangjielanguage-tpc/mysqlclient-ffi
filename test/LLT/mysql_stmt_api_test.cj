@@ -52,6 +52,7 @@ public class MysqlStmtApiTest {
         let ret2 = mysqlStmtApi.mysqlStmtStoreResult()
         @Assert(0, ret2)
 
+        mysqlStatement1.close()
         mysqlConnection.close()
     }
 
@@ -82,9 +83,12 @@ public class MysqlStmtApiTest {
 
         let ret2 = mysqlStmtApi.mysqlStmtStoreResult()
         @Assert(0, ret2)
+        
+        mysqlStatement1.close()
 
         var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement9.update()
+        mysqlStatement9.close()
 
         mysqlConnection.close()
     }
@@ -106,16 +110,19 @@ public class MysqlStmtApiTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
             "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
+        mysqlStatement3.close()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
             "select * from t_test_bigint where id = 1")
@@ -130,9 +137,11 @@ public class MysqlStmtApiTest {
 
         let ret2 = mysqlStmtApi.mysqlStmtStoreResult()
         @Assert(1, ret2)
+        mysqlStatement4.close()
 
         var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement9.update()
+        mysqlStatement9.close()
 
         mysqlConnection.close()
     }
@@ -154,16 +163,19 @@ public class MysqlStmtApiTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
             "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
+        mysqlStatement3.close()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
             "select * from t_test_bigint where id = 1")
@@ -175,9 +187,11 @@ public class MysqlStmtApiTest {
 
         let ret2 = mysqlStmtApi.mysqlStmtStoreResult()
         @Assert(1, ret2)
+        mysqlStatement4.close()
 
         var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement9.update()
+        mysqlStatement9.close()
 
         mysqlConnection.close()
     }
@@ -199,16 +213,19 @@ public class MysqlStmtApiTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
             "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
+        mysqlStatement3.close()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
             "select * from t_test_bigint where id = 1")
@@ -223,9 +240,11 @@ public class MysqlStmtApiTest {
 
         let ret2 = mysqlStmtApi.mysqlStmtStoreResult()
         @Assert(1, ret2)
+        mysqlStatement4.close()
 
         var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement9.update()
+        mysqlStatement9.close()
 
         mysqlConnection.close()
     }
@@ -247,16 +266,19 @@ public class MysqlStmtApiTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
             "insert into  t_test_bigint(id,value1,value2)  VALUES(1,2,3)")
         mysqlStatement3.update()
+        mysqlStatement3.close()
 
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
             "select * from t_test_bigint where id = 1")
@@ -282,9 +304,11 @@ public class MysqlStmtApiTest {
 
         let ret2 = mysqlStmtApi.mysqlStmtStoreResult()
         @Assert(1, ret2)
+        mysqlStatement4.close()
 
         var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement9.update()
+        mysqlStatement9.close()
 
         mysqlConnection.close()
     }
@@ -306,11 +330,13 @@ public class MysqlStmtApiTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_bigint(id bigint not null, value1 bigint not null, value2 bigint)")
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
@@ -336,9 +362,11 @@ public class MysqlStmtApiTest {
 
         retUInt64 = mysqlStmtApi.mysqlStmtInsertId()
         @Assert(0, retUInt64)
+        mysqlStatement3.close()
 
         var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_bigint")
         mysqlStatement9.update()
+        mysqlStatement9.close()
 
         mysqlConnection.close()
     }

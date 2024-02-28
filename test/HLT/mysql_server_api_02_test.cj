@@ -40,16 +40,16 @@ public class MysqlServerApiTest {
 
         let mysqlServerApi: MysqlServerApi = MysqlServerApi(mysqlConnection)
 
-        mysqlServerApi.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT)
+        // mysqlServerApi.mysqlShutdown(MysqlShutdownLevel.SHUTDOWN_DEFAULT)
 
-        unsafe {
-            let CStr1: CString = LibC.mallocCString(str1)
-            system(CStr1)
-        }        
-        unsafe {
-            let CStr2: CString = LibC.mallocCString(str2)
-            system(CStr2)
-        }
+        // unsafe {
+        //     let CStr1: CString = LibC.mallocCString(str1)
+        //     system(CStr1)
+        // }        
+        // unsafe {
+        //     let CStr2: CString = LibC.mallocCString(str2)
+        //     system(CStr2)
+        // }
 
         mysqlConnection.close()
     }

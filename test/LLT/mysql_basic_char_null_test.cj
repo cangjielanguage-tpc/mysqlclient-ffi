@@ -44,11 +44,13 @@ public class MysqlCharTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_char")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_char(id bigint not null, value1 char(50) not null, value2 char(50))")
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
@@ -81,6 +83,7 @@ public class MysqlCharTest {
         // 执行插入语句插入数据
         var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update(arrDb)
         @Assert(1, mysqlUpdateResult3.rowCount)
+        mysqlStatement3.close()
 
         // 查询语句预执行语句
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement("select * from t_test_char where id = 1")
@@ -131,6 +134,7 @@ public class MysqlCharTest {
         arrDb = [id, data1, data2]
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
+        mysqlStatement4.close()
 
         // 删除语句预执行语句
         let mysqlStatement5: MysqlStatement = mysqlConnection.prepareStatement("delete from t_test_char where id = ?")
@@ -142,6 +146,7 @@ public class MysqlCharTest {
         // 执行删除语句
         let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update(arrDb)
         @Assert(1, mysqlUpdateResult4.rowCount)
+        mysqlStatement5.close()
 
         // 查询语句预执行语句
         let mysqlStatement6: MysqlStatement = mysqlConnection.prepareStatement("select * from t_test_char where id = 1")
@@ -157,6 +162,7 @@ public class MysqlCharTest {
         // 获取数据
         isBool = mysqlQueryResult1.next(arrDb)
         @Assert(false, isBool)
+        mysqlStatement6.close()
 
         // 更新语句预执行语句
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
@@ -171,6 +177,7 @@ public class MysqlCharTest {
         // 执行更新语句
         let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb)
         @Assert(1, mysqlUpdateResult5.rowCount)
+        mysqlStatement7.close()
 
         // 查询语句预执行语句
         let mysqlStatement8: MysqlStatement = mysqlConnection.prepareStatement("select * from t_test_char where id = 2")
@@ -189,12 +196,11 @@ public class MysqlCharTest {
         @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
         @Assert("charString222", (arrDb[1] as SqlChar).getOrThrow().value)
         @Assert("charString444", (arrDb[2] as SqlNullableChar).getOrThrow().value)
+        mysqlStatement8.close()
 
         // 删除t_test名称数据表
         let mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_char")
         mysqlStatement9.update()
-
-        // 释放预执行语句内存
         mysqlStatement9.close()
 
         // 关闭链接

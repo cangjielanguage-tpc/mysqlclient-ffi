@@ -5,7 +5,6 @@ package mysqlclient
  */
 public class MysqlConnection <: Connection {
     var mysql: CPointer<Unit>
-    private var stmt: CPointer<Unit>
 
     /*
      * 初始化数据库连接
@@ -14,14 +13,6 @@ public class MysqlConnection <: Connection {
      */
     init(mysql: CPointer<Unit>) {
         this.mysql = mysql
-        unsafe {
-            // 为结构分配和初始化内存MYSQL_STMT 
-            this.stmt = mysql_stmt_init(mysql)
-            if (stmt.isNull()) {
-                // 内存不足返回NULL
-                throw SqlException(mysql_stmt_error(stmt).toString())
-            }
-        }
     }
 
     /**
@@ -94,6 +85,12 @@ public class MysqlConnection <: Connection {
      */
     public override func prepareStatement(sql: String): MysqlStatement {
         unsafe {
+            // 为结构分配和初始化内存MYSQL_STMT 
+            var stmt: CPointer<Unit> = mysql_stmt_init(mysql)
+            if (stmt.isNull()) {
+                // 内存不足返回NULL
+                throw SqlException(mysql_stmt_error(stmt).toString())
+            }
             let sqlCString: CString = LibC.mallocCString(sql)
 
             // 准备要执行的语句
@@ -103,8 +100,8 @@ public class MysqlConnection <: Connection {
                 // 发生错误为非零值
                 throw SqlException(mysql_stmt_error(stmt).toString())
             }
+            return MysqlStatement(mysql, stmt)
         }
-        return MysqlStatement(mysql, stmt)
     }
 
     /**

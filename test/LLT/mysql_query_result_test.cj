@@ -35,11 +35,13 @@ public class MysqlQueryResultTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_time")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_time(id bigint not null, timeValue1 time not null, timeValue2 time)")
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 查询语句预执行语句
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement("select * from t_test_time where id = 1")
@@ -72,13 +74,12 @@ public class MysqlQueryResultTest {
 
         mysqlQueryResult.close()
         @Assert(false, mysqlStatement1.isClosed())
+        mysqlStatement4.close()
 
         // 删除t_test2名称数据表
         var mysqlStatement6: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_time")
         mysqlStatement6.update()
-
-        // 释放预执行语句内存
-        mysqlStatement4.close()
+        mysqlStatement6.close()
 
         // 关闭链接
         mysqlConnection.close()

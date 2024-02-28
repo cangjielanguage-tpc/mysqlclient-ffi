@@ -25,11 +25,13 @@ main(): Int64 {
     // 删除t_test名称数据表
     var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_varchar_long")
     mysqlStatement.update()
+    mysqlStatement.close()
 
     // 创建t_test名称数据表
     var mysqlStatement0: MysqlStatement = mysqlConnection.prepareStatement(
         "create table t_test_varchar_long(varcharValue1 varchar(5500) not null)")
     mysqlStatement0.update()
+    mysqlStatement0.close()
 
     // 插入数据预执行语句
     var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement(
@@ -55,6 +57,7 @@ main(): Int64 {
     var arrDb3: Array<SqlDbType> = [varcharValueOne3]
     var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement1.update(arrDb3)
     @Assert(1, mysqlUpdateResult3.rowCount)
+    mysqlStatement1.close()
 
     // 查询语句预执行语句
     var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
@@ -70,6 +73,7 @@ main(): Int64 {
     var isBool1: Bool = mysqlQueryResult1.next(arrDb5)
     @Assert(true, isBool1)
     @Assert(longStr, (arrDb5[0] as SqlVarchar).getOrThrow().value)
+    mysqlStatement2.close()
 
     // 删除语句预执行语句
     var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
@@ -79,6 +83,7 @@ main(): Int64 {
     var arrDb6: Array<SqlDbType> = [varcharValueOne6]
     var mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement3.update(arrDb6)
     @Assert(1, mysqlUpdateResult4.rowCount)
+    mysqlStatement3.close()
 
     // 查询语句预执行语句
     var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
@@ -91,6 +96,7 @@ main(): Int64 {
     var arrDb8: Array<SqlDbType> = [varcharValueOne8]
     var isBool2: Bool = mysqlQueryResult2.next(arrDb8)
     @Assert(false, isBool2)
+    mysqlStatement4.close()
 
     // 更新语句预执行语句
     let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
@@ -106,6 +112,7 @@ main(): Int64 {
     // 执行更新语句
     let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb9)
     @Assert(1, mysqlUpdateResult5.rowCount)
+    mysqlStatement7.close()
 
     // 查询语句预执行语句
     let mysqlStatement8: MysqlStatement = mysqlConnection.prepareStatement(
@@ -121,6 +128,7 @@ main(): Int64 {
     // 获取数据
     let isBool10: Bool = mysqlQueryResult3.next(arrDb10)
     @Assert(true, isBool10)
+    mysqlStatement8.close()
 
     // 删除t_test名称数据表
     let mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_varchar_long")
