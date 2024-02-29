@@ -75,6 +75,9 @@ public class MysqlAllTest {
         mysqlStatement.update()
         mysqlStatement.close()
 
+        println(mysqlConnection.objId)
+        @Assert(true, mysqlConnection.objId >= 0)
+
         // 关闭链接
         mysqlConnection.close()
     }

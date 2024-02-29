@@ -135,7 +135,12 @@ public class MysqlDatasource <: Datasource {
 ##### public class MysqlConnection <: Connection
 
 ```cangjie
-public class MysqlConnection <: Connection {
+public class MysqlConnection <: Connection {    
+    /*
+     * connection标识ID
+     */
+    public prop objId: UInt64
+    
     /**
      * 描述与数据源连接的当前状态
      */
