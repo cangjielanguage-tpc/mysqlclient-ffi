@@ -44,12 +44,14 @@ public class MysqlDateTimeTest {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_date_time")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test_date_time(id bigint not null, dateTimeValue1 datetime not null, datetimeValue2 datetime)"
         )
         mysqlStatement2.update()
+        mysqlStatement2.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
@@ -86,6 +88,7 @@ public class MysqlDateTimeTest {
         // 执行插入语句插入数据
         var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update(arrDb)
         @Assert(1, mysqlUpdateResult3.rowCount)
+        mysqlStatement3.close()
 
         // 查询语句预执行语句
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
@@ -142,6 +145,7 @@ public class MysqlDateTimeTest {
         arrDb = [id, date1, date2]
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
+        mysqlStatement4.close()
 
         // 删除语句预执行语句
         let mysqlStatement5: MysqlStatement = mysqlConnection.prepareStatement(
@@ -154,6 +158,7 @@ public class MysqlDateTimeTest {
         // 执行删除语句
         let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update(arrDb)
         @Assert(1, mysqlUpdateResult4.rowCount)
+        mysqlStatement5.close()
 
         // 查询语句预执行语句
         let mysqlStatement6: MysqlStatement = mysqlConnection.prepareStatement(
@@ -170,6 +175,7 @@ public class MysqlDateTimeTest {
         // 获取数据
         isBool = mysqlQueryResult1.next(arrDb)
         @Assert(false, isBool)
+        mysqlStatement6.close()
 
         // 更新语句预执行语句
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
@@ -186,6 +192,7 @@ public class MysqlDateTimeTest {
         // 执行更新语句
         let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb)
         @Assert(1, mysqlUpdateResult5.rowCount)
+        mysqlStatement7.close()
 
         // 查询语句预执行语句
         let mysqlStatement8: MysqlStatement = mysqlConnection.prepareStatement(
@@ -217,12 +224,11 @@ public class MysqlDateTimeTest {
         @Assert(13, dateTimeQuery2.hour)
         @Assert(6, dateTimeQuery2.minute)
         @Assert(4, dateTimeQuery2.second)
+        mysqlStatement8.close()
 
         // 删除t_test名称数据表
         let mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_date_time")
         mysqlStatement9.update()
-
-        // 释放预执行语句内存
         mysqlStatement9.close()
 
         // 关闭链接

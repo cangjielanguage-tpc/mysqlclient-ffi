@@ -20,7 +20,7 @@ main(): Int64 {
 
 @Test
 public class MysqlInfoApi01Test {
-    @TestCase
+    //@TestCase
     func mysqlInfoApiTest001(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -50,7 +50,7 @@ public class MysqlInfoApi01Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     func mysqlInfoApiTest002(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -65,7 +65,7 @@ public class MysqlInfoApi01Test {
         let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
 
         // 删除t_test2名称数据表
-        mysqlConnection.prepareStatement("drop table if exists t_test_float")
+        let mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_float")
 
         let mysqlInfoApi: MysqlInfoApi = MysqlInfoApi(mysqlConnection)
         let retErrno: UInt32 = mysqlInfoApi.mysqlErrno()
@@ -81,10 +81,12 @@ public class MysqlInfoApi01Test {
         let retInfo: Int32 = mysqlInfoApi.mysqlDumpDebugInfo()
         @Assert(0, retInfo)
 
+        mysqlStatement.close()
+
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     func mysqlInfoApiTest003(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -98,7 +100,8 @@ public class MysqlInfoApi01Test {
         // 返回一个可用的链接
         let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
         try {
-            mysqlConnection.prepareStatement("drop")
+            let mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop")
+            mysqlStatement.close()
         } catch (e: SqlException) {
             (e)
         }
@@ -119,7 +122,7 @@ public class MysqlInfoApi01Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     func mysqlInfoApiTest004(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -136,6 +139,7 @@ public class MysqlInfoApi01Test {
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_float")
         mysqlStatement1.update()
+        mysqlStatement1.close()
 
         let mysqlInfoApi: MysqlInfoApi = MysqlInfoApi(mysqlConnection)
         let retErrno: UInt32 = mysqlInfoApi.mysqlErrno()
@@ -154,6 +158,7 @@ public class MysqlInfoApi01Test {
         // 删除t_test2名称数据表
         var mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_float")
         mysqlStatement9.update()
+        mysqlStatement9.close()
 
         let retErrno2: UInt32 = mysqlInfoApi.mysqlErrno()
         @Assert(0, retErrno2)

@@ -18,9 +18,11 @@ public class bigint_001 {
         prepareStatement = conn.prepareStatement("drop table if exists test")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("create table test(data bigint NOT NULL, datanull bigint)")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
     }
 
     @TestCase
@@ -28,6 +30,7 @@ public class bigint_001 {
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         var rowCount = prepareStatement.update([SqlBigInt(Int64.Max), SqlNullableBigInt(None)])
         @Assert(1, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
         var arr: Array<SqlDbType> = [SqlBigInt(0), SqlNullableBigInt(0)]
@@ -42,9 +45,12 @@ public class bigint_001 {
             case v: SqlNullableBigInt => @Assert(None, v.value)
             case _ => @Assert("abc", "123")
         }
+        prepareStatement.close()
 
         // 删除test名称数据表
         let mysqlStatement9: MysqlStatement = conn.prepareStatement("drop table if exists test")
         mysqlStatement9.update()
+        mysqlStatement9.close()
+        conn.close()
     }
 }

@@ -115,6 +115,7 @@ public class MysqlVarcharTest {
         var arrDb3: Array<SqlDbType> = [id3, varcharValueOne3, varcharValueTwo3]
         var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement1.update(arrDb3)
         @Assert(1, mysqlUpdateResult3.rowCount)
+        mysqlStatement1.close()
 
         // 查询语句预执行语句
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
@@ -160,6 +161,7 @@ public class MysqlVarcharTest {
         @Assert(2, (arrDb5[0] as SqlBigInt).getOrThrow().value)
         @Assert(longStr, (arrDb5[1] as SqlVarchar).getOrThrow().value)
         @Assert("菜鸟课程", (arrDb5[2] as SqlNullableVarchar).getOrThrow().value.getOrThrow())
+        mysqlStatement2.close()
 
         // 删除语句预执行语句
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
@@ -167,6 +169,7 @@ public class MysqlVarcharTest {
         @Assert(0, mysqlStatement3.parameterCount)
         var mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult4.rowCount)
+        mysqlStatement3.close()
 
         // 查询语句预执行语句
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
@@ -181,6 +184,7 @@ public class MysqlVarcharTest {
         var arrDb7: Array<SqlDbType> = [id7, varcharValueOne7, varcharValueTwo7]
         var isBool2: Bool = mysqlQueryResult2.next(arrDb7)
         @Assert(false, isBool2)
+        mysqlStatement4.close()
 
         // 更新语句预执行语句
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
@@ -194,6 +198,7 @@ public class MysqlVarcharTest {
         // 执行更新语句
         let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb9)
         @Assert(1, mysqlUpdateResult5.rowCount)
+        mysqlStatement7.close()
 
         // 查询语句预执行语句
         let mysqlStatement8: MysqlStatement = mysqlConnection.prepareStatement(
@@ -210,12 +215,11 @@ public class MysqlVarcharTest {
         // 获取数据
         let isBool10: Bool = mysqlQueryResult3.next(arrDb10)
         @Assert(true, isBool10)
+        mysqlStatement8.close()
 
         // 删除t_test名称数据表
         let mysqlStatement9: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_varchar")
         mysqlStatement9.update()
-
-        // 释放预执行语句内存
         mysqlStatement9.close()
 
         // 关闭链接

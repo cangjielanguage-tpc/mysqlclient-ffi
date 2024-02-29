@@ -17,12 +17,15 @@ public class OdbcTest {
         var prepareStatement = conn.prepareStatement("drop table if exists test")
         var rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("create table test(id int NOT NULL, data varchar(20) NOT NULL)")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         rowCount = prepareStatement.update([SqlInteger(1), SqlVarchar("abc")])
         @Assert(1, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test where id = ?")
         var queryResult = prepareStatement.query(SqlInteger(1))
         var arr: Array<SqlDbType> = [SqlInteger(3), SqlVarchar("1")]
@@ -37,9 +40,12 @@ public class OdbcTest {
             case v: SqlVarchar => @Assert("abc", v.value)
             case _ => @Assert("abc", "123")
         }
+        prepareStatement.close()
 
         // 删除test名称数据表
         let mysqlStatement9: MysqlStatement = conn.prepareStatement("drop table if exists test")
         mysqlStatement9.update()
+        mysqlStatement9.close()
+        conn.close()
     }
 }

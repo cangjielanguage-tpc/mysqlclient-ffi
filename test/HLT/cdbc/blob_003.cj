@@ -18,9 +18,11 @@ public class blob_003 {
         prepareStatement = conn.prepareStatement("drop table if exists test")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("create table test(data blob(20) NOT NULL, datanull blob(20))")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
     }
     @TestCase
     public func blob_003(): Unit {
@@ -29,6 +31,7 @@ public class blob_003 {
         str.write([11, 22, 33, 44, 55, 66, 77, 88])
         rowCount = prepareStatement.update([SqlBlob(str), SqlNullableBlob(None)])
         @Assert(1, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
         var arr: Array<SqlDbType> = [SqlBlob(str), SqlNullableBlob(None)]
@@ -52,9 +55,12 @@ public class blob_003 {
             }
             case _ => @Assert("abc", "123")
         }
+        prepareStatement.close()
 
         // 删除test名称数据表
         let mysqlStatement9: MysqlStatement = conn.prepareStatement("drop table if exists test")
         mysqlStatement9.update()
+        mysqlStatement9.close()
+        conn.close()
     }
 }

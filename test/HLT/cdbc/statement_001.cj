@@ -18,5 +18,6 @@ public class OdbcTest {
 
         ps.isClosed()
         ps.close()
+        conn.close()
     }
 }

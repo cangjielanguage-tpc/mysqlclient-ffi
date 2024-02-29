@@ -55,23 +55,24 @@ public class MysqlAllTest {
         // 删除t_test名称数据表
         var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test1")
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 创建t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test1(id bigint, name varchar(50),charValue char(10),tinyintValue tinyint,smallintValue smallint,bigintValue bigint,floatValue float,doubleValue double,textValue text,timeValue time,dateValue date,datetimeValue datetime,timestampValue timestamp)"
         )
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例
         mysqlStatement = mysqlConnection.prepareStatement(
             "insert into  t_test1(id,name,charValue,tinyintValue,smallintValue,bigintValue,floatValue,doubleValue,textValue,timeValue,dateValue,datetimeValue,timestampValue)  VALUES(?,?,?,?,?,?,?,?,?,?,?,?,?)"
         )
+        mysqlStatement.close()
 
         // 删除t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test1")
         mysqlStatement.update()
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接

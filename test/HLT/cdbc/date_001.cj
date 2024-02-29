@@ -17,9 +17,11 @@ public class OdbcTest {
         var prepareStatement = conn.prepareStatement("drop table if exists test")
         var rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("create table test(data date NOT NULL, datanull date)")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         var date = DateTime.of(
             year: 2023,
@@ -32,6 +34,7 @@ public class OdbcTest {
         )
         rowCount = prepareStatement.update([SqlDate(date), SqlNullableDate(None)])
         @Assert(1, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
         var arr: Array<SqlDbType> = [SqlDate(date), SqlNullableDate(None)]
@@ -46,9 +49,12 @@ public class OdbcTest {
             case v: SqlNullableDate => @Assert(None, v.value)
             case _ => @Assert("abc", "123")
         }
+        prepareStatement.close()
 
         // 删除test名称数据表
         let mysqlStatement9: MysqlStatement = conn.prepareStatement("drop table if exists test")
         mysqlStatement9.update()
+        mysqlStatement9.close()
+        conn.close()
     }
 }

@@ -45,10 +45,12 @@ public class MysqlBlobTest {
         // 删除t_test名称数据表
         var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 创建t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement("create table t_test(id bigint, name blob)")
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 插入数据预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
@@ -71,6 +73,7 @@ public class MysqlBlobTest {
         // 执行插入语句插入空数据2
         mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -109,6 +112,7 @@ public class MysqlBlobTest {
         if (let None <- (arrDb[1] as SqlBlob)) {
             @Assert(true, true)
         }
+        mysqlStatement.close()
 
         // 删除语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
@@ -120,6 +124,7 @@ public class MysqlBlobTest {
         // 执行删除语句
         mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -137,6 +142,7 @@ public class MysqlBlobTest {
         arrDb = [id, name2]
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
+        mysqlStatement.close()
 
         // 更新语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
@@ -150,6 +156,7 @@ public class MysqlBlobTest {
         // 执行更新语句
         mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -189,12 +196,11 @@ public class MysqlBlobTest {
         var buf = Array<Byte>(10, item: 0)
         (arrDb[1] as SqlBlob).getOrThrow().value.read(buf)
         @Assert("7777777777", String.fromUtf8(buf))
+        mysqlStatement.close()
 
         //删除t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
         mysqlStatement.update()
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接

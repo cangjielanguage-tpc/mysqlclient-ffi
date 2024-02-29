@@ -20,15 +20,18 @@ public class OdbcTest {
         var rowCount = prepareStatement.update()
         tran.commit()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("create table test(data int NOT NULL, datanull int)")
         rowCount = prepareStatement.update()
         tran.commit()
         @Assert(0, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         rowCount = prepareStatement.update([SqlInteger(Int32.Max), SqlNullableInteger(None)])
         rowCount = prepareStatement.update([SqlInteger(Int32.Max), SqlNullableInteger(None)])
         tran.commit()
         @Assert(1, rowCount.rowCount)
+        prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
         var arr: Array<SqlDbType> = [SqlInteger(Int32.Max), SqlNullableInteger(None)]
@@ -45,15 +48,19 @@ public class OdbcTest {
         }
         queryResult.close()
         tran.commit()
+        prepareStatement.close()
 
         prepareStatement = conn.prepareStatement("update test set datanull = 10")
         rowCount = prepareStatement.update()
         @Assert(2, rowCount.rowCount)
         tran.commit()
+        prepareStatement.close()
 
         // 删除test名称数据表
         let mysqlStatement9: MysqlStatement = conn.prepareStatement("drop table if exists test")
         mysqlStatement9.update()
         tran.commit()
+        mysqlStatement9.close()
+        conn.close()
     }
 }

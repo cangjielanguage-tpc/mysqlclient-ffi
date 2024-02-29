@@ -68,12 +68,14 @@ public class MysqlIntTest {
         // 删除t_test名称数据表
         var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 创建t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement(
             "create table t_test(id bigint, name varchar(50),intt int, char1 char(50), tiny tinyint, small smallint, flo float, dou double)"
         )
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 插入数据预执行语句
         mysqlStatement = mysqlConnection.prepareStatement(
@@ -95,8 +97,6 @@ public class MysqlIntTest {
         // 执行插入语句插入数据
         var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接
@@ -140,8 +140,6 @@ public class MysqlIntTest {
         // 执行插入语句插入数据
         var mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接
@@ -282,7 +280,6 @@ public class MysqlIntTest {
         @Assert(0.0, (arrDb[6] as SqlNullableReal).getOrThrow().value.getOrThrow())
         @Assert(0.0, (arrDb[7] as SqlNullableDouble).getOrThrow().value.getOrThrow())
 
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接
@@ -316,6 +313,7 @@ public class MysqlIntTest {
         // 执行删除语句
         var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -341,8 +339,6 @@ public class MysqlIntTest {
         // 获取数据
         let isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接
@@ -379,6 +375,7 @@ public class MysqlIntTest {
         // 执行更新语句
         var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -411,8 +408,6 @@ public class MysqlIntTest {
         @Assert(1, (arrDb[0] as SqlNullableBigInt).getOrThrow().value.getOrThrow())
         @Assert("lihao333", (arrDb[1] as SqlNullableVarchar).getOrThrow().value.getOrThrow())
         @Assert(11, (arrDb[2] as SqlNullableInteger).getOrThrow().value.getOrThrow())
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接
@@ -457,6 +452,7 @@ public class MysqlIntTest {
         // 执行更新语句
         var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -529,12 +525,11 @@ public class MysqlIntTest {
 
             case None => @Assert(1, 1)
         }
+        mysqlStatement.close()
 
         // 删除t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
         mysqlStatement.update()
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接

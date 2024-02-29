@@ -57,10 +57,12 @@ public class MysqlBigintVarcharTest {
         // 删除t_test名称数据表
         var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 创建t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement("create table t_test(id bigint, name varchar(5500))")
         mysqlStatement.update()
+        mysqlStatement.close()
 
         // 插入数据预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
@@ -83,6 +85,7 @@ public class MysqlBigintVarcharTest {
         // 执行插入语句插入数据
         mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -125,6 +128,7 @@ public class MysqlBigintVarcharTest {
 
         @Assert(2, (arrDb[0] as SqlNullableBigInt).getOrThrow().value.getOrThrow())
         @Assert(strName, (arrDb[1] as SqlNullableVarchar).getOrThrow().value.getOrThrow())
+        mysqlStatement.close()
 
         // 删除语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where id = 2")
@@ -133,6 +137,7 @@ public class MysqlBigintVarcharTest {
         // 执行删除语句
         mysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -148,6 +153,7 @@ public class MysqlBigintVarcharTest {
         arrDb = [id, name]
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
+        mysqlStatement.close()
 
         // 更新语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
@@ -160,6 +166,7 @@ public class MysqlBigintVarcharTest {
         // 执行更新语句
         mysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
+        mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -197,12 +204,11 @@ public class MysqlBigintVarcharTest {
 
         @Assert(1, (arrDb[0] as SqlNullableBigInt).getOrThrow().value.getOrThrow())
         @Assert("lihao333", (arrDb[1] as SqlNullableVarchar).getOrThrow().value.getOrThrow())
+        mysqlStatement.close()
 
         // 删除t_test名称数据表
         mysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
         mysqlStatement.update()
-
-        // 释放预执行语句内存
         mysqlStatement.close()
 
         // 关闭链接
