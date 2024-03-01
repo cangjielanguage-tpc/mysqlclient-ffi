@@ -5,6 +5,15 @@ package mysqlclient
  */
 public class MysqlConnection <: Connection {
     var mysql: CPointer<Unit>
+    var objIdValue: UInt64
+    /*
+     * connection标识ID
+     */
+    public prop objId: UInt64 {
+        get() {
+            return objIdValue
+        }
+    }
 
     /*
      * 初始化数据库连接
@@ -12,6 +21,9 @@ public class MysqlConnection <: Connection {
      * 参数 mysql - 初始化的mysql
      */
     init(mysql: CPointer<Unit>) {
+        let rnd = Random()
+        rnd.seed = UInt64(DateTime.now().toUnixTimeStamp().toMilliseconds())
+        this.objIdValue = rnd.nextUInt64()
         this.mysql = mysql
     }
 
