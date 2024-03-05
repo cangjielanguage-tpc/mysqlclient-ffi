@@ -52,3 +52,9 @@ libmysqlclient_c/*.o
 *.macrocall
 .cache
 .vnext/
+*.lock
+*.toml
+target/
+test_temp/
+*.so
+*.so.*
