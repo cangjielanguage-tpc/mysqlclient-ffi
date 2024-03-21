@@ -9,8 +9,8 @@ echo "Successfully generated .o file."
 ar rcs ${lib_path}/lib/libmysqlclient_cj.a ${lib_path}/libmysqlclient_c/*.o
 echo "Successfully generated .a file."
 
-# 将module.json的22行修改成静态编译
-sed -i -e '22 s/	"output_type": "dynamic",/	"output_type": "static",/' ${lib_path}/module.json
+# 将cjpm.toml的16行修改成静态编译
+sed -i -e '16 s/  output-type = "dynamic"/  output-type = "static"/' ${lib_path}/cjpm.toml
 
 cd  ${lib_path}/
 echo start build mysqlclient
@@ -26,8 +26,11 @@ cjpm build -V
 echo end cjpm build -V
 
 # 将lib下依赖包copy到运行环境下
-cp ${lib_path}/lib/*.a ${lib_path}/build/release/mysqlclient/
-cp ${lib_path}/lib/*.so ${lib_path}/build/release/mysqlclient/
-cp ${lib_path}/lib/*.so.21 ${lib_path}/build/release/mysqlclient/
-cp ${lib_path}/lib/*.so.21.2.33 ${lib_path}/build/release/mysqlclient/
+cp ${lib_path}/lib/*.a ${lib_path}/target/release/mysqlclient/
+cp ${lib_path}/lib/*.so ${lib_path}/target/release/mysqlclient/
+cp ${lib_path}/lib/*.so.21 ${lib_path}/target/release/mysqlclient/
+cp ${lib_path}/lib/*.so.21.2.33 ${lib_path}/target/release/mysqlclient/
 echo end build mysqlclient
+
+# 将cjpm.toml的16行修改还原
+sed -i -e '16 s/  output-type = "static"/  output-type = "dynamic"/' ${lib_path}/cjpm.toml

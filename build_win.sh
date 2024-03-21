@@ -35,5 +35,5 @@ echo start cjpm build -V
 cjpm build -V
 echo end cjpm build -V
 
-cp ${lib_path}/lib/*.dll ${lib_path}/build/release/mysqlclient/
+cp ${lib_path}/lib/*.dll ${lib_path}/target/release/mysqlclient/
 echo end build mysqlclient

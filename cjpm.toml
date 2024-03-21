@@ -1,0 +1,21 @@
+[dependencies]
+
+[ffi]
+  [ffi.c]
+    [ffi.c.mysqlclient]
+      path = "./lib/"
+    [ffi.c.mysqlclient_cj]
+      path = "./lib/"
+
+[package]
+  cjc-version = "0.49.2"
+  compile-option = "-O2"
+  description = "mysqlclient"
+  link-option = ""
+  name = "mysqlclient"
+  output-type = "dynamic"
+  src-dir = "src"
+  target-dir = ""
+  version = "0.0.1"
+  package-configuration = {}
+  scripts = {}

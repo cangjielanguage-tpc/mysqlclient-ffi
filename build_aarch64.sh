@@ -40,7 +40,7 @@ echo start cjpm build -V
 cjpm build -V
 echo end cjpm build -V
 
-cp ${lib_path}/lib/*.so ${lib_path}/build/release/mysqlclient/
-cp ${lib_path}/lib/*.so.21 ${lib_path}/build/release/mysqlclient/
-cp ${lib_path}/lib/*.so.21.2.33 ${lib_path}/build/release/mysqlclient/
+cp ${lib_path}/lib/*.so ${lib_path}/target/release/mysqlclient/
+cp ${lib_path}/lib/*.so.21 ${lib_path}/target/release/mysqlclient/
+cp ${lib_path}/lib/*.so.21.2.33 ${lib_path}/target/release/mysqlclient/
 echo end build mysqlclient
