@@ -49,6 +49,7 @@ temp_ci_lib/
 lib/
 *.o
 libmysqlclient_c/*.o
+libmysqlclient_c/Makefile
 *.macrocall
 .cache
 .vnext/

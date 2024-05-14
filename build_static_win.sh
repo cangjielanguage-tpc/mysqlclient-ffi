@@ -2,11 +2,11 @@
 lib_path=$(cd `dirname $0`; pwd)
 
 # 将.c文件生成.o文件
-gcc -c ${lib_path}/libmysqlclient_c/mysql_client_cj.c
+g++ -std=c++17 -O2 -c ${lib_path}/libmysqlclient_c/mysqlclient_cj.cpp -o libmysqlclient_c/mysqlclient_cj.o
 echo "Successfully generated .o file."
 
 #将.o文件生成.a文件
-ar rcs ${lib_path}/lib/libmysqlclient_cj.a ${lib_path}/libmysqlclient_c/*.o
+ar qc ${lib_path}/lib/libmysqlclient_cj.a ${lib_path}/libmysqlclient_c/*.o
 echo "Successfully generated .a file."
 
 # 将cjpm.toml的16行修改成静态编译
@@ -27,7 +27,6 @@ echo end cjpm build -V
 
 # 将lib下依赖包copy到运行环境下
 cp ${lib_path}/lib/*.a ${lib_path}/target/release/mysqlclient/
-cp ${lib_path}/lib/*.dll ${lib_path}/target/release/mysqlclient/
 echo end build mysqlclient
 
 # 将cjpm.toml的16行修改还原

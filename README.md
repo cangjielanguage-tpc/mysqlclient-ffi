@@ -77,6 +77,8 @@
 
 ### 编译
 
+编译静态库方法请参考： [编译静态库](./doc/编译静态库.md)
+
 1、本项目基于 mysqlclient8.0.33 开发，需要依赖 mysqlclient，下载地址 https://downloads.mysql.com/archives/community/
 
 windows环境下需要msys2、mingw64、cmake

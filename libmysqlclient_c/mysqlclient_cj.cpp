@@ -1,19 +1,30 @@
-/*
- * Copyright (c) Huawei Technologies Co., Ltd. 2023-2023. All rights reserved.
- * Description: MYSQL for Cangjie API
- * Author: pwx1229727
- * Create: 2023-10-12
- * Notes: 2023-10-12 Create
- */
-
-#include "stdlib.h"
-#include "limits.h"
-#include "string.h"
-#include "stdarg.h"
-#include "stddef.h"
-#include "stdio.h"
 #include "include/mysql.h"
-#include "include/mysql_client_info_cj.h"
+#include <string.h>
+
+#ifdef __cplusplus
+extern "C" {
+#endif
+
+typedef struct MYSQL_COLUMN_INFO
+{
+    char *name_string;
+    enum enum_field_types type;
+    unsigned int flags;
+    int64_t display_size_int64;
+    int64_t length_int64;
+    int64_t scale_int64;
+} MYSQL_COLUMN_INFO;
+
+MYSQL *mysql_init_my(MYSQL *mysql)
+{
+    mysql_init(mysql);
+    return mysql;
+}
+
+#ifndef _WIN32
+extern int memcpy_s(void *dest, uint32_t destsz, const void *src, uint32_t count);
+extern int strcpy_s(char *dest, uint32_t destsz, const char *src);
+#endif
 
 #define INT8_SIZE 1
 #define INT16_SIZE 2
@@ -93,7 +104,7 @@ bool get_all_bytes_blob(MYSQL_BIND *bind, int64_t index, int64_t length)
 
 bool get_all_data(MYSQL_BIND *bind, int64_t index)
 {
-    bind[index].length = malloc(sizeof(unsigned long));
+    bind[index].length = (unsigned long *)malloc(sizeof(unsigned long));
     if (bind[index].length == NULL) {
         return false;
     }
@@ -132,7 +143,7 @@ bool set_string(MYSQL_BIND *bind, int64_t index, char *value)
     if (bind[index].buffer == NULL) {
         return false;
     }
-    int code = strcpy_s(bind[index].buffer, strLength, value);
+    int code = strcpy_s((char *)bind[index].buffer, strLength, value);
     if (code != 0) {
         return false;
     }
@@ -318,7 +329,7 @@ bool set_decimal(MYSQL_BIND *bind, int64_t index, char *value)
     if (bind[index].buffer == NULL) {
         return false;
     }
-    int code = strcpy_s(bind[index].buffer, strLength, value);
+    int code = strcpy_s((char *)bind[index].buffer, strLength, value);
     if (code != 0) {
         return false;
     }
@@ -329,7 +340,7 @@ bool set_decimal(MYSQL_BIND *bind, int64_t index, char *value)
 bool set_null(MYSQL_BIND *bind, int64_t index)
 {
     bind[index].buffer_type = MYSQL_TYPE_NULL;
-    bind[index].is_null = malloc(1);
+    bind[index].is_null = (bool *)malloc(1);
     if (bind[index].is_null == NULL) {
         return false;
     }
@@ -341,7 +352,7 @@ bool set_null(MYSQL_BIND *bind, int64_t index)
 
 void free_mysql_cj(MYSQL_BIND *bind, int64_t size)
 {
-    for (size_t i = 0; i < size; i++) {
+    for (int64_t i = 0; i < size; i++) {
         if (bind[i].buffer != NULL) {
             free(bind[i].buffer);
         }
@@ -582,3 +593,7 @@ bool get_res_data(MYSQL_RES *mysql_res_list, int64_t length, MYSQL_COLUMN_INFO *
     }
     return true;
 }
+
+#ifdef __cplusplus
+    }
+#endif
