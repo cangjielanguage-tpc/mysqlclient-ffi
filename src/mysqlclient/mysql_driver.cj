@@ -52,13 +52,13 @@ public class MysqlDriver <: Driver {
     }
 
     /**
-     * 指示驱动程序是否与连接池亲和。(不支持)
+     * 指示驱动程序是否与连接池亲和。
      * 如果否，则不建议使用连接池。
      * 比如sqlite驱动连接池化的收益不明显，不建议使用连接池
      */
     public override prop preferredPooling: Bool {
         get() {
-            return false
+            return true
         }
     }
 
@@ -66,12 +66,11 @@ public class MysqlDriver <: Driver {
      * 通过connectionString和选项打开数据源
      *
      * 参数 connectionString - 数据库连接字符串
-     * 参数 opts - key,value的tuple数组，打开数据源的选项
+     * 参数 _ - key,value的tuple数组，打开数据源的选项
      * 返回值 Datasource - 数据源实例
      * 异常 SqlException - connectionString连接内容不正确会导致异常
      */
-    public override func open(connectionString: String, opts: Array<(String, String)>): MysqlDatasource {
-        (opts)
+    public override func open(connectionString: String, _: Array<(String, String)>): MysqlDatasource {
         var arrList: Array<String> = openString(connectionString)
         return MysqlDatasource(arrList)
     }

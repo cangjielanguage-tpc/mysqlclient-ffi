@@ -8,5 +8,6 @@ from std import io.*
 from std import time.*
 from std import math.*
 from std import math.numeric.*
-from std import random.Random
+from std import random.*
+from std import sync.*
 

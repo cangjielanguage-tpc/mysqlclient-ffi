@@ -24,34 +24,36 @@ public class MysqlDriver <: Driver {
      * 参数 name - 驱动名称
      * 异常 SqlException - 内存不足导致初始化失败
      */
-     public init(name: String)
+    public init(name: String)
 
     /**
      * 驱动名称
      */
-     public override prop name: String
+    public override prop name: String
 
     /**
      * 驱动版本
      *
      * 异常 SqlException - 获取版本失败
      */
-     public override prop version: String
+    public override prop version: String
 
     /**
-     * 指示驱动程序是否与连接池亲和。(不支持)
+     * 指示驱动程序是否与连接池亲和。
+     * 如果否，则不建议使用连接池。
+     * 比如sqlite驱动连接池化的收益不明显，不建议使用连接池
      */
-     public override prop preferredPooling: Bool
+    public override prop preferredPooling: Bool
 
     /*
      * 通过connectionString和选项打开数据源
      *
      * 参数 connectionString - 数据库连接字符串
-     * 参数 opts - key,value的tuple数组，打开数据源的选项
+     * 参数 _ - key,value的tuple数组，打开数据源的选项
      * 返回值 Datasource - 数据源实例
      * 异常 SqlException - connectionString连接内容不正确会导致异常
      */
-     public override func open(connectionString: String, opts: Array<(String, String)>): MysqlDatasource
+    public override func open(connectionString: String, _: Array<(String, String)>): MysqlDatasource
 }
 ```
 
@@ -70,7 +72,7 @@ public class MysqlDatasource <: Datasource {
     /*
      * 设置连接选项(不支持)
      */
-    public override func setOption(key: String, value: String): Unit
+    public override func setOption(_: String, _: String): Unit
 
     /*
      * 连接前设置选项
@@ -119,6 +121,8 @@ public class MysqlDatasource <: Datasource {
 
     /*
      * 判断资源是否关闭（不支持）
+     *
+     * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
     public override func isClosed(): Bool
 }
@@ -140,7 +144,7 @@ public class MysqlConnection <: Connection {
      * connection标识ID
      */
     public prop objId: UInt64
-    
+
     /**
      * 描述与数据源连接的当前状态
      */
@@ -148,6 +152,8 @@ public class MysqlConnection <: Connection {
 
     /**
      * 返回连接到的数据源元数据(不支持)
+     *
+     * 返回值 Map<String, String> - 数据源元数据
      */
     public override func getMetaData(): Map<String, String>
 
@@ -219,12 +225,12 @@ public class MysqlStatement <: Statement {
     /**
      * 设置预执行sql语句选项(不支持)
      */
-    public override func setOption(key: String, value: String): Unit
+    public override func setOption(_: String, _: String): Unit
 
     /**
      * 设置预执行sql语句选项
      *
-     * 参数 key - C中枚举 enum enum_stmt_attr_type
+     * 参数 option - C中枚举 enum enum_stmt_attr_type
      * 参数 arg - 值
      * 异常 SqlException - 参数设置错误。
      */
@@ -233,7 +239,7 @@ public class MysqlStatement <: Statement {
     /**
      * 设置预执行sql语句选项
      *
-     * 参数 key - C中枚举 enum enum_stmt_attr_type
+     * 参数 option - C中枚举 enum enum_stmt_attr_type
      * 参数 arg - 值
      * 异常 SqlException - 参数设置错误。
      */
@@ -265,7 +271,9 @@ public class MysqlStatement <: Statement {
     public override func close(): Unit
 
     /*
-     * 判断资源是否关闭(不支持)
+     * 判断资源是否关闭
+     *
+     * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
     public override func isClosed(): Bool
 }
@@ -335,7 +343,8 @@ public class MysqlQueryResult <: QueryResult {
     public override func close(): Unit
 
     /*
-     * 判断资源是否关闭(不支持)
+     * 判断资源是否关闭
+     * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
     public override func isClosed(): Bool
 }
@@ -429,6 +438,7 @@ public class MysqlTransaction <: Transaction {
 
     /*
      * 数据库事务延迟模式。(不支持)
+     * 仅PostgreSQL和PostgreSQL支持
      */
     public mut override prop deferrableMode: TransactionDeferrableMode
 
@@ -525,52 +535,6 @@ public class SqlNullableDateTime <: SqlNullableDbType{
      * 数据
      */
     public mut prop value: ?DateTime
-
-    /*
-     * 类型名称
-     */
-    public prop name: String
-}
-```
-
-##### public class SqlDecimal <: SqlDbType
-
-```cangjie
-public class SqlDecimal <: SqlDbType {
-    /*
-     * 初始化SQL数据类型
-     *
-     * 参数 decimal - 大数
-     */
-    public init(decimal: Decimal) 
-
-    /*
-     * 数据
-     */
-    public mut prop value: Decimal
-
-    /*
-     * 类型名称
-     */
-    public prop name: String
-}
-```
-
-##### public class SqlNullableDecimal <: SqlNullableDbType
-
-```cangjie
-public class SqlNullableDecimal <: SqlNullableDbType{
-    /*
-     * 初始化SQL数据类型
-     *
-     * 参数 decimal - 大数
-     */
-     public init(decimal: ?Decimal)
-
-    /*
-     * 数据
-     */
-    public mut prop value: ?Decimal
 
     /*
      * 类型名称

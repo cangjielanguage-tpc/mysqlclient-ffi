@@ -23,8 +23,7 @@ public class MysqlDatasource <: Datasource {
      * 参数 key - key
      * 参数 value - value
      */
-    public override func setOption(key: String, value: String): Unit {
-        (key, value)
+    public override func setOption(_: String, _: String): Unit {
     }
 
     /*

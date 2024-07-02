@@ -73,7 +73,7 @@ public class MysqlQueryResultTest {
         @Assert(false, mysqlColumnInfos[2].nullable)
 
         mysqlQueryResult.close()
-        @Assert(false, mysqlStatement1.isClosed())
+        @Assert(true, mysqlStatement1.isClosed())
         mysqlStatement4.close()
 
         // 删除t_test2名称数据表
