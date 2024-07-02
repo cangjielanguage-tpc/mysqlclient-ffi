@@ -123,7 +123,7 @@ public class MysqlConnection <: Connection {
      * 返回值 MysqlTransaction - 事务对象
      */
     public override func createTransaction(): MysqlTransaction {
-        return MysqlTransaction(mysql)
+        return MysqlTransaction(mysql, this)
     }
 
     /*

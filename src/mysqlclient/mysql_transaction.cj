@@ -5,14 +5,16 @@ package mysqlclient
  */
 public class MysqlTransaction <: Transaction {
     private var mysql: CPointer<Unit>
+    private var mysqlConnection: MysqlConnection
 
     /*
      * 初始化数据库事务
      *
      * 参数 mysql - 初始化的mysql
      */
-    init(mysql: CPointer<Unit>) {
+    init(mysql: CPointer<Unit>, mysqlConnection: MysqlConnection) {
         this.mysql = mysql
+        this.mysqlConnection = mysqlConnection
     }
 
     /*
@@ -23,6 +25,9 @@ public class MysqlTransaction <: Transaction {
      */
     public mut override prop isoLevel: TransactionIsoLevel {
         get() {
+            if(mysqlConnection.isClosed()){
+                throw SqlException("The database connection has been closed")
+            }
             unsafe {
                 let sql = "SELECT @@transaction_isolation"
                 let sqlcstr: CString = LibC.mallocCString(sql)
@@ -49,6 +54,9 @@ public class MysqlTransaction <: Transaction {
             }
         }
         set(value) {
+            if(mysqlConnection.isClosed()){
+                throw SqlException("The database connection has been closed")
+            }
             unsafe {
                 var sql = match (value) {
                     case TransactionIsoLevel.ReadCommitted => "SET SESSION TRANSACTION ISOLATION LEVEL READ COMMITTED"
@@ -77,6 +85,9 @@ public class MysqlTransaction <: Transaction {
      */
     public mut override prop accessMode: TransactionAccessMode {
         get() {
+            if(mysqlConnection.isClosed()){
+                throw SqlException("The database connection has been closed")
+            }
             unsafe {
                 let sql = "SELECT @@transaction_read_only"
                 let sqlcstr: CString = LibC.mallocCString(sql)
@@ -97,11 +108,15 @@ public class MysqlTransaction <: Transaction {
             }
         }
         set(value) {
+            if(mysqlConnection.isClosed()){
+                throw SqlException("The database connection has been closed")
+            }
             unsafe {
                 var sql = ""
                 match (value) {
                     case TransactionAccessMode.ReadWrite => sql = "SET SESSION transaction_read_only = OFF"
                     case TransactionAccessMode.ReadOnly => sql = "SET SESSION transaction_read_only = ON"
+                    case TransactionAccessMode.Unspecified => sql = "SET SESSION transaction_read_only = OFF"
                     case _ => throw SqlException("error")
                 }
                 let sqlcstr: CString = LibC.mallocCString(sql)
@@ -132,6 +147,9 @@ public class MysqlTransaction <: Transaction {
      * 异常 SqlException - 开始数据库事务失败。
      */
     public override func begin(): Unit {
+        if(mysqlConnection.isClosed()){
+            throw SqlException("The database connection has been closed")
+        }
         unsafe {
             // 设置自动提交模式
             let isBool: Bool = mysql_autocommit(mysql, false)
@@ -147,6 +165,9 @@ public class MysqlTransaction <: Transaction {
      * 异常 SqlException - 提交数据库事务失败。
      */
     public override func commit(): Unit {
+        if(mysqlConnection.isClosed()){
+            throw SqlException("The database connection has been closed")
+        }
         unsafe {
             // 提交事务
             let isBool: Bool = mysql_commit(mysql)
@@ -162,6 +183,9 @@ public class MysqlTransaction <: Transaction {
      * 异常 SqlException - 从挂起状态回滚事务失败。
      */
     public override func rollback(): Unit {
+        if(mysqlConnection.isClosed()){
+            throw SqlException("The database connection has been closed")
+        }
         unsafe {
             // 回滚事务 
             let isBool: Bool = mysql_rollback(mysql)
@@ -178,6 +202,9 @@ public class MysqlTransaction <: Transaction {
      * 异常 SqlException - 提交事务时服务器端发生错误或者事务已提交或回滚或连接已断开。
      */
     public override func save(savePointName: String): Unit {
+        if(mysqlConnection.isClosed()){
+            throw SqlException("The database connection has been closed")
+        }
         unsafe {
             let sql = "SAVEPOINT ${savePointName}"
             let sqlcstr: CString = LibC.mallocCString(sql)
@@ -196,6 +223,9 @@ public class MysqlTransaction <: Transaction {
      * 异常 SqlException - 提交事务时服务器端发生错误或者事务已提交或回滚或连接已断开。
      */
     public override func rollback(savepointName: String): Unit {
+        if(mysqlConnection.isClosed()){
+            throw SqlException("The database connection has been closed")
+        }
         unsafe {
             let sql = "rollback to SAVEPOINT ${savepointName}"
             let sqlcstr: CString = LibC.mallocCString(sql)
@@ -214,6 +244,9 @@ public class MysqlTransaction <: Transaction {
      * 异常 SqlException - 提交事务时服务器端发生错误或者事务已提交或回滚或连接已断开。
      */
     public override func release(savePointName: String): Unit {
+        if(mysqlConnection.isClosed()){
+            throw SqlException("The database connection has been closed")
+        }
         unsafe {
             let sql = "RELEASE SAVEPOINT  ${savePointName}"
             let sqlcstr: CString = LibC.mallocCString(sql)
