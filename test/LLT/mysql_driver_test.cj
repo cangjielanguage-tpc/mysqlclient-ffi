@@ -43,7 +43,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("mysql", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -52,7 +52,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("12423432423", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -61,7 +61,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert(",/.';][[]32190583207571]", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -70,7 +70,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("adssa你好421312", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -79,7 +79,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size == 0)
         @Assert("", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -88,7 +88,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("测试ceshi——000032123", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -97,7 +97,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("测试 ceshi —— 000032123", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -106,7 +106,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("abcd", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -115,7 +115,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("1234", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -124,7 +124,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("~!@#$%&^&*()_+{}|<>?:", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
     }
 
     @TestCase
@@ -133,7 +133,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("mysql", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
         try {
             mysqlDriver.open(
                 "HOST=127.0.0.1;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=",
@@ -151,7 +151,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("mysql", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
         try {
             mysqlDriver.open(
                 "HOST==localhost;USER=root;PASSWD=123;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",
@@ -169,7 +169,7 @@ public class MysqlDriverTest {
         @Assert(true, mysqlDriver.name.size > 0)
         @Assert("mysql", mysqlDriver.name)
         @Assert(true, mysqlDriver.version.size > 0)
-        @Assert(false, mysqlDriver.preferredPooling)
+        @Assert(true, mysqlDriver.preferredPooling)
         try {
             mysqlDriver.open(
                 "mysql=localhost;USER=root;PWD=123456;DB=mysql;PORT=3306;UNIX_SOCKET=;CLIENT_FLAG=0",

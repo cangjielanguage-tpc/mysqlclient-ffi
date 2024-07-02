@@ -6,6 +6,7 @@ package mysqlclient
 public class MysqlStatement <: Statement {
     private var mysql: CPointer<Unit>
     var stmt: CPointer<Unit>
+    let closed = AtomicBool(false)
 
     /*
      * 初始化sql语句预执行
@@ -43,12 +44,8 @@ public class MysqlStatement <: Statement {
 
     /**
      * 设置预执行sql语句选项(不支持)
-     *
-     * 参数 key - key
-     * 参数 value - value
      */
-    public override func setOption(key: String, value: String): Unit {
-        (key, value)
+    public override func setOption(_: String, _: String): Unit {
     }
 
     /**
@@ -212,6 +209,10 @@ public class MysqlStatement <: Statement {
      * 异常 SqlException - 关闭资源失败。
      */
     public override func close(): Unit {
+        if (isClosed()) {
+            return
+        }
+        closed.store(true)
         unsafe {
             // 释放预准备语句内存资源
             let isBool: Bool = mysql_stmt_close(stmt)
@@ -222,12 +223,12 @@ public class MysqlStatement <: Statement {
     }
 
     /*
-     * 判断资源是否关闭(不支持)
+     * 判断资源是否关闭
      *
      * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
     public override func isClosed(): Bool {
-        return false
+        return closed.load()
     }
 
     private func getInfo(): Array<MysqlColumnInfo> {

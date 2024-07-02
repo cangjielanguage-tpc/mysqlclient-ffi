@@ -122,8 +122,7 @@ public class MysqlTransaction <: Transaction {
         get() {
             return TransactionDeferrableMode.Deferrable
         }
-        set(value) {
-            (value)
+        set(_) {
         }
     }
 

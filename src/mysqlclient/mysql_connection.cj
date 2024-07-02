@@ -5,6 +5,7 @@ package mysqlclient
  */
 public class MysqlConnection <: Connection {
     var mysql: CPointer<Unit>
+    let closed = AtomicBool(false)
     var objIdValue: UInt64
     /*
      * connection标识ID
@@ -129,6 +130,10 @@ public class MysqlConnection <: Connection {
      * 关闭资源
      */
     public override func close(): Unit {
+        if (isClosed()) {
+            return
+        }
+        closed.store(true)
         unsafe {
             // 关闭与服务器的连接
             mysql_close(mysql)
@@ -141,12 +146,7 @@ public class MysqlConnection <: Connection {
      * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
     public override func isClosed(): Bool {
-        unsafe {
-            if (mysql_ping(mysql) == 0) {
-                return false
-            }
-            return true
-        }
+        return closed.load()
     }
 
     /*

@@ -1,15 +1,12 @@
 package mysqlclient
 
-let bufferLengthUInt64: UInt64 = 1024
-
-let bufferLengthInt64: Int64 = 1024
-
 /*
  * 执行Select语句产生的结果
  */
 public class MysqlQueryResult <: QueryResult {
     private var resultCount: Array<MysqlColumnInfo>
     private var stmt: CPointer<Unit>
+    let closed = AtomicBool(false)
 
     /*
      * 初始化 执行Select语句产生的结果
@@ -99,6 +96,10 @@ public class MysqlQueryResult <: QueryResult {
      * 异常 SqlException - 关闭资源失败。
      */
     public override func close(): Unit {
+        if (isClosed()) {
+            return
+        }
+        closed.store(true)
         unsafe {
             // 释放预准备语句内存资源
             let isBool: Bool = mysql_stmt_free_result(stmt)
@@ -109,11 +110,11 @@ public class MysqlQueryResult <: QueryResult {
     }
 
     /*
-     * 判断资源是否关闭(不支持)
+     * 判断资源是否关闭
      * 返回值 Bool - 如果已经关闭返回true，否则返回false
      */
     public override func isClosed(): Bool {
-        return false
+        return closed.load()
     }
 }
 
