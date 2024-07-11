@@ -1,3 +1,7 @@
+/*
+ * @Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
+ */
+ 
 package mysqlclient
 
 /*--------------------- MySQL的列类型,C中枚举 enum enum_field_types ---------------------*/
