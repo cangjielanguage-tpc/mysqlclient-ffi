@@ -1,3 +1,7 @@
+/*
+ * @Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
+ */
+ 
 package mysqlclient
 
 /*
@@ -265,6 +269,7 @@ public class MysqlStatement <: Statement {
                 mysqlColumnInfos[i] = mysqlColumnInfo
             }
             releaseArrayRawData<MYSQL_COLUMN_INFO>(cp)
+            mysql_free_result(metadataUnit)
             return mysqlColumnInfos
         }
     }
