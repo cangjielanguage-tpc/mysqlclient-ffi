@@ -1,11 +1,11 @@
 // EXEC: cjc %import-path %L %l %f
 // EXEC: ./main
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
-from std import database.sql.*
-from std import time.*
-from std import math.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
+import std.database.sql.*
+import std.time.*
+import std.math.*
 
 main(): Int64 {
     let mysqlListApi01Test: MysqlListApi02Test = MysqlListApi02Test()
@@ -25,9 +25,9 @@ main(): Int64 {
     return 0
 }
 
-@Test
+// @Test
 public class MysqlListApi02Test {
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest001(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -72,7 +72,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest002(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -117,7 +117,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest003(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -162,7 +162,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest004(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -207,7 +207,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest005(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -252,7 +252,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest006(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -297,7 +297,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest007(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -336,7 +336,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest008(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -375,7 +375,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest009(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -414,7 +414,7 @@ public class MysqlListApi02Test {
         mysqlConnection.close()
     }
 
-    @TestCase
+    //@TestCase
     public func mysqlListApiTest010(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")

@@ -2,7 +2,7 @@
  * @Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
  */
  
-package mysqlclient
+package mysqlclient_ffi
 
 /*
  * 年、月、日、时、分、秒不包含时区

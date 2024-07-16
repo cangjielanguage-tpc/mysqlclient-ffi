@@ -5,7 +5,7 @@
 <p align="center">
 <img alt="" src="https://img.shields.io/badge/release-v0.0.1-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/build-pass-brightgreen" style="display: inline-block;" />
-<img alt="" src="https://img.shields.io/badge/cjc-v0.51.4-brightgreen" style="display: inline-block;" />
+<img alt="" src="https://img.shields.io/badge/cjc-v0.53.4-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/cjcov-91.2%25-brightgreen" style="display: inline-block;" />
 <img alt="" src="https://img.shields.io/badge/project-open-brightgreen" style="display: inline-block;" />
 </p>
@@ -96,7 +96,7 @@ mingw64：https://github.com/niXman/mingw-builds-binaries/releases/download/12.2
 2、克隆 mysqlclient-ffi 项目
 
 ```shell
-git clone https://gitee.com/HW-PLLab/mysqlclient-ffi.git
+git clone https://gitcode.com/Cangjie-TPC/mysqlclient-ffi.git
 ```
 
 3、切换目录
@@ -163,47 +163,28 @@ window 环境下运行 build_win.bat 文件
 
 7、编译示例文件
 
-示例文件在 test/DOC/mysql_examples.cj
+示例文件在 test/DOC/mysql_examples.cj  
+${path}修改成用户自己项目本地路径
 
 linux 编译指令
 
-```shell
-cjc --import-path /[path]/mysqlclient-ffi/build -L /[path]/mysqlclient-ffi/build/mysqlclient -l mysqlclient_mysqlclient -l mysqlclient_cj /[path]/mysqlclient-ffi/test/DOC/mysql_examples.cj -O2 -o /[path]/mysqlclient-ffi/build/mysqlclient/
-```
-
-其中的 [path]是本地路径，例：
+cjc  --import-path /root/cangjie_code/mysqlclient-ffi/target/release -L /root/cangjie_code/mysqlclient-ffi/target/release/mysqlclient_ffi -l mysqlclient -l mysqlclient_cj -l mysqlclient_ffi /root/cangjie_code/mysqlclient-ffi/test/DOC/mysql_examples.cj -O0 -Woff all
 
 ```shell
-cjc --import-path /home/root/cj_project/mysqlclient-ffi/build -L /home/root/cj_project/mysqlclient-ffi/build/mysqlclient -l mysqlclient_mysqlclient -l mysqlclient_cj /home/root/cj_project/mysqlclient-ffi/test/DOC/mysql_examples.cj -O2 -o /home/root/cj_project/mysqlclient-ffi/build/mysqlclient/
+cd target/release/mysqlclient_ffi
+
+cjc  --import-path ${path}/mysqlclient-ffi/target/release -L ${path}/mysqlclient-ffi/target/release/mysqlclient_ffi -l mysqlclient -l mysqlclient_cj -l mysqlclient_ffi${path}/mysqlclient-ffi/test/DOC/mysql_examples.cj -O0 -Woff all
 ```
 
 windows 编译指令
 
 ```cmd
-cjc --import-path [path]\mysqlclient-ffi\build\release -L [path]\mysqlclient-ffi\build\release\mysqlclient -l mysql -l mysqlclient -l mysqlclient_cj -l mysqlclient_mysqlclient [path]\mysqlclient-ffi\test\DOC\mysql_examples.cj -O2 -o [path]\mysqlclient-ffi\build\release\mysqlclient\
+cd target/release/mysqlclient_ffi
+
+cjc  --import-path ${path}/mysqlclient-ffi/target/release -L ${path}/mysqlclient-ffi/target/release/mysqlclient_ffi -l mysqlclient -l mysqlclient_cj -l mysqlclient_ffi${path}/mysqlclient-ffi/test/DOC/mysql_examples.cj -O0 -Woff all
 ```
 
-其中的 [path]是本地路径，例：
-
-```cmd
-cjc --import-path D:\cangjie\mysqlclient-ffi\build\release -L D:\cangjie\mysqlclient-ffi\build\release\mysqlclient -l mysql -l mysqlclient -l mysqlclient_cj -l mysqlclient_mysqlclient D:\cangjie\mysqlclient-ffi\test\DOC\mysql_examples.cj -O2 -o D:\cangjie\mysqlclient-ffi\build\release\mysqlclient\
-```
-
-8、切换运行目录
-
-linux环境下
-
-```shell
-cd build/mysqlclient/
-```
-
-windows环境下
-
-```shell
-cd build/release/mysqlclient/
-```
-
-9、运行执行文件
+8、运行执行文件
 
 linux 运行
 
@@ -220,9 +201,9 @@ windows 运行
 ### 功能示例
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import database.sql.*
-from std import time.*
+import mysqlclient_ffi.*
+import std.database.sql.*
+import std.time.*
 
 main(): Int64 {
     // 初始化数据库驱动

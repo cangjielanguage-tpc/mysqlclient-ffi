@@ -1,8 +1,8 @@
 // EXEC: cjc %import-path %L %l %f
 // EXEC: ./main
-from mysqlclient import mysqlclient.*
-from std import database.sql.*
-from std import time.*
+import mysqlclient_ffi.*
+import std.database.sql.*
+import std.time.*
 
 main(): Int64 {
     // 初始化数据库驱动

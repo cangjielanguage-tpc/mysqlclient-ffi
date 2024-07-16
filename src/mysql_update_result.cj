@@ -2,7 +2,7 @@
  * @Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
  */
  
-package mysqlclient
+package mysqlclient_ffi
 
 /*
  * 执行Insert、Update、Delete语句产生的结果

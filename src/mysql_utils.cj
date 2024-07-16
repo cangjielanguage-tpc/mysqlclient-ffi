@@ -2,7 +2,7 @@
  * @Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
  */
  
-package mysqlclient
+package mysqlclient_ffi
 
 /*--------------------- MySQL的列类型,C中枚举 enum enum_field_types ---------------------*/
 public let MYSQL_TYPE_DECIMAL: Int32 = 0

@@ -1,9 +1,12 @@
 // 3rd_party_lib:mysqlclient-ffi/build/mysqlclient
 // 3rd_party_lib_ohos:mysqlclient-ffi/build/aarch64-linux-ohos/mysqlclient
-from std import database.sql.*, io.*, time.*, regex.*
-from mysqlclient import mysqlclient.*
-from std import math.*
-from std import collection.*
+import std.database.sql.*
+import std.io.*
+import std.time.* 
+import std.regex.*
+import mysqlclient_ffi.*
+import std.math.*
+import std.collection.*
 
 main() {
     println("TCS: mysqlclient-ffi, time elapsed: 1 ns, RESULT:")

@@ -1,7 +1,11 @@
 // 3rd_party_lib:mysqlclient-ffi/build/mysqlclient
-from std import database.sql.*, io.*, time.*, regex.*, math.*
-from mysqlclient import mysqlclient.*
-from fuzz import fuzz.*
+import std.database.sql.*
+import std.io.*
+import std.time.*
+import std.regex.*
+import std.math.*
+import mysqlclient_ffi.*
+import fuzz.*
 
 var returnFlag: Int32 = 0
 var driver = MysqlDriver("mysql")

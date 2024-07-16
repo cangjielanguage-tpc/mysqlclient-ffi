@@ -58,3 +58,5 @@ target/
 test_temp/
 *.so
 *.so.*
+main
+*.bchir2

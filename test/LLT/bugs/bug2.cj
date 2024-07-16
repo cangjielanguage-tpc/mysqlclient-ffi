@@ -1,13 +1,13 @@
 // EXEC: cjc %import-path %L %l %f
 // EXEC: ./main
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
-from std import database.sql.*
-from std import time.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
+import std.database.sql.*
+import std.time.*
 
 /*
- * MysqlConnectionApi.mysqlSelectDb传入参数为空字符串时报错
+ * 事务设置ReadUncommitted级别报错
  */
 main(): Int64 {
     // 初始化数据库驱动
@@ -22,9 +22,16 @@ main(): Int64 {
     // 返回一个可用的链接
     let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
 
-    let mysqlConnectionApi: MysqlConnectionApi = MysqlConnectionApi(mysqlConnection)
-    let ret: Int32 = mysqlConnectionApi.mysqlSelectDb("")
-    @Assert(true, ret != 0)
+    // 创建事务对象
+    let mysqlTransaction: MysqlTransaction = mysqlConnection.createTransaction()
+
+    mysqlTransaction.isoLevel = TransactionIsoLevel.ReadUncommitted
+
+    let res = match (mysqlTransaction.isoLevel) {
+        case TransactionIsoLevel.ReadUncommitted => 0
+        case _ => 1
+    }
+    @Assert(0, res)
 
     mysqlConnection.close()
 
