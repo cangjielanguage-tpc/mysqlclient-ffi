@@ -1,7 +1,11 @@
 // 3rd_party_lib:mysqlclient-ffi/build/mysqlclient
 // 3rd_party_lib_ohos:mysqlclient-ffi/build/aarch64-linux-ohos/mysqlclient
-from std import database.sql.*, io.*, time.*, regex.*
-from mysqlclient import mysqlclient.*
+import std.database.sql.*
+import std.io.*
+import std.time.*
+import std.regex.*
+import std.math.*
+import mysqlclient_ffi.*
 
 @Test
 public class OdbcTest {
@@ -15,36 +19,30 @@ public class OdbcTest {
         )
         var conn = database.connect()
         var prepareStatement = conn.prepareStatement("drop table if exists test")
+        prepareStatement.setOption(MysqlStmtAttrType.STMT_ATTR_UPDATE_MAX_LENGTH, 0)
         var rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
-        prepareStatement = conn.prepareStatement("create table test(data TIMESTAMP NOT NULL, datanull TIMESTAMP)")
+        prepareStatement = conn.prepareStatement("create table test(data int NOT NULL, datanull int)")
         rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
-        var date = DateTime.of(
-            year: 2009,
-            month: 11,
-            dayOfMonth: 21,
-            hour: 13,
-            minute: 15,
-            second: 35,
-            nanosecond: 0,
-        )
-        rowCount = prepareStatement.update([SqlDateTime(date), SqlNullableDateTime(None)])
+        rowCount = prepareStatement.update([SqlInteger(Int32.Max), SqlNullableInteger(None)])
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlDateTime(DateTime.now()), SqlNullableDateTime(None)]
+        var arr: Array<SqlDbType> = [SqlInteger(Int32.Max), SqlNullableInteger(None)]
         queryResult.next(arr)
+        @Assert("SqlInteger", queryResult.columnInfos[0].typeName)
         match (arr[0]) {
-            case v: SqlDateTime => @Assert(date, v.value)
+            case v: SqlInteger => @Assert(Int32.Max, v.value)
             case _ => @Assert("abc", "123")
         }
+        @Assert("SqlNullableInteger", queryResult.columnInfos[1].typeName)
         match (arr[1]) {
-            case v: SqlNullableDateTime => @Assert(None, v.value)
+            case v: SqlNullableInteger => @Assert(None, v.value)
             case _ => @Assert("abc", "123")
         }
         prepareStatement.close()

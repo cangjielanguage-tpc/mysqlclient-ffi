@@ -26,7 +26,7 @@ cjpm build -V
 echo end cjpm build -V
 
 # 将lib下依赖包copy到运行环境下
-cp ${lib_path}/lib/*.a ${lib_path}/target/release/mysqlclient/
+cp ${lib_path}/lib/*.a ${lib_path}/target/release/mysqlclient_ffi/
 echo end build mysqlclient
 
 # 将cjpm.toml的16行修改还原

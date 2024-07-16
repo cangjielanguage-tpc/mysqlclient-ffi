@@ -1,7 +1,11 @@
 // 3rd_party_lib:mysqlclient-ffi/build/mysqlclient
 // 3rd_party_lib_ohos:mysqlclient-ffi/build/aarch64-linux-ohos/mysqlclient
-from std import database.sql.*, io.*, time.*, regex.*, math.*
-from mysqlclient import mysqlclient.*
+import std.database.sql.*
+import std.io.*
+import std.time.*
+import std.regex.*
+import std.math.*
+import mysqlclient_ffi.*
 
 @Test
 public class OdbcTest {
@@ -15,7 +19,6 @@ public class OdbcTest {
         )
         var conn = database.connect()
         var prepareStatement = conn.prepareStatement("drop table if exists test")
-        prepareStatement.setOption(MysqlStmtAttrType.STMT_ATTR_UPDATE_MAX_LENGTH, 0)
         var rowCount = prepareStatement.update()
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
@@ -24,6 +27,7 @@ public class OdbcTest {
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
+        @Assert(2, prepareStatement.parameterCount)
         rowCount = prepareStatement.update([SqlInteger(Int32.Max), SqlNullableInteger(None)])
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()

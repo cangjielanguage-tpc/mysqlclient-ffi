@@ -1,10 +1,10 @@
 // EXEC: cjc %import-path %L %l %f
 // EXEC: ./main
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
-from std import database.sql.*
-from std import time.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
+import std.database.sql.*
+import std.time.*
 
 /*
  * MYSQL数据插入后，数据末尾多出\0

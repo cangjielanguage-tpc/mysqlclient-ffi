@@ -1254,9 +1254,9 @@ public class MysqlthreadApi {
 #### public class MysqlCharSetApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动
@@ -1297,9 +1297,9 @@ main():Int64{
 #### public class MysqlConnectionApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动
@@ -1325,9 +1325,9 @@ main():Int64{
 #### public class MysqlInfoApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{ 
     // 初始化数据库驱动
@@ -1362,9 +1362,9 @@ main():Int64{
 #### public class MysqlListApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动
@@ -1408,9 +1408,9 @@ main():Int64{
 #### public class MysqlRecordApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动
@@ -1438,9 +1438,9 @@ main():Int64{
 #### public class MysqlServerApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动
@@ -1478,9 +1478,9 @@ main():Int64{
 #### public class MysqlSslApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动
@@ -1518,9 +1518,9 @@ main():Int64{
 #### public class MysqlStmtApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动
@@ -1581,9 +1581,9 @@ main():Int64{
 #### public class MysqlthreadApi
 
 ```cangjie
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 main():Int64{
     // 初始化数据库驱动

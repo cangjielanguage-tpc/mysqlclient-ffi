@@ -1,9 +1,9 @@
 // 3rd_party_lib:mysqlclient-ffi/build/mysqlclient
 // 3rd_party_lib_ohos:mysqlclient-ffi/build/aarch64-linux-ohos/mysqlclient
-from mysqlclient import mysqlclient.*
-from std import database.sql.*
-from std import unittest.*
-from std import unittest.testmacro.*
+import mysqlclient_ffi.*
+import std.database.sql.*
+import std.unittest.*
+import std.unittest.testmacro.*
 
 @Test
 public class MysqlInfoApi01Test {

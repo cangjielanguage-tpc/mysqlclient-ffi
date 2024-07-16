@@ -2,7 +2,7 @@
  * @Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
  */
  
-package mysqlclient
+package mysqlclient_ffi
 
 /*
  * 执行Select/Query语句返回结果的列信息

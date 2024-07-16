@@ -1,13 +1,13 @@
 // EXEC: cjc %import-path %L %l %f
 // EXEC: ./main
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
-from std import database.sql.*
-from std import time.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
+import std.database.sql.*
+import std.time.*
 
 /*
- * 事务设置ReadUncommitted级别报错
+ * MysqlCharSetApi.mysqlSetCharacterSet传入参数为空字符时报错
  */
 main(): Int64 {
     // 初始化数据库驱动
@@ -22,16 +22,10 @@ main(): Int64 {
     // 返回一个可用的链接
     let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
 
-    // 创建事务对象
-    let mysqlTransaction: MysqlTransaction = mysqlConnection.createTransaction()
-
-    mysqlTransaction.isoLevel = TransactionIsoLevel.ReadUncommitted
-
-    let res = match (mysqlTransaction.isoLevel) {
-        case TransactionIsoLevel.ReadUncommitted => 0
-        case _ => 1
-    }
-    @Assert(0, res)
+    let mysqlCharSetApi: MysqlCharSetApi = MysqlCharSetApi(mysqlConnection)
+    let ret: Int32 = mysqlCharSetApi.mysqlSetCharacterSet("")
+    @Assert(false, ret == 0)
+    @Assert("utf8mb4", mysqlCharSetApi.mysqlCharacterSetName())
 
     mysqlConnection.close()
 

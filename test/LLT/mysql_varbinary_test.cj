@@ -1,11 +1,11 @@
 // EXEC: cjc %import-path %L %l %f
 // EXEC: ./main
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
-from std import database.sql.*
-from std import time.*
-from std import io.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
+import std.database.sql.*
+import std.time.*
+import std.io.*
 
 main(): Int64 {
     let mysqlVarVarBinaryTest: MysqlVarVarBinaryTest = MysqlVarVarBinaryTest()

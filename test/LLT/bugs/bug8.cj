@@ -1,10 +1,10 @@
 // EXEC: cjc %import-path %L %l %f
 // EXEC: ./main
-from mysqlclient import mysqlclient.*
-from std import unittest.*
-from std import unittest.testmacro.*
-from std import database.sql.*
-from std import time.*
+import mysqlclient_ffi.*
+import std.unittest.*
+import std.unittest.testmacro.*
+import std.database.sql.*
+import std.time.*
 
 /*
  * MysqlDriver.openString接口参数问题抛IllegalArgumentException异常
