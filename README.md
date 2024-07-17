@@ -168,8 +168,6 @@ ${path}修改成用户自己项目本地路径
 
 linux 编译指令
 
-cjc  --import-path /root/cangjie_code/mysqlclient-ffi/target/release -L /root/cangjie_code/mysqlclient-ffi/target/release/mysqlclient_ffi -l mysqlclient -l mysqlclient_cj -l mysqlclient_ffi /root/cangjie_code/mysqlclient-ffi/test/DOC/mysql_examples.cj -O0 -Woff all
-
 ```shell
 cd target/release/mysqlclient_ffi
 
