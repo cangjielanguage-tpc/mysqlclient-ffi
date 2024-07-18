@@ -465,7 +465,7 @@ pass33
 
 ## 开源协议
 
-[LICENSE](/LICENSE)
+本项目基于 [GPLv2](./LICENSE) ，请自由的享受和参与开源。
 
 ## 参与贡献
 
