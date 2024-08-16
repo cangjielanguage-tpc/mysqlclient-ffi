@@ -79,7 +79,7 @@
 
 1、本项目基于 mysqlclient8.0.33 开发，需要依赖 mysqlclient，下载地址 https://downloads.mysql.com/archives/community/
 
-windows环境下需要msys2、mingw64、cmake
+windows环境下需要msys2、mingw64
 
 下载msys2和mingw64
 
@@ -89,9 +89,7 @@ mingw64：https://github.com/niXman/mingw-builds-binaries/releases/download/12.2
 
 将mingw64解压到msys2的根目录
 
-下载cmake：https://github.com/Kitware/CMake/releases/download/v3.26.3/cmake-3.26.3-windows-x86_64.zip
-
-将cmake解压到D盘
+进入到 mingw64 的 bin 目录下 复制 mingw32-make.exe 到当前目录，并将名称改成 make.exe
 
 2、克隆 mysqlclient-ffi 项目
 
@@ -126,12 +124,11 @@ libmysqlclient.so libmysqlclient.so.21 libmysqlclient.so.21.2.33 三个文件通
 sudo apt-get install libmysqlclient-dev
 ```
 
-window 环境下 将 libmysql.dll复制两份到lib中，一份保持原样，一份修改名称为libmysqlclient.dll,目录结构如下
+window 环境下 将 libmysql.dll复制到lib中，目录结构如下
 
 ```shell
 ├─ lib
-│   ├─ libmysql.dll
-│   └─ libmysqlclient.dll
+│   └─ libmysql.dll
 ```
 
 libmysql.dll 通常在mysql安装目录 lib 目录下
@@ -150,14 +147,13 @@ linux-x86 环境下运行 build_linux.sh 文件,linux-arrch64 环境运行 build
 │   └─ libmysqlclient.so.21.2.33
 ```
 
-window 环境下运行 build_win.bat 文件
+window 环境下运行 build_win.bat 文件。build_win.bat 文件需要注意修改其中的msys2路径
 
 最终目录结构如下
 
 ```shell
 ├─ lib
 │   ├─ libmysql.dll
-│   ├─ libmysqlclient.dll
 │   └─ libmysqlclient_cj.dll
 ```
 
@@ -179,7 +175,7 @@ windows 编译指令
 ```cmd
 cd target/release/mysqlclient_ffi
 
-cjc  --import-path ${path}/mysqlclient-ffi/target/release -L ${path}/mysqlclient-ffi/target/release/mysqlclient_ffi -l mysqlclient -l mysqlclient_cj -l mysqlclient_ffi${path}/mysqlclient-ffi/test/DOC/mysql_examples.cj -O0 -Woff all
+cjc  --import-path ${path}/mysqlclient-ffi/target/release -L ${path}/mysqlclient-ffi/target/release/mysqlclient_ffi -l mysql -l mysqlclient_cj -l mysqlclient_ffi${path}/mysqlclient-ffi/test/DOC/mysql_examples.cj -O0 -Woff all
 ```
 
 8、运行执行文件
