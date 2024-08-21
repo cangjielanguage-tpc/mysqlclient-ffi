@@ -12,6 +12,9 @@ echo "Successfully generated .a file."
 # 将cjpm.toml的16行修改成静态编译
 sed -i -e '16 s/  output-type = "dynamic"/  output-type = "static"/' ${lib_path}/cjpm.toml
 
+# 将cjpm.toml的4行的cjpm的mysqlclient改成mysql
+sed -i -e '4 s|  mysqlclient = { path = "./lib/"}|  mysql = { path = "./lib/"}|' ${lib_path}/cjpm.toml
+
 cd  ${lib_path}/
 echo start build mysqlclient
 
