@@ -113,16 +113,14 @@ public class MysqlDatasource <: Datasource {
             }
 
             // 对保存的设置内容进行处理设置
-            for (_ in 0..optionList.size) {
-                var hashMapIterator: HashMapIterator<Int32, CPointer<Unit>> = optionList.iterator()
+            var hashMapIterator: HashMapIterator<Int32, CPointer<Unit>> = optionList.iterator()
+            while (true) {
                 var optionValue: Option<(Int32, CPointer<Unit>)> = hashMapIterator.next()
-                while (true) {
-                    match (optionValue) {
-                        case Some(v) =>
-                            mysql_options(mysql, v[0], v[1])
-                            LibC.free<Unit>(v[1])
-                        case None => break
-                    }
+                match (optionValue) {
+                    case Some(v) =>
+                        mysql_options(mysql, v[0], v[1])
+                        LibC.free<Unit>(v[1])
+                    case None => break
                 }
             }
 
