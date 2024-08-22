@@ -40,6 +40,9 @@ public class MysqlVarcharTest {
 
         // 返回一个可用的链接
         let mysqlConnection: MysqlConnection = mysqlDatasource.connect()
+        
+        mysqlDatasource.setOption(MysqlOption.MYSQL_OPT_CONNECT_TIMEOUT, UInt32(60))
+        mysqlDatasource.setOption(MysqlOption.MYSQL_OPT_READ_TIMEOUT, UInt32(60))
 
         // 删除t_test2名称数据表
         var mysqlStatement1: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test_varchar")
