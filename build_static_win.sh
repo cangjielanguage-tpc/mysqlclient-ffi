@@ -9,8 +9,8 @@ echo "Successfully generated .o file."
 ar qc ${lib_path}/lib/libmysqlclient_cj.a ${lib_path}/libmysqlclient_c/*.o
 echo "Successfully generated .a file."
 
-# 将cjpm.toml的16行修改成静态编译
-sed -i -e '16 s/  output-type = "dynamic"/  output-type = "static"/' ${lib_path}/cjpm.toml
+# 将cjpm.toml的13行修改成静态编译
+sed -i -e '13 s/  output-type = "dynamic"/  output-type = "static"/' ${lib_path}/cjpm.toml
 
 # 将cjpm.toml的4行的cjpm的mysqlclient改成mysql
 sed -i -e '4 s|  mysqlclient = { path = "./lib/"}|  mysql = { path = "./lib/"}|' ${lib_path}/cjpm.toml
@@ -32,5 +32,5 @@ echo end cjpm build -V
 cp ${lib_path}/lib/*.a ${lib_path}/target/release/mysqlclient_ffi/
 echo end build mysqlclient
 
-# 将cjpm.toml的16行修改还原
-sed -i -e '16 s/  output-type = "static"/  output-type = "dynamic"/' ${lib_path}/cjpm.toml
+# 将cjpm.toml的13行修改还原
+sed -i -e '13 s/  output-type = "static"/  output-type = "dynamic"/' ${lib_path}/cjpm.toml
