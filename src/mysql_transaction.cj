@@ -121,7 +121,6 @@ public class MysqlTransaction <: Transaction {
                     case TransactionAccessMode.ReadWrite => sql = "SET SESSION transaction_read_only = OFF"
                     case TransactionAccessMode.ReadOnly => sql = "SET SESSION transaction_read_only = ON"
                     case TransactionAccessMode.Unspecified => sql = "SET SESSION transaction_read_only = OFF"
-                    case _ => throw SqlException("error")
                 }
                 let sqlcstr: CString = LibC.mallocCString(sql)
                 if (mysql_query(mysql, sqlcstr) != 0) {

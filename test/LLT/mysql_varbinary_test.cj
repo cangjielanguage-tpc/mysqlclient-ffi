@@ -57,7 +57,7 @@ public class MysqlVarVarBinaryTest {
         @Assert(2, mysqlStatement.parameterCount)
 
         var id: SqlBigInt = SqlBigInt(1)
-        var name: SqlVarBinary = SqlVarBinary(Array<Byte>(50, item: 89))
+        var name: SqlVarBinary = SqlVarBinary(Array<Byte>(50, repeat: 89))
         var arrDb: Array<SqlDbType> = [id, name]
 
         // 执行插入语句插入数据
@@ -116,7 +116,7 @@ public class MysqlVarVarBinaryTest {
         mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
-        name = SqlVarBinary(Array<Byte>(50, item: 89))
+        name = SqlVarBinary(Array<Byte>(50, repeat: 89))
         arrDb = [name]
 
         // 执行删除语句
@@ -147,7 +147,7 @@ public class MysqlVarVarBinaryTest {
         mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
         @Assert(2, mysqlStatement.parameterCount)
 
-        name = SqlVarBinary(Array<Byte>(10, item: 55))
+        name = SqlVarBinary(Array<Byte>(10, repeat: 55))
         id = SqlBigInt(2)
         arrDb = [name, id]
 
@@ -183,7 +183,7 @@ public class MysqlVarVarBinaryTest {
         @Assert(false, mysqlColumnInfos[1].nullable)
 
         id = SqlBigInt(2)
-        name = SqlVarBinary(Array<Byte>(10, item: 55))
+        name = SqlVarBinary(Array<Byte>(10, repeat: 55))
         arrDb = [id, name]
 
         // 获取数据
