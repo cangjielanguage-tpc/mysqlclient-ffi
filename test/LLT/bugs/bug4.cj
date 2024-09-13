@@ -44,7 +44,7 @@ main(): Int64 {
     var id: SqlBigInt = SqlBigInt(1)
 
     let stream = ByteArrayStream()
-    stream.write(Array<Byte>(5, item: 89))
+    stream.write(Array<Byte>(5, repeat: 89))
     var data1: SqlClob = SqlClob(stream)
 
     var data2: SqlNullableClob = SqlNullableClob(None)
@@ -57,11 +57,11 @@ main(): Int64 {
     id = SqlBigInt(2)
 
     let stream11 = ByteArrayStream()
-    stream11.write(Array<Byte>(5, item: 88))
+    stream11.write(Array<Byte>(5, repeat: 88))
     var data11: SqlClob = SqlClob(stream11)
 
     let stream22 = ByteArrayStream()
-    stream22.write(Array<Byte>(5, item: 87))
+    stream22.write(Array<Byte>(5, repeat: 87))
     var data22: SqlNullableClob = SqlNullableClob(stream22)
     arrDb = [id, data11, data22]
 
@@ -72,11 +72,11 @@ main(): Int64 {
     id = SqlBigInt(3)
 
     let stream111 = ByteArrayStream()
-    stream111.write(Array<Byte>(5, item: 86))
+    stream111.write(Array<Byte>(5, repeat: 86))
     var data111: SqlClob = SqlClob(stream111)
 
     let stream222 = ByteArrayStream()
-    stream222.write(Array<Byte>(5, item: 85))
+    stream222.write(Array<Byte>(5, repeat: 85))
     var data222: SqlNullableClob = SqlNullableClob(stream222)
 
     arrDb = [id, data111, data222]
@@ -100,10 +100,10 @@ main(): Int64 {
     @Assert(true, isBool)
     @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
 
-    var buf = Array<Byte>(5, item: 0)
+    var buf = Array<Byte>(5, repeat: 0)
     (arrDb[1] as SqlClob).getOrThrow().value.read(buf)
 
-    var dataD = Array<Byte>(5, item: 89)
+    var dataD = Array<Byte>(5, repeat: 89)
 
     @Assert(String.fromUtf8(dataD), String.fromUtf8(buf))
     @Assert("YYYYY", String.fromUtf8(buf))
@@ -158,11 +158,11 @@ main(): Int64 {
     id = SqlBigInt(2)
 
     let stream1111 = ByteArrayStream()
-    stream1111.write(Array<Byte>(5, item: 84))
+    stream1111.write(Array<Byte>(5, repeat: 84))
     data1 = SqlClob(stream1111)
 
     let stream2222 = ByteArrayStream()
-    stream2222.write(Array<Byte>(5, item: 83))
+    stream2222.write(Array<Byte>(5, repeat: 83))
     data2 = SqlNullableClob(stream2222)
 
     arrDb = [data1, data2, id]
@@ -188,11 +188,11 @@ main(): Int64 {
     @Assert(true, isBool)
     @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
 
-    buf = Array<Byte>(5, item: 0)
+    buf = Array<Byte>(5, repeat: 0)
     (arrDb[1] as SqlClob).getOrThrow().value.read(buf)
     @Assert("TTTTT", String.fromUtf8(buf))
 
-    buf = Array<Byte>(5, item: 0)
+    buf = Array<Byte>(5, repeat: 0)
     (arrDb[2] as SqlNullableClob).getOrThrow().value.getOrThrow().read(buf)
 
     @Assert("SSSSS", String.fromUtf8(buf))

@@ -58,7 +58,7 @@ public class MysqlBlobTest {
 
         var id: SqlBigInt = SqlBigInt(1)
         let stream = ByteArrayStream()
-        stream.write(Array<Byte>(50, item: 89))
+        stream.write(Array<Byte>(50, repeat: 89))
         var name: SqlBlob = SqlBlob(stream)
         var arrDb: Array<SqlDbType> = [id, name]
 
@@ -148,7 +148,7 @@ public class MysqlBlobTest {
         mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
         @Assert(2, mysqlStatement.parameterCount)
 
-        stream.write(Array<Byte>(10, item: 55))
+        stream.write(Array<Byte>(10, repeat: 55))
         name = SqlBlob(stream)
         id = SqlBigInt(1)
         arrDb = [name, id]
@@ -185,7 +185,7 @@ public class MysqlBlobTest {
         @Assert(false, mysqlColumnInfos[1].nullable)
 
         id = SqlBigInt(1)
-        stream.write(Array<Byte>(10, item: 55))
+        stream.write(Array<Byte>(10, repeat: 55))
         name = SqlBlob(stream)
         arrDb = [id, name]
 
@@ -193,7 +193,7 @@ public class MysqlBlobTest {
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(true, isBool)
         @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        var buf = Array<Byte>(10, item: 0)
+        var buf = Array<Byte>(10, repeat: 0)
         (arrDb[1] as SqlBlob).getOrThrow().value.read(buf)
         @Assert("7777777777", String.fromUtf8(buf))
         mysqlStatement.close()
