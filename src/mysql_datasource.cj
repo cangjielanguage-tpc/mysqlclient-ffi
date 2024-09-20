@@ -10,6 +10,10 @@ package mysqlclient_ffi
 public class MysqlDatasource <: Datasource {
     private var arrList: Array<String>
     private var optionList: HashMap<Int32, CPointer<Unit>> = HashMap<Int32, CPointer<Unit>>()
+    /**
+     * 全局锁
+     */
+    private static let latexReentrantMutex: ReentrantMutex = ReentrantMutex()
 
     /*
      * 初始化数据源
@@ -102,79 +106,81 @@ public class MysqlDatasource <: Datasource {
     public override func connect(): MysqlConnection {
         let portUInt32: UInt32 = UInt32.parse(arrList[4])
         let clientFlagUInt32: UInt64 = UInt64.parse(arrList[6])
-        unsafe {
-            let tCPointer: CPointer<Unit> = CPointer<Unit>()
-            // 获取或初始化结构MYSQL
-            var mysql: CPointer<Unit> = mysql_init(tCPointer)
+        synchronized(latexReentrantMutex) {
+            unsafe {
+                let tCPointer: CPointer<Unit> = CPointer<Unit>()
+                // 获取或初始化结构MYSQL
+                var mysql: CPointer<Unit> = mysql_init(tCPointer)
 
-            if (mysql.isNull()) {
-                // 内存不足返回NULL
-                throw SqlException("Mysql Initialization Failed!")
-            }
-
-            // 对保存的设置内容进行处理设置
-            var hashMapIterator: HashMapIterator<Int32, CPointer<Unit>> = optionList.iterator()
-            while (true) {
-                var optionValue: Option<(Int32, CPointer<Unit>)> = hashMapIterator.next()
-                match (optionValue) {
-                    case Some(v) =>
-                        mysql_options(mysql, v[0], v[1])
-                        LibC.free<Unit>(v[1])
-                    case None => break
+                if (mysql.isNull()) {
+                    // 内存不足返回NULL
+                    throw SqlException("Mysql Initialization Failed!")
                 }
-            }
 
-            var hostCString: CString = CString(CPointer<UInt8>())
-            if (arrList[0].size != 0) {
-                hostCString = LibC.mallocCString(arrList[0])
-            }
-            var userCString: CString = CString(CPointer<UInt8>())
-            if (arrList[1].size != 0) {
-                userCString = LibC.mallocCString(arrList[1])
-            }
-            var pwdCString: CString = CString(CPointer<UInt8>())
-            if (arrList[2].size != 0) {
-                pwdCString = LibC.mallocCString(arrList[2])
-            }
-            var dbCString: CString = CString(CPointer<UInt8>())
-            if (arrList[3].size != 0) {
-                dbCString = LibC.mallocCString(arrList[3])
-            }
-            var unixSocketCString: CString = CString(CPointer<UInt8>())
-            if (arrList[5].size != 0) {
-                unixSocketCString = LibC.mallocCString(arrList[5])
-            }
+                // 对保存的设置内容进行处理设置
+                var hashMapIterator: HashMapIterator<Int32, CPointer<Unit>> = optionList.iterator()
+                while (true) {
+                    var optionValue: Option<(Int32, CPointer<Unit>)> = hashMapIterator.next()
+                    match (optionValue) {
+                        case Some(v) =>
+                            mysql_options(mysql, v[0], v[1])
+                            LibC.free<Unit>(v[1])
+                        case None => break
+                    }
+                }
 
-            // 	连接到MySQL服务器
-            mysql = mysql_real_connect(
-                mysql,
-                hostCString,
-                userCString,
-                pwdCString,
-                dbCString,
-                portUInt32,
-                unixSocketCString,
-                clientFlagUInt32
-            )
-            if (arrList[0].size != 0) {
-                LibC.free(hostCString)
+                var hostCString: CString = CString(CPointer<UInt8>())
+                if (arrList[0].size != 0) {
+                    hostCString = LibC.mallocCString(arrList[0])
+                }
+                var userCString: CString = CString(CPointer<UInt8>())
+                if (arrList[1].size != 0) {
+                    userCString = LibC.mallocCString(arrList[1])
+                }
+                var pwdCString: CString = CString(CPointer<UInt8>())
+                if (arrList[2].size != 0) {
+                    pwdCString = LibC.mallocCString(arrList[2])
+                }
+                var dbCString: CString = CString(CPointer<UInt8>())
+                if (arrList[3].size != 0) {
+                    dbCString = LibC.mallocCString(arrList[3])
+                }
+                var unixSocketCString: CString = CString(CPointer<UInt8>())
+                if (arrList[5].size != 0) {
+                    unixSocketCString = LibC.mallocCString(arrList[5])
+                }
+
+                // 	连接到MySQL服务器
+                mysql = mysql_real_connect(
+                    mysql,
+                    hostCString,
+                    userCString,
+                    pwdCString,
+                    dbCString,
+                    portUInt32,
+                    unixSocketCString,
+                    clientFlagUInt32
+                )
+                if (arrList[0].size != 0) {
+                    LibC.free(hostCString)
+                }
+                if (arrList[1].size != 0) {
+                    LibC.free(userCString)
+                }
+                if (arrList[2].size != 0) {
+                    LibC.free(pwdCString)
+                }
+                if (arrList[3].size != 0) {
+                    LibC.free(dbCString)
+                }
+                if (arrList[5].size != 0) {
+                    LibC.free(unixSocketCString)
+                }
+                if (mysql.isNull()) {
+                    throw SqlException("Connect Failed!")
+                }
+                return MysqlConnection(mysql)
             }
-            if (arrList[1].size != 0) {
-                LibC.free(userCString)
-            }
-            if (arrList[2].size != 0) {
-                LibC.free(pwdCString)
-            }
-            if (arrList[3].size != 0) {
-                LibC.free(dbCString)
-            }
-            if (arrList[5].size != 0) {
-                LibC.free(unixSocketCString)
-            }
-            if (mysql.isNull()) {
-                throw SqlException("Connect Failed!")
-            }
-            return MysqlConnection(mysql)
         }
     }
 
