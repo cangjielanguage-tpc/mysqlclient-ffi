@@ -60,7 +60,7 @@ public class MysqlIntTest {
 
         var id: SqlBigInt = SqlBigInt(1)
 
-        let stream = ByteArrayStream()
+        let stream = ByteBuffer()
         stream.write(Array<Byte>(5, repeat: 89))
         var data1: SqlBlob = SqlBlob(stream)
 
@@ -73,11 +73,11 @@ public class MysqlIntTest {
 
         id = SqlBigInt(2)
 
-        let stream11 = ByteArrayStream()
+        let stream11 = ByteBuffer()
         stream11.write(Array<Byte>(5, repeat: 88))
         var data11: SqlBlob = SqlBlob(stream11)
 
-        let stream22 = ByteArrayStream()
+        let stream22 = ByteBuffer()
         stream22.write(Array<Byte>(5, repeat: 87))
         var data22: SqlNullableBlob = SqlNullableBlob(stream22)
         arrDb = [id, data11, data22]
@@ -88,11 +88,11 @@ public class MysqlIntTest {
 
         id = SqlBigInt(3)
 
-        let stream111 = ByteArrayStream()
+        let stream111 = ByteBuffer()
         stream111.write(Array<Byte>(5, repeat: 86))
         var data111: SqlBlob = SqlBlob(stream111)
 
-        let stream222 = ByteArrayStream()
+        let stream222 = ByteBuffer()
         stream222.write(Array<Byte>(5, repeat: 85))
         var data222: SqlNullableBlob = SqlNullableBlob(stream222)
 
@@ -131,8 +131,8 @@ public class MysqlIntTest {
         @Assert(false, mysqlColumnInfos[2].nullable)
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteArrayStream())
-        data2 = SqlNullableBlob(ByteArrayStream())
+        data1 = SqlBlob(ByteBuffer())
+        data2 = SqlNullableBlob(ByteBuffer())
         arrDb = [id, data1, data2]
 
         var isBool: Bool = mysqlQueryResult.next(arrDb)
@@ -151,8 +151,8 @@ public class MysqlIntTest {
         }
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteArrayStream())
-        data2 = SqlNullableBlob(ByteArrayStream())
+        data1 = SqlBlob(ByteBuffer())
+        data2 = SqlNullableBlob(ByteBuffer())
         arrDb = [id, data1, data2]
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
@@ -177,8 +177,8 @@ public class MysqlIntTest {
         let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteArrayStream())
-        data2 = SqlNullableBlob(ByteArrayStream())
+        data1 = SqlBlob(ByteBuffer())
+        data2 = SqlNullableBlob(ByteBuffer())
         arrDb = [id, data1, data2]
 
         // 获取数据
@@ -193,11 +193,11 @@ public class MysqlIntTest {
 
         id = SqlBigInt(2)
 
-        let stream1111 = ByteArrayStream()
+        let stream1111 = ByteBuffer()
         stream1111.write(Array<Byte>(5, repeat: 84))
         data1 = SqlBlob(stream1111)
 
-        let stream2222 = ByteArrayStream()
+        let stream2222 = ByteBuffer()
         stream2222.write(Array<Byte>(5, repeat: 83))
         data2 = SqlNullableBlob(stream2222)
 
@@ -215,8 +215,8 @@ public class MysqlIntTest {
         var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteArrayStream())
-        data2 = SqlNullableBlob(ByteArrayStream())
+        data1 = SqlBlob(ByteBuffer())
+        data2 = SqlNullableBlob(ByteBuffer())
         arrDb = [id, data1, data2]
 
         // 获取数据

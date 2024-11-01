@@ -326,7 +326,7 @@ func getSqlClob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
         for (i in 0..length) {
             arr[i] = valueCPointer.read(i)
         }
-        var output = ByteArrayStream()
+        var output = ByteBuffer()
         output.write(arr)
         return SqlClob(output)
     }
@@ -343,7 +343,7 @@ func getSqlNullableClob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<
             for (i in 0..length) {
                 arr[i] = valueCPointer.read(i)
             }
-            var output = ByteArrayStream()
+            var output = ByteBuffer()
             output.write(arr)
             return SqlNullableClob(output)
         }
@@ -357,7 +357,7 @@ func getSqlBlob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
         for (i in 0..length) {
             arr[i] = valueCPointer.read(i)
         }
-        var output = ByteArrayStream()
+        var output = ByteBuffer()
         output.write(arr)
         return SqlBlob(output)
     }
@@ -374,7 +374,7 @@ func getSqlNullableBlob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<
             for (i in 0..length) {
                 arr[i] = valueCPointer.read(i)
             }
-            var output = ByteArrayStream()
+            var output = ByteBuffer()
             output.write(arr)
             return SqlNullableBlob(output)
         }

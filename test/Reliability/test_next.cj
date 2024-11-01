@@ -25,7 +25,7 @@ main() {
             var prepareStatement = conn.prepareStatement("drop table if exists t_test")
             prepareStatement=conn.prepareStatement("create table t_test(data text(20) NOT NULL, datanull text(20))")
             prepareStatement=conn.prepareStatement("insert into t_test values(?,?)")
-            var str = ByteArrayStream(20)
+            var str = ByteBuffer(20)
             str.write("12345678".toUtf8Array())
             prepareStatement.update([SqlClob(str), SqlNullableClob(None)])
             prepareStatement = conn.prepareStatement("select * from t_test where data=12345678")

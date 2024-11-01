@@ -43,7 +43,7 @@ main(): Int64 {
 
     var id: SqlBigInt = SqlBigInt(1)
 
-    let stream = ByteArrayStream()
+    let stream = ByteBuffer()
     stream.write(Array<Byte>(5, repeat: 89))
     var data1: SqlClob = SqlClob(stream)
 
@@ -56,11 +56,11 @@ main(): Int64 {
 
     id = SqlBigInt(2)
 
-    let stream11 = ByteArrayStream()
+    let stream11 = ByteBuffer()
     stream11.write(Array<Byte>(5, repeat: 88))
     var data11: SqlClob = SqlClob(stream11)
 
-    let stream22 = ByteArrayStream()
+    let stream22 = ByteBuffer()
     stream22.write(Array<Byte>(5, repeat: 87))
     var data22: SqlNullableClob = SqlNullableClob(stream22)
     arrDb = [id, data11, data22]
@@ -71,11 +71,11 @@ main(): Int64 {
 
     id = SqlBigInt(3)
 
-    let stream111 = ByteArrayStream()
+    let stream111 = ByteBuffer()
     stream111.write(Array<Byte>(5, repeat: 86))
     var data111: SqlClob = SqlClob(stream111)
 
-    let stream222 = ByteArrayStream()
+    let stream222 = ByteBuffer()
     stream222.write(Array<Byte>(5, repeat: 85))
     var data222: SqlNullableClob = SqlNullableClob(stream222)
 
@@ -92,8 +92,8 @@ main(): Int64 {
     var mysqlQueryResult: MysqlQueryResult = mysqlStatement4.query()
 
     id = SqlBigInt(3)
-    data1 = SqlClob(ByteArrayStream())
-    data2 = SqlNullableClob(ByteArrayStream())
+    data1 = SqlClob(ByteBuffer())
+    data2 = SqlNullableClob(ByteBuffer())
     arrDb = [id, data1, data2]
 
     var isBool: Bool = mysqlQueryResult.next(arrDb)
@@ -115,8 +115,8 @@ main(): Int64 {
     }
 
     id = SqlBigInt(3)
-    data1 = SqlClob(ByteArrayStream())
-    data2 = SqlNullableClob(ByteArrayStream())
+    data1 = SqlClob(ByteBuffer())
+    data2 = SqlNullableClob(ByteBuffer())
     arrDb = [id, data1, data2]
     isBool = mysqlQueryResult.next(arrDb)
     @Assert(false, isBool)
@@ -141,8 +141,8 @@ main(): Int64 {
     let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
 
     id = SqlBigInt(3)
-    data1 = SqlClob(ByteArrayStream())
-    data2 = SqlNullableClob(ByteArrayStream())
+    data1 = SqlClob(ByteBuffer())
+    data2 = SqlNullableClob(ByteBuffer())
     arrDb = [id, data1, data2]
 
     // 获取数据
@@ -157,11 +157,11 @@ main(): Int64 {
 
     id = SqlBigInt(2)
 
-    let stream1111 = ByteArrayStream()
+    let stream1111 = ByteBuffer()
     stream1111.write(Array<Byte>(5, repeat: 84))
     data1 = SqlClob(stream1111)
 
-    let stream2222 = ByteArrayStream()
+    let stream2222 = ByteBuffer()
     stream2222.write(Array<Byte>(5, repeat: 83))
     data2 = SqlNullableClob(stream2222)
 
@@ -179,8 +179,8 @@ main(): Int64 {
     var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()
 
     id = SqlBigInt(3)
-    data1 = SqlClob(ByteArrayStream())
-    data2 = SqlNullableClob(ByteArrayStream())
+    data1 = SqlClob(ByteBuffer())
+    data2 = SqlNullableClob(ByteBuffer())
     arrDb = [id, data1, data2]
 
     // 获取数据
