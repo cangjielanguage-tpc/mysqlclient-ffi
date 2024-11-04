@@ -57,7 +57,7 @@ public class MysqlClobTest {
         @Assert(2, mysqlStatement.parameterCount)
 
         var id: SqlBigInt = SqlBigInt(1)
-        let stream = ByteArrayStream()
+        let stream = ByteBuffer()
         stream.write(Array<Byte>(50, repeat: 89))
         var name: SqlClob = SqlClob(stream)
         var arrDb: Array<SqlDbType> = [id, name]
@@ -66,7 +66,7 @@ public class MysqlClobTest {
         var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
         @Assert(1, mysqlUpdateResult.rowCount)
 
-        var name2 = SqlNullableClob(ByteArrayStream())
+        var name2 = SqlNullableClob(ByteBuffer())
         id = SqlBigInt(2)
         arrDb = [id, name2]
 
@@ -102,7 +102,7 @@ public class MysqlClobTest {
         @Assert(false, mysqlColumnInfos[1].nullable)
 
         id = SqlBigInt(0)
-        name2 = SqlNullableClob(ByteArrayStream())
+        name2 = SqlNullableClob(ByteBuffer())
         arrDb = [id, name2]
 
         // 获取数据
@@ -138,7 +138,7 @@ public class MysqlClobTest {
 
         // 获取数据
         id = SqlBigInt(0)
-        name2 = SqlNullableClob(ByteArrayStream())
+        name2 = SqlNullableClob(ByteBuffer())
         arrDb = [id, name2]
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)

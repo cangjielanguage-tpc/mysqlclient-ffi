@@ -37,6 +37,5 @@ cjpm build -V
 echo end cjpm build -V
 
 cp ${lib_path}/lib/*.so ${lib_path}/target/release/mysqlclient_ffi/
-cp ${lib_path}/lib/*.so.21 ${lib_path}/target/release/mysqlclient_ffi/
-cp ${lib_path}/lib/*.so.21.2.33 ${lib_path}/target/release/mysqlclient_ffi/
+cp ${lib_path}/lib/*.so.* ${lib_path}/target/release/mysqlclient_ffi/
 echo end build mysqlclient

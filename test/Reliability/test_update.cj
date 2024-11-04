@@ -28,7 +28,7 @@ main() {
                     var prepareStatement = conn.prepareStatement("drop table if exists test")
                     prepareStatement=conn.prepareStatement("create table test(data text(20) NOT NULL, datanull text(20))")
                     prepareStatement=conn.prepareStatement("insert into test values(?,?)")
-                    var str = ByteArrayStream(20)
+                    var str = ByteBuffer(20)
                     str.write("12345678".toUtf8Array())
                     var rowCount = prepareStatement.update([SqlClob(str), SqlNullableClob(None)])
                     if(rowCount.rowCount == 1){
