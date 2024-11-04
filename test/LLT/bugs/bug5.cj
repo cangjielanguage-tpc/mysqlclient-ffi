@@ -41,7 +41,7 @@ main(): Int64 {
     @Assert(3, mysqlStatement3.parameterCount)
 
     var id: SqlBigInt = SqlBigInt(1)
-    var data1: SqlBinary = SqlBinary(Array<Byte>(50, repeat: 89))
+    var data1: SqlBinary = SqlBinary(Array<Byte>(50, item: 89))
     var data2: SqlNullableBinary = SqlNullableBinary(None)
     var arrDb: Array<SqlDbType> = [id, data1, data2]
 
@@ -50,8 +50,8 @@ main(): Int64 {
     @Assert(1, mysqlUpdateResult1.rowCount)
 
     id = SqlBigInt(2)
-    data1 = SqlBinary(Array<Byte>(50, repeat: 88))
-    data2 = SqlNullableBinary(Array<Byte>(50, repeat: 87))
+    data1 = SqlBinary(Array<Byte>(50, item: 88))
+    data2 = SqlNullableBinary(Array<Byte>(50, item: 87))
     arrDb = [id, data1, data2]
 
     // 执行插入语句插入数据
@@ -59,8 +59,8 @@ main(): Int64 {
     @Assert(1, mysqlUpdateResult2.rowCount)
 
     id = SqlBigInt(3)
-    data1 = SqlBinary(Array<Byte>(50, repeat: 86))
-    data2 = SqlNullableBinary(Array<Byte>(50, repeat: 85))
+    data1 = SqlBinary(Array<Byte>(50, item: 86))
+    data2 = SqlNullableBinary(Array<Byte>(50, item: 85))
     arrDb = [id, data1, data2]
 
     // 执行插入语句插入数据
@@ -82,7 +82,7 @@ main(): Int64 {
     @Assert(true, isBool)
     @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
 
-    var dataD = Array<Byte>(50, repeat: 89)
+    var dataD = Array<Byte>(50, item: 89)
     var bufD = (arrDb[1] as SqlBinary).getOrThrow().value
 
     @Assert(String.fromUtf8(dataD), String.fromUtf8(bufD))
@@ -135,8 +135,8 @@ main(): Int64 {
     @Assert(3, mysqlStatement7.parameterCount)
 
     id = SqlBigInt(2)
-    data1 = SqlBinary(Array<Byte>(50, repeat: 84))
-    data2 = SqlNullableBinary(Array<Byte>(50, repeat: 83))
+    data1 = SqlBinary(Array<Byte>(50, item: 84))
+    data2 = SqlNullableBinary(Array<Byte>(50, item: 83))
     arrDb = [data1, data2, id]
 
     // 执行更新语句
@@ -160,11 +160,11 @@ main(): Int64 {
     @Assert(true, isBool)
     @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
 
-    var dataD1 = Array<Byte>(50, repeat: 84)
+    var dataD1 = Array<Byte>(50, item: 84)
     var bufD1 = (arrDb[1] as SqlBinary).getOrThrow().value
     @Assert(String.fromUtf8(dataD1), String.fromUtf8(bufD1))
 
-    var dataD2 = Array<Byte>(50, repeat: 83)
+    var dataD2 = Array<Byte>(50, item: 83)
     var bufD2 = (arrDb[2] as SqlNullableBinary).getOrThrow().value.getOrThrow()
     @Assert(String.fromUtf8(dataD2), String.fromUtf8(bufD2))
     mysqlStatement8.close()

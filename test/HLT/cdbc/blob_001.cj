@@ -31,7 +31,7 @@ public class blob_001 {
     @TestCase
     public func blob_001(): Unit {
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
-        var str = ByteBuffer(20)
+        var str = ByteArrayStream(20)
         str.write([11, 22, 33])
         rowCount = prepareStatement.update([SqlBlob(str), SqlNullableBlob(None)])
         @Assert(1, rowCount.rowCount)
@@ -43,7 +43,7 @@ public class blob_001 {
         @Assert("SqlBlob", queryResult.columnInfos[0].typeName)
         match (arr[0]) {
             case v: SqlBlob =>
-                var a = Array<UInt8>(3, repeat: 0)
+                var a = Array<UInt8>(3, item: 0)
                 v.value.read(a)
                 @Assert([11,22,33].toString(), a.toString())
             case _ => @Assert("abc", "123")
@@ -52,7 +52,7 @@ public class blob_001 {
         match (arr[1]) {
             case v: SqlNullableBlob => match (v.value) {
                 case Some(v) =>
-                    var a = Array<UInt8>(0, repeat: 0)
+                    var a = Array<UInt8>(0, item: 0)
                     v.read(a)
                     @Assert(None<Array<UInt8>>, a)
                 case None => @Assert(None<String>, None<String>)

@@ -60,8 +60,8 @@ public class MysqlIntTest {
 
         var id: SqlBigInt = SqlBigInt(1)
 
-        let stream = ByteBuffer()
-        stream.write(Array<Byte>(5, repeat: 89))
+        let stream = ByteArrayStream()
+        stream.write(Array<Byte>(5, item: 89))
         var data1: SqlBlob = SqlBlob(stream)
 
         var data2: SqlNullableBlob = SqlNullableBlob(None)
@@ -73,12 +73,12 @@ public class MysqlIntTest {
 
         id = SqlBigInt(2)
 
-        let stream11 = ByteBuffer()
-        stream11.write(Array<Byte>(5, repeat: 88))
+        let stream11 = ByteArrayStream()
+        stream11.write(Array<Byte>(5, item: 88))
         var data11: SqlBlob = SqlBlob(stream11)
 
-        let stream22 = ByteBuffer()
-        stream22.write(Array<Byte>(5, repeat: 87))
+        let stream22 = ByteArrayStream()
+        stream22.write(Array<Byte>(5, item: 87))
         var data22: SqlNullableBlob = SqlNullableBlob(stream22)
         arrDb = [id, data11, data22]
 
@@ -88,12 +88,12 @@ public class MysqlIntTest {
 
         id = SqlBigInt(3)
 
-        let stream111 = ByteBuffer()
-        stream111.write(Array<Byte>(5, repeat: 86))
+        let stream111 = ByteArrayStream()
+        stream111.write(Array<Byte>(5, item: 86))
         var data111: SqlBlob = SqlBlob(stream111)
 
-        let stream222 = ByteBuffer()
-        stream222.write(Array<Byte>(5, repeat: 85))
+        let stream222 = ByteArrayStream()
+        stream222.write(Array<Byte>(5, item: 85))
         var data222: SqlNullableBlob = SqlNullableBlob(stream222)
 
         arrDb = [id, data111, data222]
@@ -131,15 +131,15 @@ public class MysqlIntTest {
         @Assert(false, mysqlColumnInfos[2].nullable)
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
+        data1 = SqlBlob(ByteArrayStream())
+        data2 = SqlNullableBlob(ByteArrayStream())
         arrDb = [id, data1, data2]
 
         var isBool: Bool = mysqlQueryResult.next(arrDb)
         @Assert(true, isBool)
         @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
 
-        var buf = Array<Byte>(5, repeat: 0)
+        var buf = Array<Byte>(5, item: 0)
         (arrDb[1] as SqlBlob).getOrThrow().value.read(buf)
 
         @Assert("YYYYY", String.fromUtf8(buf))
@@ -151,8 +151,8 @@ public class MysqlIntTest {
         }
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
+        data1 = SqlBlob(ByteArrayStream())
+        data2 = SqlNullableBlob(ByteArrayStream())
         arrDb = [id, data1, data2]
         isBool = mysqlQueryResult.next(arrDb)
         @Assert(false, isBool)
@@ -177,8 +177,8 @@ public class MysqlIntTest {
         let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
+        data1 = SqlBlob(ByteArrayStream())
+        data2 = SqlNullableBlob(ByteArrayStream())
         arrDb = [id, data1, data2]
 
         // 获取数据
@@ -193,12 +193,12 @@ public class MysqlIntTest {
 
         id = SqlBigInt(2)
 
-        let stream1111 = ByteBuffer()
-        stream1111.write(Array<Byte>(5, repeat: 84))
+        let stream1111 = ByteArrayStream()
+        stream1111.write(Array<Byte>(5, item: 84))
         data1 = SqlBlob(stream1111)
 
-        let stream2222 = ByteBuffer()
-        stream2222.write(Array<Byte>(5, repeat: 83))
+        let stream2222 = ByteArrayStream()
+        stream2222.write(Array<Byte>(5, item: 83))
         data2 = SqlNullableBlob(stream2222)
 
         arrDb = [data1, data2, id]
@@ -215,8 +215,8 @@ public class MysqlIntTest {
         var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()
 
         id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
+        data1 = SqlBlob(ByteArrayStream())
+        data2 = SqlNullableBlob(ByteArrayStream())
         arrDb = [id, data1, data2]
 
         // 获取数据
@@ -224,11 +224,11 @@ public class MysqlIntTest {
         @Assert(true, isBool)
         @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
 
-        buf = Array<Byte>(5, repeat: 0)
+        buf = Array<Byte>(5, item: 0)
         (arrDb[1] as SqlBlob).getOrThrow().value.read(buf)
         @Assert("TTTTT", String.fromUtf8(buf))
 
-        buf = Array<Byte>(5, repeat: 0)
+        buf = Array<Byte>(5, item: 0)
         (arrDb[2] as SqlNullableBlob).getOrThrow().value.getOrThrow().read(buf)
 
         println(String.fromUtf8(buf))

@@ -246,7 +246,7 @@ public class MysqlStatement <: Statement {
             let columnCountInt64: Int64 = Int64(columnCount)
             var cMysqlColumnInfos: Array<MYSQL_COLUMN_INFO> = Array<MYSQL_COLUMN_INFO>(
                 columnCountInt64,
-                repeat: MYSQL_COLUMN_INFO()
+                item: MYSQL_COLUMN_INFO()
             )
             var cp: CPointerHandle<MYSQL_COLUMN_INFO> = acquireArrayRawData<MYSQL_COLUMN_INFO>(
                 cMysqlColumnInfos.toArray())
@@ -254,7 +254,7 @@ public class MysqlStatement <: Statement {
             get_res_data(metadataUnit, columnCountInt64, bytesCPointer)
             var mysqlColumnInfos: Array<MysqlColumnInfo> = Array<MysqlColumnInfo>(
                 columnCountInt64,
-                repeat: MysqlColumnInfo("", "", 0, 0, 0, false)
+                item: MysqlColumnInfo("", "", 0, 0, 0, false)
             )
             for (i in 0..columnCountInt64) {
                 var field: MYSQL_COLUMN_INFO = bytesCPointer.read(i)
@@ -401,7 +401,7 @@ func setBytes(bindsCP: CPointer<Unit>, index: Int64, value: Option<Array<Byte>>)
 func setClob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>): Bool {
     match (value) {
         case Some(v) =>
-            var arr: Array<Byte> = Array<Byte>(1, repeat: 0)
+            var arr: Array<Byte> = Array<Byte>(1, item: 0)
             var list: ArrayList<Byte> = ArrayList<Byte>()
             var length: Int64 = 0
             while (true) {
@@ -428,7 +428,7 @@ func setClob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>):
 func setBlob(bindsCP: CPointer<Unit>, index: Int64, value: Option<InputStream>): Bool {
     match (value) {
         case Some(v) =>
-            var arr: Array<Byte> = Array<Byte>(1, repeat: 0)
+            var arr: Array<Byte> = Array<Byte>(1, item: 0)
             var list: ArrayList<Byte> = ArrayList<Byte>()
             var length: Int64 = 0
             while (true) {

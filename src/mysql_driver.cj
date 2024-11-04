@@ -120,7 +120,7 @@ public class MysqlDriver <: Driver {
                 throw SqlException("Url is error!")
             }
         }
-        var arrList: Array<String> = Array<String>(7, repeat: "")
+        var arrList: Array<String> = Array<String>(7, item: "")
         arrList[0] = hostString
         arrList[1] = userString
         arrList[2] = pwdString

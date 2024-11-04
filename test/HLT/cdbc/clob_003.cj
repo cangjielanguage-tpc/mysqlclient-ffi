@@ -27,7 +27,7 @@ public class OdbcTest {
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
-        var str = ByteBuffer(20)
+        var str = ByteArrayStream(20)
         str.write("12345678".toArray())
         rowCount = prepareStatement.update([SqlClob(str), SqlNullableClob(None)])
         @Assert(1, rowCount.rowCount)
@@ -40,7 +40,7 @@ public class OdbcTest {
         // @Assert("SqlClob", queryResult.columnInfos[0].typeName)
         match (arr[0]) {
             case v: SqlClob =>
-                var a = Array<UInt8>(8, repeat: 0)
+                var a = Array<UInt8>(8, item: 0)
                 v.value.read(a)
                 @Assert("12345678".toArray().toString(), a.toString())
             case _ => @Assert("abc", "123")
@@ -50,7 +50,7 @@ public class OdbcTest {
         match (arr[1]) {
             case v: SqlNullableClob => match (v.value) {
                 case Some(v) =>
-                    var a = Array<UInt8>(0, repeat: 0)
+                    var a = Array<UInt8>(0, item: 0)
                     v.read(a)
                     @Assert(None<Array<UInt8>>, a)
                 case None => @Assert(None<String>, None<String>)

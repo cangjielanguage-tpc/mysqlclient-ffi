@@ -268,7 +268,7 @@ func getSqlNullableVarchar(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlD
 func getSqlBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-        var arr = Array<Byte>(length, repeat: 0)
+        var arr = Array<Byte>(length, item: 0)
         for (i in 0..length) {
             arr[i] = valueCPointer.read(i)
         }
@@ -283,7 +283,7 @@ func getSqlNullableBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPointe
             return SqlNullableBinary(None)
         } else {
             let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-            var arr = Array<Byte>(length, repeat: 0)
+            var arr = Array<Byte>(length, item: 0)
             for (i in 0..length) {
                 arr[i] = valueCPointer.read(i)
             }
@@ -295,7 +295,7 @@ func getSqlNullableBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPointe
 func getSqlVarBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-        var arr = Array<Byte>(length, repeat: 0)
+        var arr = Array<Byte>(length, item: 0)
         for (i in 0..length) {
             arr[i] = valueCPointer.read(i)
         }
@@ -310,7 +310,7 @@ func getSqlNullableVarBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPoi
             return SqlNullableVarBinary(None)
         } else {
             let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-            var arr = Array<Byte>(length, repeat: 0)
+            var arr = Array<Byte>(length, item: 0)
             for (i in 0..length) {
                 arr[i] = valueCPointer.read(i)
             }
@@ -322,11 +322,11 @@ func getSqlNullableVarBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPoi
 func getSqlClob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-        var arr = Array<Byte>(length, repeat: 0)
+        var arr = Array<Byte>(length, item: 0)
         for (i in 0..length) {
             arr[i] = valueCPointer.read(i)
         }
-        var output = ByteBuffer()
+        var output = ByteArrayStream()
         output.write(arr)
         return SqlClob(output)
     }
@@ -339,11 +339,11 @@ func getSqlNullableClob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<
             return SqlNullableClob(None)
         } else {
             let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-            var arr = Array<Byte>(length, repeat: 0)
+            var arr = Array<Byte>(length, item: 0)
             for (i in 0..length) {
                 arr[i] = valueCPointer.read(i)
             }
-            var output = ByteBuffer()
+            var output = ByteArrayStream()
             output.write(arr)
             return SqlNullableClob(output)
         }
@@ -353,11 +353,11 @@ func getSqlNullableClob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<
 func getSqlBlob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-        var arr = Array<Byte>(length, repeat: 0)
+        var arr = Array<Byte>(length, item: 0)
         for (i in 0..length) {
             arr[i] = valueCPointer.read(i)
         }
-        var output = ByteBuffer()
+        var output = ByteArrayStream()
         output.write(arr)
         return SqlBlob(output)
     }
@@ -370,11 +370,11 @@ func getSqlNullableBlob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<
             return SqlNullableBlob(None)
         } else {
             let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
-            var arr = Array<Byte>(length, repeat: 0)
+            var arr = Array<Byte>(length, item: 0)
             for (i in 0..length) {
                 arr[i] = valueCPointer.read(i)
             }
-            var output = ByteBuffer()
+            var output = ByteArrayStream()
             output.write(arr)
             return SqlNullableBlob(output)
         }
