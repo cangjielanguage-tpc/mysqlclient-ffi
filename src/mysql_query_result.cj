@@ -52,6 +52,9 @@ public class MysqlQueryResult <: QueryResult {
     public override func next(values: Array<SqlDbType>): Bool {
         unsafe {
             var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+            if (bindsCP.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
             if (values.size > 0) {
                 bindsCP = init_bind(values.size)
             }
@@ -127,6 +130,18 @@ func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64):
         var bufferTypeCp: CPointer<Unit> = LibC.malloc<Unit>(count: 1)
         var isNullCp: CPointer<Unit> = LibC.malloc<Unit>(count: 1)
         var lengthCp: CPointer<Int64> = LibC.malloc<Int64>(count: 8)
+        if (bufferTypeCp.isNull()) {
+            throw SqlException("Native malloc Failed.")
+        }
+        if (isNullCp.isNull()) {
+            LibC.free<Unit>(bufferTypeCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (lengthCp.isNull()) {
+            LibC.free<Unit>(bufferTypeCp)
+            LibC.free<Unit>(isNullCp)
+            throw SqlException("Native malloc Failed.")
+        }
         var bufferCp: CPointer<Unit> = get_sql_buffer(bindsCP, index, bufferTypeCp, isNullCp, lengthCp)
         let sqlDbType: SqlDbType = match (value) {
             // String----SqlChar----CHAR----CHAR----MYSQL_TYPE_STRING----char[]
@@ -545,6 +560,39 @@ func getSqlDate(buffer: CPointer<Unit>): SqlDbType {
         var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+        if (yearCp.isNull()) {
+            throw SqlException("Native malloc Failed.")
+        }
+        if (monthCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (dayCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (hourCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (minuteCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (secondCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            throw SqlException("Native malloc Failed.")
+        }
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
         let dateTime: DateTime = DateTime.of(
             year: Int64(yearCp.read()),
@@ -573,6 +621,39 @@ func getSqlNullableDate(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
             var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            if (yearCp.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
+            if (monthCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (dayCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (hourCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (minuteCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (secondCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                LibC.free<UInt32>(minuteCp)
+                throw SqlException("Native malloc Failed.")
+            }
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
             let dateTime: DateTime = DateTime.of(
                 year: Int64(yearCp.read()),
@@ -598,6 +679,39 @@ func getSqlTime(buffer: CPointer<Unit>): SqlDbType {
         var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+        if (yearCp.isNull()) {
+            throw SqlException("Native malloc Failed.")
+        }
+        if (monthCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (dayCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (hourCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (minuteCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (secondCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            throw SqlException("Native malloc Failed.")
+        }
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
         let dateTime: DateTime = DateTime.of(
             year: 1970,
@@ -629,6 +743,39 @@ func getSqlNullableTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
             var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            if (yearCp.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
+            if (monthCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (dayCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (hourCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (minuteCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (secondCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                LibC.free<UInt32>(minuteCp)
+                throw SqlException("Native malloc Failed.")
+            }
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
             let dateTime: DateTime = DateTime.of(
                 year: 1970,
@@ -657,6 +804,39 @@ func getSqlTimestamp(buffer: CPointer<Unit>): SqlDbType {
         var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+        if (yearCp.isNull()) {
+            throw SqlException("Native malloc Failed.")
+        }
+        if (monthCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (dayCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (hourCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (minuteCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (secondCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            throw SqlException("Native malloc Failed.")
+        }
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
         let dateTime: DateTime = DateTime.of(
             year: Int64(yearCp.read()),
@@ -688,6 +868,39 @@ func getSqlNullableTimestamp(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sq
             var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            if (yearCp.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
+            if (monthCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (dayCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (hourCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (minuteCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (secondCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                LibC.free<UInt32>(minuteCp)
+                throw SqlException("Native malloc Failed.")
+            }
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
             let dateTime: DateTime = DateTime.of(
                 year: Int64(yearCp.read()),
@@ -716,6 +929,39 @@ func getSqlDateTime(buffer: CPointer<Unit>): SqlDbType {
         var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+        if (yearCp.isNull()) {
+            throw SqlException("Native malloc Failed.")
+        }
+        if (monthCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (dayCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (hourCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (minuteCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        if (secondCp.isNull()) {
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            throw SqlException("Native malloc Failed.")
+        }
         get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
         let dateTime: DateTime = DateTime.of(
             year: Int64(yearCp.read()),
@@ -747,6 +993,39 @@ func getSqlNullableDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sql
             var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
             var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            if (yearCp.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
+            if (monthCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (dayCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (hourCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (minuteCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                throw SqlException("Native malloc Failed.")
+            }
+            if (secondCp.isNull()) {
+                LibC.free<UInt32>(yearCp)
+                LibC.free<UInt32>(monthCp)
+                LibC.free<UInt32>(dayCp)
+                LibC.free<UInt32>(hourCp)
+                LibC.free<UInt32>(minuteCp)
+                throw SqlException("Native malloc Failed.")
+            }
             get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp);
             let dateTime: DateTime = DateTime.of(
                 year: Int64(yearCp.read()),
