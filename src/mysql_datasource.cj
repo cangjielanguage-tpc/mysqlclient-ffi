@@ -57,6 +57,9 @@ public class MysqlDatasource <: Datasource {
     public func setOption(key: MysqlOption, value: UInt32): Unit {
         unsafe {
             let valueCPointer: CPointer<UInt32> = LibC.malloc<UInt32>()
+            if (valueCPointer.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
             optionList.put(key.toInt32(), valueCPointer1)
@@ -72,6 +75,9 @@ public class MysqlDatasource <: Datasource {
     public func setOption(key: MysqlOption, value: UInt64): Unit {
         unsafe {
             let valueCPointer: CPointer<UInt64> = LibC.malloc<UInt64>()
+            if (valueCPointer.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
             optionList.put(key.toInt32(), valueCPointer1)
@@ -87,6 +93,9 @@ public class MysqlDatasource <: Datasource {
     public func setOption(key: MysqlOption, value: Bool): Unit {
         unsafe {
             let valueCPointer: CPointer<Byte> = LibC.malloc<Byte>()
+            if (valueCPointer.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
             if (value) {
                 valueCPointer.write(1)
             } else {
