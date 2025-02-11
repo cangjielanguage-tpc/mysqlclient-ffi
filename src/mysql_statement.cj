@@ -119,7 +119,8 @@ public class MysqlStatement <: Statement {
         let rows: Int64
         if (parameterCount == params.size) {
             unsafe {
-                var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+                var bindsCPInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
+                var bindsCP: CPointer<Unit> = CPointer<Unit>(bindsCPInt8)
                 if (bindsCP.isNull()) {
                     throw SqlException("Native malloc Failed.")
                 }
@@ -176,7 +177,8 @@ public class MysqlStatement <: Statement {
     public override func query(params: Array<SqlDbType>): MysqlQueryResult {
         if (parameterCount == params.size) {
             unsafe {
-                var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+                var bindsCPInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
+                var bindsCP: CPointer<Unit> = CPointer<Unit>(bindsCPInt8)
                 if (bindsCP.isNull()) {
                     throw SqlException("Native malloc Failed.")
                 }

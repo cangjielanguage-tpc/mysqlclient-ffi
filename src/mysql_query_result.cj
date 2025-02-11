@@ -51,7 +51,8 @@ public class MysqlQueryResult <: QueryResult {
      */
     public override func next(values: Array<SqlDbType>): Bool {
         unsafe {
-            var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+            var bindsCPInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
+            var bindsCP: CPointer<Unit> = CPointer<Unit>(bindsCPInt8)
             if (bindsCP.isNull()) {
                 throw SqlException("Native malloc Failed.")
             }
@@ -127,6 +128,10 @@ public class MysqlQueryResult <: QueryResult {
 
 func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64): SqlDbType {
     unsafe {
+        // var bufferTypeCpInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
+        // var bufferTypeCp: CPointer<Unit> = CPointer<Unit>(bufferTypeCpInt8)
+        // var isNullCpCpInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
+        // var isNullCp: CPointer<Unit> = CPointer<Unit>(isNullCpCpInt8)
         var bufferTypeCp: CPointer<Unit> = LibC.malloc<Unit>(count: 1)
         var isNullCp: CPointer<Unit> = LibC.malloc<Unit>(count: 1)
         var lengthCp: CPointer<Int64> = LibC.malloc<Int64>(count: 8)
