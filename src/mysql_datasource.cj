@@ -44,7 +44,7 @@ public class MysqlDatasource <: Datasource {
         unsafe {
             let sqlCString: CString = LibC.mallocCString(value)
             let valueCPointer: CPointer<Unit> = CPointer<Unit>(sqlCString.getChars())
-            optionList.put(key.toInt32(), valueCPointer)
+            optionList.add(key.toInt32(), valueCPointer)
         }
     }
 
@@ -62,7 +62,7 @@ public class MysqlDatasource <: Datasource {
             }
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
-            optionList.put(key.toInt32(), valueCPointer1)
+            optionList.add(key.toInt32(), valueCPointer1)
         }
     }
 
@@ -80,7 +80,7 @@ public class MysqlDatasource <: Datasource {
             }
             valueCPointer.write(value)
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
-            optionList.put(key.toInt32(), valueCPointer1)
+            optionList.add(key.toInt32(), valueCPointer1)
         }
     }
 
@@ -102,7 +102,7 @@ public class MysqlDatasource <: Datasource {
                 valueCPointer.write(0)
             }
             let valueCPointer1: CPointer<Unit> = CPointer<Unit>(valueCPointer)
-            optionList.put(key.toInt32(), valueCPointer1)
+            optionList.add(key.toInt32(), valueCPointer1)
         }
     }
 
