@@ -62,6 +62,9 @@ public class MysqlStatement <: Statement {
     public func setOption(option: MysqlStmtAttrType, arg: Bool): Unit {
         unsafe {
             let argCPointer: CPointer<Byte> = LibC.malloc<Byte>()
+            if (argCPointer.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
             if (arg) {
                 argCPointer.write(1)
             } else {
@@ -89,6 +92,9 @@ public class MysqlStatement <: Statement {
     public func setOption(option: MysqlStmtAttrType, arg: UInt64): Unit {
         unsafe {
             let argCPointer: CPointer<UInt64> = LibC.malloc<UInt64>()
+            if (argCPointer.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
             argCPointer.write(arg)
             let argCPointer1: CPointer<Unit> = CPointer<Unit>(argCPointer)
 
@@ -114,6 +120,9 @@ public class MysqlStatement <: Statement {
         if (parameterCount == params.size) {
             unsafe {
                 var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+                if (bindsCP.isNull()) {
+                    throw SqlException("Native malloc Failed.")
+                }
                 if (params.size > 0) {
                     bindsCP = init_bind(params.size)
                 }
@@ -168,6 +177,9 @@ public class MysqlStatement <: Statement {
         if (parameterCount == params.size) {
             unsafe {
                 var bindsCP: CPointer<Unit> = LibC.malloc<Unit>()
+                if (bindsCP.isNull()) {
+                    throw SqlException("Native malloc Failed.")
+                }
                 if (params.size > 0) {
                     bindsCP = init_bind(params.size)
                 }
