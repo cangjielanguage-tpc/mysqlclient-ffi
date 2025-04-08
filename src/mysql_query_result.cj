@@ -1060,7 +1060,7 @@ func getSqlDecimal(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         let cstirng: CString = CString(valueCPointer)
-        return SqlDecimal(Decimal(cstirng.toString()))
+        return SqlDecimal(Decimal.parse(cstirng.toString()))
     }
 }
 
@@ -1072,7 +1072,7 @@ func getSqlNullableDecimal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlD
         } else {
             let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
             let cstirng: CString = CString(valueCPointer)
-            return SqlNullableDecimal(Decimal(cstirng.toString()))
+            return SqlNullableDecimal(Decimal.parse(cstirng.toString()))
         }
     }
 }

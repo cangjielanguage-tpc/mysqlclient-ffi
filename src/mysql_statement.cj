@@ -550,7 +550,7 @@ func setFloat64(bindsCP: CPointer<Unit>, index: Int64, value: Option<Float64>): 
 func setDate(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>): Bool {
     match (value) {
         case Some(v) => unsafe {
-                set_date(bindsCP, index, UInt32(v.year), UInt32(v.monthValue), UInt32(v.dayOfMonth))
+                set_date(bindsCP, index, UInt32(v.year), UInt32(v.month.toInteger()), UInt32(v.dayOfMonth))
             }
         case None => unsafe {
                 set_null(bindsCP, index)
@@ -576,7 +576,7 @@ func setTimestamp(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>
                     bindsCP,
                     index,
                     UInt32(v.year),
-                    UInt32(v.monthValue),
+                    UInt32(v.month.toInteger()),
                     UInt32(v.dayOfMonth),
                     UInt32(v.hour),
                     UInt32(v.minute),
@@ -596,7 +596,7 @@ func setDateTime(bindsCP: CPointer<Unit>, index: Int64, value: Option<DateTime>)
                     bindsCP,
                     index,
                     UInt32(v.year),
-                    UInt32(v.monthValue),
+                    UInt32(v.month.toInteger()),
                     UInt32(v.dayOfMonth),
                     UInt32(v.hour),
                     UInt32(v.minute),

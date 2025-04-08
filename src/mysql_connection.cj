@@ -26,8 +26,7 @@ public class MysqlConnection <: Connection {
      * 参数 mysql - 初始化的mysql
      */
     init(mysql: CPointer<Unit>) {
-        let rnd = Random()
-        rnd.seed = UInt64(DateTime.now().toUnixTimeStamp().toMilliseconds())
+        let rnd = Random(UInt64(DateTime.nowUTC().toUnixTimeStamp().toMilliseconds()))
         this.objIdValue = rnd.nextUInt64()
         this.mysql = mysql
     }

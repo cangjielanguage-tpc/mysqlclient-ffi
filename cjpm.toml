@@ -5,7 +5,7 @@
   mysqlclient_cj = { path = "./lib/"}
 
 [package]
-  cjc-version = "0.58.3"
+  cjc-version = "0.59.6"
   compile-option = "-O2"
   description = "mysqlclient_ffi"
   link-option = ""
