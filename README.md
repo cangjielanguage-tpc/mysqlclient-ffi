@@ -222,10 +222,12 @@ main(): Int64 {
     // 删除t_test名称数据表
     var mysqlStatement: MysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
     mysqlStatement.update()
+    mysqlStatement.close()
 
     // 创建t_test名称数据表
     mysqlStatement = mysqlConnection.prepareStatement("create table t_test(id bigint, name varchar(50))")
     mysqlStatement.update()
+    mysqlStatement.close()
 
     // 插入数据预执行语句
     mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
@@ -252,6 +254,7 @@ main(): Int64 {
     if (mysqlUpdateResult.rowCount == 1) {
         println("pass5")
     }
+    mysqlStatement.close()
 
     // 查询语句预执行语句
     mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -321,6 +324,7 @@ main(): Int64 {
     if ((arrDb[1] as SqlVarchar).getOrThrow().value == "lihao222") {
         println("pass22")
     }
+    mysqlStatement.close()
 
     // 删除语句预执行语句
     mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
@@ -336,6 +340,7 @@ main(): Int64 {
     if (mysqlUpdateResult.rowCount == 1) {
         println("pass24")
     }
+    mysqlStatement.close()
 
     // 查询语句预执行语句
     mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -355,6 +360,7 @@ main(): Int64 {
     if (!isBool) {
         println("pass26")
     }
+    mysqlStatement.close()
 
     // 更新语句预执行语句
     mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
@@ -371,6 +377,7 @@ main(): Int64 {
     if (mysqlUpdateResult.rowCount == 1) {
         println("pass28")
     }
+    mysqlStatement.close()
 
     // 查询语句预执行语句
     mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
@@ -402,12 +409,11 @@ main(): Int64 {
     if ((arrDb[1] as SqlVarchar).getOrThrow().value == "lihao333") {
         println("pass33")
     }
+    mysqlStatement.close()
 
     // 删除t_test名称数据表
     mysqlStatement = mysqlConnection.prepareStatement("drop table if exists t_test")
     mysqlStatement.update()
-
-    // 释放预执行语句内存
     mysqlStatement.close()
 
     // 关闭链接
