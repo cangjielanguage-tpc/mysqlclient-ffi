@@ -283,17 +283,12 @@ public class MysqlStmtApiTest {
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
             "select * from t_test_bigint where id = 1")
         var mysqlQueryResult: MysqlQueryResult = mysqlStatement4.query()
-        var id: SqlBigInt = SqlBigInt(3)
-        var data1: SqlBigInt = SqlBigInt(1)
-        var data2: SqlNullableBigInt = SqlNullableBigInt(1)
-        var arrDb: Array<SqlDbType> = [id, data1, data2]
 
-        var isBool: Bool = mysqlQueryResult.next(arrDb)
-
+        var isBool: Bool = mysqlQueryResult.next()
         @Assert(true, isBool)
-        @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        @Assert(2, (arrDb[1] as SqlBigInt).getOrThrow().value)
-        @Assert(3, (arrDb[2] as SqlNullableBigInt).getOrThrow().value)
+        @Assert(1, mysqlQueryResult.get<Int64>(0))
+        @Assert(2, mysqlQueryResult.get<Int64>(1))
+        @Assert(3, mysqlQueryResult.get<Int64>(2))
 
         let mysqlStmtApi: MysqlStmtApi = MysqlStmtApi(mysqlStatement4)
         let ret1 = mysqlStmtApi.mysqlStmtStoreResult()

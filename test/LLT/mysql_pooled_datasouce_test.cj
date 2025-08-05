@@ -39,27 +39,22 @@ public class MysqlPooledDatasouceTest {
         statement1.close()
         // 通过传入的 sql 语句，返回一个预执行的 Statement 对象实例，插入数据
         var statement2: Statement = connection.prepareStatement("insert into t_test10000(id,name) VALUES(?,?)")
-        var id: SqlNullableBigInt = SqlNullableBigInt(1)
-        var name: SqlNullableVarchar = SqlNullableVarchar("lihao111")
-        var arrDb: Array<SqlDbType> = [id, name]
-        var updateResult: UpdateResult = statement2.update(arrDb)
+        statement2.set<Int64>(0, 1)
+        statement2.set<String>(1, "lihao111")
+        var updateResult: UpdateResult = statement2.update()
         @Assert(1, updateResult.rowCount)
         statement2.close()
         // 查询语句预执行语句
         var statement3: Statement = connection.prepareStatement("select * from t_test10000 where id = ?")
-        var id1: SqlNullableBigInt = SqlNullableBigInt(1)
-        var arrDb1: Array<SqlDbType> = [id1]
-        var queryResult: QueryResult = statement3.query(arrDb1)
+        statement3.set<Int64>(0, 1)
+        var queryResult: QueryResult = statement3.query()
         let columnInfos: Array<ColumnInfo> = queryResult.columnInfos
         @Assert(2, columnInfos.size)
-        var id2: SqlNullableBigInt = SqlNullableBigInt(0)
-        var name2: SqlNullableVarchar = SqlNullableVarchar("")
-        var arrDb2: Array<SqlDbType> = [id2, name2]
-        var isBool: Bool = queryResult.next(arrDb2)
+        var isBool: Bool = queryResult.next()
         @Assert(true, isBool)
-        @Assert(1, (arrDb2[0] as SqlNullableBigInt).getOrThrow().value.getOrThrow())
-        @Assert("lihao111", (arrDb2[1] as SqlNullableVarchar).getOrThrow().value.getOrThrow())
-        var isBool1: Bool = queryResult.next(arrDb2)
+        @Assert(1, queryResult.get<Int64>(0))
+        @Assert("lihao111", queryResult.get<String>(1))
+        var isBool1: Bool = queryResult.next()
         @Assert(false, isBool1)
         queryResult.close()
         statement3.close()

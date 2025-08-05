@@ -56,20 +56,16 @@ public class MysqlVarVarBinaryTest {
         mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
         @Assert(2, mysqlStatement.parameterCount)
 
-        var id: SqlBigInt = SqlBigInt(1)
-        var name: SqlVarBinary = SqlVarBinary(Array<Byte>(50, repeat: 89))
-        var arrDb: Array<SqlDbType> = [id, name]
-
         // 执行插入语句插入数据
-        var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
+        mysqlStatement.set<Int64>(0, 1)
+        mysqlStatement.set<Array<Byte>>(1, Array<Byte>(50, repeat: 89))
+        var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
 
-        var name2 = SqlNullableVarBinary(Array<Byte>())
-        id = SqlBigInt(2)
-        arrDb = [id, name2]
-
         // 执行插入语句插入空数据2
-        mysqlUpdateResult = mysqlStatement.update(arrDb)
+        mysqlStatement.set<Int64>(0, 2)
+        mysqlStatement.set<Array<Byte>>(1, Array<Byte>())
+        mysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
         mysqlStatement.close()
 
@@ -77,50 +73,40 @@ public class MysqlVarVarBinaryTest {
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
-        id = SqlBigInt(2)
-        arrDb = [id]
-
         // 执行查询语句
-        var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query(arrDb)
+        mysqlStatement.set<Int64>(0, 2)
+        var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query()
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
         @Assert(2, mysqlColumnInfos.size)
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlInt64", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
 
         @Assert("name", mysqlColumnInfos[1].name)
-        @Assert("SqlNullableVarchar", mysqlColumnInfos[1].typeName)
+        @Assert("SqlString", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(50, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(false, mysqlColumnInfos[1].nullable)
 
-        id = SqlBigInt(0)
-        name2 = SqlNullableVarBinary(Array<Byte>())
-        arrDb = [id, name2]
-
         // 获取数据
-        var isBool: Bool = mysqlQueryResult.next(arrDb)
+        var isBool: Bool = mysqlQueryResult.next()
         @Assert(true, isBool)
-        @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        if (let None <- (arrDb[1] as SqlVarBinary)) {
-            @Assert(true, true)
-        }
+        @Assert(2, mysqlQueryResult.get<Int64>(0))
+        @Assert("", mysqlQueryResult.get<String>(1))
         mysqlStatement.close()
 
         // 删除语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("delete from t_test where name = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
-        name = SqlVarBinary(Array<Byte>(50, repeat: 89))
-        arrDb = [name]
-
         // 执行删除语句
-        mysqlUpdateResult = mysqlStatement.update(arrDb)
+        mysqlStatement.set<Array<Byte>>(0, Array<Byte>(50, repeat: 89))
+        mysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
         mysqlStatement.close()
 
@@ -128,18 +114,12 @@ public class MysqlVarVarBinaryTest {
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
-        id = SqlBigInt(1)
-        arrDb = [id]
-
         // 执行查询语句
-        mysqlQueryResult = mysqlStatement.query(arrDb)
-
-        id = SqlBigInt(0)
-        name2 = SqlNullableVarBinary(Array<Byte>())
-        arrDb = [id, name2]
+        mysqlStatement.set<Int64>(0, 1)
+        mysqlQueryResult = mysqlStatement.query()
 
         // 获取数据
-        isBool = mysqlQueryResult.next(arrDb)
+        isBool = mysqlQueryResult.next()
         @Assert(false, isBool)
         mysqlStatement.close()
 
@@ -147,12 +127,10 @@ public class MysqlVarVarBinaryTest {
         mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
         @Assert(2, mysqlStatement.parameterCount)
 
-        name = SqlVarBinary(Array<Byte>(10, repeat: 55))
-        id = SqlBigInt(2)
-        arrDb = [name, id]
-
         // 执行更新语句
-        mysqlUpdateResult = mysqlStatement.update(arrDb)
+        mysqlStatement.set<Int64>(1, 2)
+        mysqlStatement.set<Array<Byte>>(0, Array<Byte>(10, repeat: 55))
+        mysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
         mysqlStatement.close()
 
@@ -160,38 +138,31 @@ public class MysqlVarVarBinaryTest {
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
-        id = SqlBigInt(1)
-        arrDb = [id]
-
         // 执行查询语句
-        mysqlQueryResult = mysqlStatement.query(arrDb)
+        mysqlStatement.set<Int64>(0, 2)
+        mysqlQueryResult = mysqlStatement.query()
 
         @Assert(2, mysqlColumnInfos.size)
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlInt64", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
 
         @Assert("name", mysqlColumnInfos[1].name)
-        @Assert("SqlNullableVarchar", mysqlColumnInfos[1].typeName)
+        @Assert("SqlString", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(50, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(false, mysqlColumnInfos[1].nullable)
 
-        id = SqlBigInt(2)
-        name = SqlVarBinary(Array<Byte>(10, repeat: 55))
-        arrDb = [id, name]
-
         // 获取数据
-        isBool = mysqlQueryResult.next(arrDb)
-        println(isBool)
-        @Assert(false, isBool)
-        @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        @Assert("7777777777", String.fromUtf8((arrDb[1] as SqlVarBinary).getOrThrow().value))
+        isBool = mysqlQueryResult.next()
+        @Assert(true, isBool)
+        @Assert(2, mysqlQueryResult.get<Int64>(0))
+        @Assert(String.fromUtf8(Array<Byte>(10, repeat: 55)), mysqlQueryResult.get<String>(1))
         mysqlStatement.close()
 
         //删除t_test名称数据表

@@ -15,30 +15,9 @@ main(): Int64 {
     return 0
 }
 
-// @Test
+@Test
 public class MysqlDecimalTest {
-    /*
-     * +-------+-------------+------+-----+---------+-------+
-     * | Field | Type        | Null | Key | Default | Extra |
-     * +-------+-------------+------+-----+---------+-------+
-     * | id    | bigint      | YES  |     | NULL    |       |
-     * | name  | varchar(50) | YES  |     | NULL    |       |
-     * +-------+-------------+------+-----+---------+-------+
-     * 1、初始化数据库驱动
-     * 2、打开数据源
-     * 3、返回可用链接
-     * 4、删除t_test表,  清除缓存影响
-     * 5、创建新的t_test表
-     * 6、往t_test表中插入两条数据（1，"lihao111"）（2，"lihao222"）
-     * 7、查询id为2的数据，查询到数据
-     * 8、删除查询的数据（2，"lihao222"）
-     * 9、重新查询id为2的数据，未查询到数据
-     * 10、修改剩下的一条数据（1，"lihao111"）-->（1，"lihao333"）
-     * 11、查询修改后id为1的数据，查询到数据
-     * 12、删除t_test表
-     * 13、关闭缓存，关闭连接
-     */
-    // @TestCase
+    @TestCase
     public func mysqlDecimalTest01(): Unit {
         // 初始化数据库驱动
         let mysqlDriver: MysqlDriver = MysqlDriver("mysql")
@@ -69,22 +48,18 @@ public class MysqlDecimalTest {
         mysqlStatement = mysqlConnection.prepareStatement("insert into  t_test(id,name)  VALUES(?,?)")
         @Assert(2, mysqlStatement.parameterCount)
 
-        var id: SqlNullableBigInt = SqlNullableBigInt(1)
-        var decimal: Decimal = Decimal("12345.6789")
-        var name: SqlNullableDecimal = SqlNullableDecimal(decimal)
-        var arrDb: Array<SqlDbType> = [id, name]
-
         // 执行插入语句插入数据
-        var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
+        var decimal: Decimal = Decimal.parse("12345.6789")
+        mysqlStatement.set<Int64>(0, 1)
+        mysqlStatement.set<Decimal>(1, decimal)
+        var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
 
-        id = SqlNullableBigInt(2)
-        var decimal1: Decimal = Decimal("98765.4321")
-        name = SqlNullableDecimal(decimal1)
-        arrDb = [id, name]
-
         // 执行插入语句插入数据
-        mysqlUpdateResult = mysqlStatement.update(arrDb)
+        var decimal1: Decimal = Decimal.parse("98765.4321")
+        mysqlStatement.set<Int64>(0, 2)
+        mysqlStatement.set<Decimal>(1, decimal1)
+        mysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
         mysqlStatement.close()
 
@@ -92,40 +67,31 @@ public class MysqlDecimalTest {
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
-        id = SqlNullableBigInt(1)
-        arrDb = [id]
-
         // 执行查询语句
-        var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query(arrDb)
+        mysqlStatement.set<Int64>(0, 1)
+        var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query()
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
         @Assert(2, mysqlColumnInfos.size)
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlNullableBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlInt64", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(false, mysqlColumnInfos[0].nullable)
 
         @Assert("name", mysqlColumnInfos[1].name)
-        @Assert("SqlNullableDecimal", mysqlColumnInfos[1].typeName)
+        @Assert("SqlDecimal", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(12, mysqlColumnInfos[1].length)
         @Assert(4, mysqlColumnInfos[1].scale)
         @Assert(false, mysqlColumnInfos[1].nullable)
 
-        var id2: SqlNullableBigInt = SqlNullableBigInt(0)
-        var decimal2: Decimal = Decimal("0")
-        var name2: SqlNullableDecimal = SqlNullableDecimal(decimal2)
-
-        arrDb = [id2, name2]
-
         // 获取数据
-        var isBool: Bool = mysqlQueryResult.next(arrDb)
+        var isBool: Bool = mysqlQueryResult.next()
         @Assert(true, isBool)
-
-        @Assert(1, (arrDb[0] as SqlNullableBigInt).getOrThrow().value.getOrThrow())
-        @Assert("12345.6789", (arrDb[1] as SqlNullableDecimal).getOrThrow().value.getOrThrow().toString())
+        @Assert(1, mysqlQueryResult.get<Int64>(0))
+        @Assert("12345.6789", mysqlQueryResult.get<Decimal>(1).toString())
         mysqlStatement.close()
 
         // 删除语句预执行语句
@@ -141,15 +107,13 @@ public class MysqlDecimalTest {
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
 
-        id = SqlNullableBigInt(1)
-        arrDb = [id]
-
         // 执行查询语句
-        mysqlQueryResult = mysqlStatement.query(arrDb)
+        mysqlStatement.set<Int64>(0, 1)
+        mysqlQueryResult = mysqlStatement.query()
 
         // 获取数据
-        arrDb = [id, name]
-        isBool = mysqlQueryResult.next(arrDb)
+        // arrDb = [id, name]
+        isBool = mysqlQueryResult.next()
         @Assert(false, isBool)
         mysqlStatement.close()
 
@@ -157,37 +121,26 @@ public class MysqlDecimalTest {
         mysqlStatement = mysqlConnection.prepareStatement("update t_test set name = ? where id = ?")
         @Assert(2, mysqlStatement.parameterCount)
 
-        var decimal3: Decimal = Decimal("8888.8888")
-        name = SqlNullableDecimal(decimal3)
-        id = SqlNullableBigInt(2)
-        arrDb = [name, id]
-
         // 执行更新语句
-        mysqlUpdateResult = mysqlStatement.update(arrDb)
+        var decimal3: Decimal = Decimal.parse("8888.8888")
+        mysqlStatement.set<Int64>(1, 2)
+        mysqlStatement.set<Decimal>(0, decimal3)
+        mysqlUpdateResult = mysqlStatement.update()
         @Assert(1, mysqlUpdateResult.rowCount)
         mysqlStatement.close()
 
         // 查询语句预执行语句
         mysqlStatement = mysqlConnection.prepareStatement("select * from t_test where id = ?")
         @Assert(1, mysqlStatement.parameterCount)
-
-        id = SqlNullableBigInt(2)
-        arrDb = [id]
-
         // 执行查询语句
-        mysqlQueryResult = mysqlStatement.query(arrDb)
-
-        id = SqlNullableBigInt(2) 
-        var decimal4: Decimal = Decimal("0")
-        name = SqlNullableDecimal(decimal4)
-        arrDb = [id, name]
+        mysqlStatement.set<Int64>(0, 2)
+        mysqlQueryResult = mysqlStatement.query()
 
         // 获取数据
-        isBool = mysqlQueryResult.next(arrDb)
+        isBool = mysqlQueryResult.next()
         @Assert(true, isBool)
-        
-        @Assert(2, (arrDb[0] as SqlNullableBigInt).getOrThrow().value.getOrThrow())
-        @Assert("8888.8888", (arrDb[1] as SqlNullableDecimal).getOrThrow().value.getOrThrow().toString())
+        @Assert(2, mysqlQueryResult.get<Int64>(0))
+        @Assert("8888.8888", mysqlQueryResult.get<Decimal>(1).toString())
         mysqlStatement.close()
 
         // 删除t_test名称数据表

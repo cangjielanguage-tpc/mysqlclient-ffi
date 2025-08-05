@@ -33,24 +33,18 @@ public class OdbcTest {
         prepareStatement = conn.prepareStatement("insert into test values(123,123)")
         tran.rollback()
         prepareStatement.close()
-
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
-        rowCount = prepareStatement.update([SqlInteger(456), SqlNullableInteger(None)])
+        prepareStatement.set<Int32>(0, 456)
+        prepareStatement.setNull(1)
+        rowCount = prepareStatement.update()
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlInteger(456), SqlNullableInteger(None)]
-        queryResult.next(arr)
-        @Assert("SqlInteger", queryResult.columnInfos[0].typeName)
-        match (arr[0]) {
-            case v: SqlInteger => @Assert(456, v.value)
-            case _ => @Assert("abc", "123")
-        }
-        @Assert("SqlNullableInteger", queryResult.columnInfos[1].typeName)
-        match (arr[1]) {
-            case v: SqlNullableInteger => @Assert(None, v.value)
-            case _ => @Assert("abc", "123")
-        }
+        queryResult.next()
+        @Assert("SqlInt32", queryResult.columnInfos[0].typeName)
+        @Assert("SqlInt32", queryResult.columnInfos[1].typeName)
+        @Assert(456, queryResult.get<Int32>(0))
+        @Assert(None, queryResult.getOrNull<Int32>(1))
         queryResult.close()
         tran.commit()
         prepareStatement.close()

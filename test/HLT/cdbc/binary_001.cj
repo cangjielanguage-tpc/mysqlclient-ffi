@@ -32,25 +32,19 @@ public class binary_001 {
     @TestCase
     public func test001(): Unit {
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
-        rowCount = prepareStatement.update([SqlBinary([0, 22]), SqlNullableBinary(None)])
+        let a: Array<Byte> = Array<Byte>(2, repeat: 22)
+        prepareStatement.set<Array<Byte>>(0, a)
+        prepareStatement.setNull(1)
+        rowCount = prepareStatement.update()
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlBinary([0, 11]), SqlNullableBinary(None)]
-        queryResult.next(arr)
-
-        // @Assert("SqlBinary", queryResult.columnInfos[0].typeName)
-        match (arr[0]) {
-            case v: SqlBinary => @Assert(true, v.value[..2]==[0, 22])
-            case _ => @Assert("abc", "123")
-        }
-
-        // @Assert("SqlNullableBinary", queryResult.columnInfos[1].typeName)
-        match (arr[1]) {
-            case v: SqlNullableBinary => @Assert(None, v.value)
-            case _ => @Assert("abc", "123")
-        }
+        queryResult.next()
+        let mysqlColumnInfos: Array<MysqlColumnInfo> = queryResult.mysqlColumnInfos
+        @Assert("SqlString", queryResult.columnInfos[0].typeName)
+        @Assert(String.fromUtf8(a), queryResult.get<String>(0))
+        @Assert(None, queryResult.getOrNull<String>(1))
         prepareStatement.close()
 
         // 删除test名称数据表

@@ -48,8 +48,7 @@ public class MysqlTimestampTest {
 
         // 创建t_test2名称数据表
         var mysqlStatement2: MysqlStatement = mysqlConnection.prepareStatement(
-            "create table t_test_timestamp(id bigint not null, timestampValue1 timestamp not null, timestampValue2 timestamp)"
-        )
+            "create table t_test_timestamp(id bigint not null, timestampValue1 timestamp not null, timestampValue2 timestamp)")
         mysqlStatement2.update()
         mysqlStatement2.close()
 
@@ -58,35 +57,30 @@ public class MysqlTimestampTest {
             "insert into  t_test_timestamp(id,timestampValue1,timestampValue2)  VALUES(?,?,?)")
         @Assert(3, mysqlStatement3.parameterCount)
 
+        // 执行插入语句插入数据
         let dateTime1: DateTime = DateTime.nowUTC()
-        var id: SqlBigInt = SqlBigInt(1)
-        var date1: SqlTimestamp = SqlTimestamp(dateTime1)
-        var date2: SqlNullableTimestamp = SqlNullableTimestamp(None)
-        var arrDb: Array<SqlDbType> = [id, date1, date2]
+        mysqlStatement3.set<Int64>(0, 1)
+        mysqlStatement3.set<MysqlTypeTimeTimestamp>(1, MysqlTypeTimeTimestamp(dateTime1))
+        mysqlStatement3.setNull(2)
+        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update()
+        @Assert(1, mysqlUpdateResult1.rowCount)
 
         // 执行插入语句插入数据
-        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update(arrDb)
-        @Assert(1, mysqlUpdateResult1.rowCount)
         let dateTime2: DateTime = DateTime.of(year: 2011, month: 10, dayOfMonth: 30, hour: 8, minute: 10, second: 30)
         let dateTime3: DateTime = DateTime.of(year: 1993, month: 5, dayOfMonth: 3, hour: 12, minute: 5, second: 3)
-        id = SqlBigInt(2)
-        date1 = SqlTimestamp(dateTime2)
-        date2 = SqlNullableTimestamp(dateTime3)
-        arrDb = [id, date1, date2]
-
-        // 执行插入语句插入数据
-        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 2)
+        mysqlStatement3.set<MysqlTypeTimeTimestamp>(1, MysqlTypeTimeTimestamp(dateTime2))
+        mysqlStatement3.set<MysqlTypeTimeTimestamp>(2, MysqlTypeTimeTimestamp(dateTime3))
+        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult2.rowCount)
 
+        // 执行插入语句插入数据
         let dateTime4: DateTime = DateTime.of(year: 2010, month: 9, dayOfMonth: 29, hour: 18, minute: 20, second: 40)
         let dateTime5: DateTime = DateTime.of(year: 1992, month: 4, dayOfMonth: 18, hour: 22, minute: 35, second: 53)
-        id = SqlBigInt(3)
-        date1 = SqlTimestamp(dateTime4)
-        date2 = SqlNullableTimestamp(dateTime5)
-        arrDb = [id, date1, date2]
-
-        // 执行插入语句插入数据
-        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 3)
+        mysqlStatement3.set<MysqlTypeTimeTimestamp>(1, MysqlTypeTimeTimestamp(dateTime4))
+        mysqlStatement3.set<MysqlTypeTimeTimestamp>(2, MysqlTypeTimeTimestamp(dateTime5))
+        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult3.rowCount)
         mysqlStatement3.close()
 
@@ -98,52 +92,43 @@ public class MysqlTimestampTest {
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlInt64", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(true, mysqlColumnInfos[0].nullable)
 
         @Assert("timestampValue1", mysqlColumnInfos[1].name)
-        @Assert("SqlTimestamp", mysqlColumnInfos[1].typeName)
+        @Assert("SqlMysqlTypeTimeTimestamp", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(19, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("timestampValue2", mysqlColumnInfos[2].name)
-        @Assert("SqlNullableTimestamp", mysqlColumnInfos[2].typeName)
+        @Assert("SqlMysqlTypeTimeTimestamp", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(19, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)
         @Assert(false, mysqlColumnInfos[2].nullable)
 
-        id = SqlBigInt(3)
-        date1 = SqlTimestamp(dateTime4)
-        date2 = SqlNullableTimestamp(dateTime5)
-        arrDb = [id, date1, date2]
-
-        var isBool: Bool = mysqlQueryResult.next(arrDb)
+        var isBool: Bool = mysqlQueryResult.next()
         @Assert(true, isBool)
-        @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        let dateTimeQuery: DateTime = (arrDb[1] as SqlTimestamp).getOrThrow().value
+        @Assert(1, mysqlQueryResult.get<Int64>(0))
+        let dateTimeQuery: DateTime = mysqlQueryResult.get<MysqlTypeTimeTimestamp>(1).value
         @Assert(dateTime1.year, dateTimeQuery.year)
-        @Assert(dateTime1.monthValue, dateTimeQuery.monthValue)
+        @Assert(dateTime1.month, dateTimeQuery.month)
         @Assert(dateTime1.dayOfMonth, dateTimeQuery.dayOfMonth)
         @Assert(dateTime1.hour, dateTimeQuery.hour)
         @Assert(dateTime1.minute, dateTimeQuery.minute)
         @Assert(dateTime1.second, dateTimeQuery.second)
-        let sqlNullableDate: SqlNullableTimestamp = (arrDb[2] as SqlNullableTimestamp).getOrThrow()
-        match (sqlNullableDate.value) {
+        let mysqlTypeDate: ?MysqlTypeTimeTimestamp = mysqlQueryResult.getOrNull<MysqlTypeTimeTimestamp>(2)
+        match (mysqlTypeDate) {
             case Some(_) => @Assert(0, 1)
             case None => @Assert(1, 1)
         }
 
-        id = SqlBigInt(3)
-        date1 = SqlTimestamp(dateTime4)
-        date2 = SqlNullableTimestamp(dateTime5)
-        arrDb = [id, date1, date2]
-        isBool = mysqlQueryResult.next(arrDb)
+        isBool = mysqlQueryResult.next()
         @Assert(false, isBool)
         mysqlStatement4.close()
 
@@ -152,11 +137,9 @@ public class MysqlTimestampTest {
             "delete from t_test_timestamp where id = ?")
         @Assert(1, mysqlStatement5.parameterCount)
 
-        id = SqlBigInt(1)
-        arrDb = [id]
-
         // 执行删除语句
-        let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update(arrDb)
+        mysqlStatement5.set<Int64>(0, 1)
+        let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update()
         @Assert(1, mysqlUpdateResult4.rowCount)
         mysqlStatement5.close()
 
@@ -167,13 +150,8 @@ public class MysqlTimestampTest {
         // 执行查询语句
         let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
 
-        id = SqlBigInt(3)
-        date1 = SqlTimestamp(dateTime4)
-        date2 = SqlNullableTimestamp(dateTime5)
-        arrDb = [id, date1, date2]
-
         // 获取数据
-        isBool = mysqlQueryResult1.next(arrDb)
+        isBool = mysqlQueryResult1.next()
         @Assert(false, isBool)
         mysqlStatement6.close()
 
@@ -181,15 +159,14 @@ public class MysqlTimestampTest {
         let mysqlStatement7: MysqlStatement = mysqlConnection.prepareStatement(
             "update t_test_timestamp set timestampValue1 = ?, timestampValue2 = ?  where id = ?")
         @Assert(3, mysqlStatement7.parameterCount)
-        id = SqlBigInt(2)
-        let dateTime6: DateTime = DateTime.of(year: 1999, month: 1, dayOfMonth: 1, hour: 9, minute: 11, second: 31)
-        let dateTime7: DateTime = DateTime.of(year: 2000, month: 2, dayOfMonth: 2, hour: 13, minute: 6, second: 4)
-        date1 = SqlTimestamp(dateTime6)
-        date2 = SqlNullableTimestamp(dateTime7)
-        arrDb = [date1, date2, id]
 
         // 执行更新语句
-        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb)
+        let dateTime6: DateTime = DateTime.of(year: 1999, month: 1, dayOfMonth: 1, hour: 9, minute: 11, second: 31)
+        let dateTime7: DateTime = DateTime.of(year: 2000, month: 2, dayOfMonth: 2, hour: 13, minute: 6, second: 4)
+        mysqlStatement7.set<Int64>(2, 2)
+        mysqlStatement7.set<MysqlTypeTimeTimestamp>(0, MysqlTypeTimeTimestamp(dateTime6))
+        mysqlStatement7.set<MysqlTypeTimeTimestamp>(1, MysqlTypeTimeTimestamp(dateTime7))
+        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update()
         @Assert(1, mysqlUpdateResult5.rowCount)
         mysqlStatement7.close()
 
@@ -200,25 +177,20 @@ public class MysqlTimestampTest {
         // 执行查询语句
         var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()
 
-        id = SqlBigInt(3)
-        date1 = SqlTimestamp(dateTime4)
-        date2 = SqlNullableTimestamp(dateTime5)
-        arrDb = [id, date1, date2]
-
         // 获取数据
-        isBool = mysqlQueryResult2.next(arrDb)
+        isBool = mysqlQueryResult2.next()
         @Assert(true, isBool)
-        @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        let dateTimeQuery1: DateTime = (arrDb[1] as SqlTimestamp).getOrThrow().value
+        @Assert(2, mysqlQueryResult2.get<Int64>(0))
+        let dateTimeQuery1: DateTime = mysqlQueryResult2.get<MysqlTypeTimeTimestamp>(1).value
         @Assert(1999, dateTimeQuery1.year)
-        @Assert(1, dateTimeQuery1.monthValue)
+        @Assert(1, dateTimeQuery1.month.toInteger())
         @Assert(1, dateTimeQuery1.dayOfMonth)
         @Assert(9, dateTimeQuery1.hour)
         @Assert(11, dateTimeQuery1.minute)
         @Assert(31, dateTimeQuery1.second)
-        let dateTimeQuery2: DateTime = (arrDb[2] as SqlNullableTimestamp).getOrThrow().value.getOrThrow()
+        let dateTimeQuery2: DateTime = mysqlQueryResult2.get<MysqlTypeTimeTimestamp>(2).value
         @Assert(2000, dateTimeQuery2.year)
-        @Assert(2, dateTimeQuery2.monthValue)
+        @Assert(2, dateTimeQuery2.month.toInteger())
         @Assert(2, dateTimeQuery2.dayOfMonth)
         @Assert(13, dateTimeQuery2.hour)
         @Assert(6, dateTimeQuery2.minute)

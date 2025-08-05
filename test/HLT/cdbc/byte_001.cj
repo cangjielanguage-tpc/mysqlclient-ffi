@@ -27,23 +27,17 @@ public class OdbcTest {
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
-        rowCount = prepareStatement.update([SqlByte(Int8.Max), SqlNullableByte(None)])
+        prepareStatement.set<Int8>(0, Int8.Max)
+        prepareStatement.setNull(1)
+        rowCount = prepareStatement.update()
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlByte(Int8.Max), SqlNullableByte(None)]
-        queryResult.next(arr)
-        @Assert("SqlByte", queryResult.columnInfos[0].typeName)
-        match (arr[0]) {
-            case v: SqlByte => @Assert(Int8.Max, v.value)
-            case _ => @Assert("abc", "123")
-        }
-        @Assert("SqlNullableByte", queryResult.columnInfos[1].typeName)
-        match (arr[1]) {
-            case v: SqlNullableByte => @Assert(None, v.value)
-            case _ => @Assert("abc", "123")
-        }
+        queryResult.next()
+        @Assert("SqlInt8", queryResult.columnInfos[0].typeName)
+        @Assert(Int8.Max, queryResult.get<Int8>(0))
+        @Assert(None, queryResult.getOrNull<Int8>(1))
         prepareStatement.close()
 
         // 删除test名称数据表

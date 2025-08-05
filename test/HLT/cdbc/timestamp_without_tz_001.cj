@@ -36,20 +36,27 @@ public class OdbcTest {
             second: 35,
             nanosecond: 0,
         )
-        rowCount = prepareStatement.update([SqlDateTime(date), SqlNullableDateTime(None)])
+        prepareStatement.set<MysqlTypeTimeTimestamp>(0, MysqlTypeTimeTimestamp(date))
+        prepareStatement.setNull(1)
+        rowCount = prepareStatement.update()
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlDateTime(DateTime.now()), SqlNullableDateTime(None)]
-        queryResult.next(arr)
-        match (arr[0]) {
-            case v: SqlDateTime => @Assert(date, v.value)
-            case _ => @Assert("abc", "123")
-        }
-        match (arr[1]) {
-            case v: SqlNullableDateTime => @Assert(None, v.value)
-            case _ => @Assert("abc", "123")
+        queryResult.next()
+        @Assert("SqlMysqlTypeTimeTimestamp", queryResult.columnInfos[0].typeName)
+        @Assert("SqlMysqlTypeTimeTimestamp", queryResult.columnInfos[1].typeName)
+        let dateTimeQuery1: DateTime = queryResult.get<MysqlTypeTimeTimestamp>(0).value
+        @Assert(date.hour, dateTimeQuery1.hour)
+        @Assert(date.minute, dateTimeQuery1.minute)
+        @Assert(date.second, dateTimeQuery1.second)
+        @Assert(date.hour, dateTimeQuery1.hour)
+        @Assert(date.minute, dateTimeQuery1.minute)
+        @Assert(date.second, dateTimeQuery1.second)
+        let dateTimeQuery2: ?MysqlTypeTimeTimestamp = queryResult.getOrNull<MysqlTypeTimeTimestamp>(1)
+        match (dateTimeQuery2) {
+            case Some(_) => @Assert(0, 1)
+            case None => @Assert(1, 1)
         }
         prepareStatement.close()
 

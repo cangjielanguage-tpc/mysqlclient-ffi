@@ -7,6 +7,7 @@ package mysqlclient_ffi
 /*
  * 年、月、日、时、分、秒不包含时区
  */
+ @Deprecated
 public class SqlDateTime <: SqlDbType {
     private var dateTime: DateTime
 
@@ -44,6 +45,7 @@ public class SqlDateTime <: SqlDbType {
 /*
  * 年、月、日、时、分、秒不包含时区，数据可能为None
  */
+ @Deprecated
 public class SqlNullableDateTime <: SqlNullableDbType {
     private var dateTime: ?DateTime
 

@@ -57,36 +57,30 @@ public class MysqlDateTest {
             "insert into  t_test_date(id,dateValue1,dateValue2)  VALUES(?,?,?)")
         @Assert(3, mysqlStatement3.parameterCount)
 
-        let dateTime1: DateTime = DateTime.nowUTC()
-        var id: SqlBigInt = SqlBigInt(1)
-        var date1: SqlDate = SqlDate(dateTime1)
-        var date2: SqlNullableDate = SqlNullableDate(None)
-        var arrDb: Array<SqlDbType> = [id, date1, date2]
-
         // 执行插入语句插入数据
-        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        let dateTime1: DateTime = DateTime.nowUTC()
+        mysqlStatement3.set<Int64>(0, 1)
+        mysqlStatement3.set<MysqlTypeDate>(1, MysqlTypeDate(dateTime1))
+        mysqlStatement3.setNull(2)
+        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult1.rowCount)
 
+        // 执行插入语句插入数据
         let dateTime2: DateTime = DateTime.of(year: 2011, month: 10, dayOfMonth: 30)
         let dateTime3: DateTime = DateTime.of(year: 1993, month: 5, dayOfMonth: 3)
-        id = SqlBigInt(2)
-        date1 = SqlDate(dateTime2)
-        date2 = SqlNullableDate(dateTime3)
-        arrDb = [id, date1, date2]
-
-        // 执行插入语句插入数据
-        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 2)
+        mysqlStatement3.set<MysqlTypeDate>(1, MysqlTypeDate(dateTime2))
+        mysqlStatement3.set<MysqlTypeDate>(2, MysqlTypeDate(dateTime3))
+        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult2.rowCount)
 
+        // 执行插入语句插入数据
         let dateTime4: DateTime = DateTime.of(year: 2010, month: 9, dayOfMonth: 29)
         let dateTime5: DateTime = DateTime.of(year: 1992, month: 4, dayOfMonth: 18)
-        id = SqlBigInt(3)
-        date1 = SqlDate(dateTime4)
-        date2 = SqlNullableDate(dateTime5)
-        arrDb = [id, date1, date2]
-
-        // 执行插入语句插入数据
-        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 3)
+        mysqlStatement3.set<MysqlTypeDate>(1, MysqlTypeDate(dateTime4))
+        mysqlStatement3.set<MysqlTypeDate>(2, MysqlTypeDate(dateTime5))
+        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult3.rowCount)
         mysqlStatement3.close()
 
@@ -97,49 +91,40 @@ public class MysqlDateTest {
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlInt64", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(true, mysqlColumnInfos[0].nullable)
 
         @Assert("dateValue1", mysqlColumnInfos[1].name)
-        @Assert("SqlDate", mysqlColumnInfos[1].typeName)
+        @Assert("SqlMysqlTypeDate", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(10, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("dateValue2", mysqlColumnInfos[2].name)
-        @Assert("SqlNullableDate", mysqlColumnInfos[2].typeName)
+        @Assert("SqlMysqlTypeDate", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(10, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)
         @Assert(false, mysqlColumnInfos[2].nullable)
 
-        id = SqlBigInt(3)
-        date1 = SqlDate(dateTime4)
-        date2 = SqlNullableDate(dateTime5)
-        arrDb = [id, date1, date2]
-
-        var isBool: Bool = mysqlQueryResult.next(arrDb)
+        var isBool: Bool = mysqlQueryResult.next()
         @Assert(true, isBool)
-        @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        let dateTimeQuery: DateTime = (arrDb[1] as SqlDate).getOrThrow().value
+        @Assert(1, mysqlQueryResult.get<Int64>(0))
+        let dateTimeQuery: DateTime = mysqlQueryResult.get<MysqlTypeDate>(1).value
         @Assert(dateTime1.year, dateTimeQuery.year)
-        @Assert(dateTime1.monthValue, dateTimeQuery.monthValue)
+        @Assert(dateTime1.month, dateTimeQuery.month)
         @Assert(dateTime1.dayOfMonth, dateTimeQuery.dayOfMonth)
-        let sqlNullableDate: SqlNullableDate = (arrDb[2] as SqlNullableDate).getOrThrow()
-        match (sqlNullableDate.value) {
+        let mysqlTypeDate: ?MysqlTypeDate = mysqlQueryResult.getOrNull<MysqlTypeDate>(2)
+        match (mysqlTypeDate) {
             case Some(_) => @Assert(0, 1)
             case None => @Assert(1, 1)
         }
 
-        id = SqlBigInt(3)
-        date1 = SqlDate(dateTime4)
-        date2 = SqlNullableDate(dateTime5)
-        arrDb = [id, date1, date2]
-        isBool = mysqlQueryResult.next(arrDb)
+        isBool = mysqlQueryResult.next()
         @Assert(false, isBool)
         mysqlStatement4.close()
 
@@ -147,11 +132,9 @@ public class MysqlDateTest {
         let mysqlStatement5: MysqlStatement = mysqlConnection.prepareStatement("delete from t_test_date where id = ?")
         @Assert(1, mysqlStatement5.parameterCount)
 
-        id = SqlBigInt(1)
-        arrDb = [id]
-
         // 执行删除语句
-        let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update(arrDb)
+        mysqlStatement5.set<Int64>(0, 1)
+        let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update()
         @Assert(1, mysqlUpdateResult4.rowCount)
         mysqlStatement5.close()
 
@@ -161,13 +144,8 @@ public class MysqlDateTest {
         // 执行查询语句
         let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
 
-        id = SqlBigInt(3)
-        date1 = SqlDate(dateTime4)
-        date2 = SqlNullableDate(dateTime5)
-        arrDb = [id, date1, date2]
-
         // 获取数据
-        isBool = mysqlQueryResult1.next(arrDb)
+        isBool = mysqlQueryResult1.next()
         @Assert(false, isBool)
         mysqlStatement6.close()
 
@@ -176,15 +154,13 @@ public class MysqlDateTest {
             "update t_test_date set dateValue1 = ?, dateValue2 = ?  where id = ?")
         @Assert(3, mysqlStatement7.parameterCount)
 
-        id = SqlBigInt(2)
+        // 执行更新语句
         let dateTime6: DateTime = DateTime.of(year: 1840, month: 1, dayOfMonth: 1)
         let dateTime7: DateTime = DateTime.of(year: 1841, month: 2, dayOfMonth: 2)
-        date1 = SqlDate(dateTime6)
-        date2 = SqlNullableDate(dateTime7)
-        arrDb = [date1, date2, id]
-
-        // 执行更新语句
-        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb)
+        mysqlStatement7.set<Int64>(2, 2)
+        mysqlStatement7.set<MysqlTypeDate>(0, MysqlTypeDate(dateTime6))
+        mysqlStatement7.set<MysqlTypeDate>(1, MysqlTypeDate(dateTime7))
+        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update()
         @Assert(1, mysqlUpdateResult5.rowCount)
         mysqlStatement7.close()
 
@@ -194,22 +170,17 @@ public class MysqlDateTest {
         // 执行查询语句
         var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()
 
-        id = SqlBigInt(3)
-        date1 = SqlDate(dateTime4)
-        date2 = SqlNullableDate(dateTime5)
-        arrDb = [id, date1, date2]
-
         // 获取数据
-        isBool = mysqlQueryResult2.next(arrDb)
+        isBool = mysqlQueryResult2.next()
         @Assert(true, isBool)
-        @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
-        let dateTimeQuery1: DateTime = (arrDb[1] as SqlDate).getOrThrow().value
+        @Assert(2, mysqlQueryResult2.get<Int64>(0))
+        let dateTimeQuery1: DateTime = mysqlQueryResult2.get<MysqlTypeDate>(1).value
         @Assert(1840, dateTimeQuery1.year)
-        @Assert(1, dateTimeQuery1.monthValue)
+        @Assert(1, dateTimeQuery1.month.toInteger())
         @Assert(1, dateTimeQuery1.dayOfMonth)
-        let dateTimeQuery2: DateTime = (arrDb[2] as SqlNullableDate).getOrThrow().value.getOrThrow()
+        let dateTimeQuery2: DateTime = mysqlQueryResult2.get<MysqlTypeDate>(2).value
         @Assert(1841, dateTimeQuery2.year)
-        @Assert(2, dateTimeQuery2.monthValue)
+        @Assert(2, dateTimeQuery2.month.toInteger())
         @Assert(2, dateTimeQuery2.dayOfMonth)
         mysqlStatement8.close()
 

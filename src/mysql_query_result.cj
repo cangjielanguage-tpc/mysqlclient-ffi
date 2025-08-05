@@ -1,7 +1,7 @@
 /*
  * @Copyright (c) Huawei Technologies Co., Ltd. 2023-2024. All rights reserved.
  */
- 
+
 package mysqlclient_ffi
 
 /*
@@ -11,6 +11,7 @@ public class MysqlQueryResult <: QueryResult {
     private var resultCount: Array<MysqlColumnInfo>
     private var stmt: CPointer<Unit>
     let closed = AtomicBool(false)
+    private var resultSet: Array<Any>
 
     /*
      * 初始化 执行Select语句产生的结果
@@ -21,6 +22,7 @@ public class MysqlQueryResult <: QueryResult {
     init(stmt: CPointer<Unit>, resultCount: Array<MysqlColumnInfo>) {
         this.stmt = stmt
         this.resultCount = resultCount
+        this.resultSet = Array<Any>(resultCount.size, repeat: Option<Any>.None)
     }
 
     /*
@@ -42,29 +44,27 @@ public class MysqlQueryResult <: QueryResult {
     }
 
     /*
-     * 向后移动一行，必须先调用一次next才能移动到第一行，第二次调用移动到第二行，依此类推。
-     * 当返回true时，驱动会在values中填入行数据；当返回false时结束，且不会修改values的内容。
+     * 向后移动一行，必须先调用一次 next() 才能移动到第一行，第二次调用移动到第二行，依此类推。当返回 true 时，驱动会在结果集的当前行填入数据，当返回 false 时结束，且不会修改结果集当前行的内容。
      *
-     * 参数 values - 需要填充返回的数据
      * 返回值 Bool - 存在下一行则返回true，否则返回false
-     * 异常 SqlException - 传入参数错误
+     * 异常 Exception - 传入参数错误
      */
-    public override func next(values: Array<SqlDbType>): Bool {
+    public override func next(): Bool {
         unsafe {
-            var bindsCPInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
+            var bindsCPInt8: CPointer<Int8> = LibC.malloc<Int8>(count: 8)
             var bindsCP: CPointer<Unit> = CPointer<Unit>(bindsCPInt8)
             if (bindsCP.isNull()) {
                 throw SqlException("Native malloc Failed.")
             }
-            if (values.size > 0) {
-                bindsCP = init_bind(values.size)
+            if (resultCount.size > 0) {
+                bindsCP = init_bind(resultCount.size)
             }
             if (bindsCP.isNull()) {
                 // 初始化失败，有可能内存不足导致的malloc失败
                 throw SqlException("Init Bind Failed!")
             }
-            for (i in 0..values.size) {
-                var isBool: Bool = cjTypeToMysqlTypeQuery(values[i], bindsCP, i, resultCount[i].length)
+            for (i in 0..resultCount.size) {
+                var isBool: Bool = cjTypeToMysqlTypeQuery(resultCount[i].typeName, bindsCP, i, resultCount[i].length)
                 if (!isBool) {
                     free_mysql_cj(bindsCP, i)
                     throw SqlException("Malloc  Failed!")
@@ -72,30 +72,55 @@ public class MysqlQueryResult <: QueryResult {
             }
             let isBool: Bool = mysql_stmt_bind_result(stmt, bindsCP)
             if (isBool) {
-                free_mysql_cj(bindsCP, values.size)
+                free_mysql_cj(bindsCP, resultCount.size)
                 throw SqlException(mysql_stmt_error(stmt).toString())
             }
             var intFetch: Int32 = mysql_stmt_fetch(stmt)
             if (intFetch == 1) {
                 // 发生错误。
-                free_mysql_cj(bindsCP, values.size)
+                free_mysql_cj(bindsCP, resultCount.size)
                 throw SqlException(mysql_stmt_error(stmt).toString())
             } else if (intFetch == 100) {
                 // 成功，不再存在数据。
-                free_mysql_cj(bindsCP, values.size)
+                free_mysql_cj(bindsCP, resultCount.size)
                 return false
             } else if (intFetch == 101) {
                 // 发生数据截断。
             }
 
             // 成功存在数据或有数据发生数据截断
-            for (i in 0..values.size) {
-                values[i] = mysqlTypeTocjType(bindsCP, values[i], i)
+            for (i in 0..resultCount.size) {
+                resultSet[i] = mysqlTypeTocjType(bindsCP, resultCount[i].typeName, i)
             }
-            free_mysql_cj(bindsCP, values.size)
-
+            free_mysql_cj(bindsCP, resultCount.size)
             return true
         }
+    }
+
+    /*
+     * 获取数据
+     *
+     * 参数 index - 位置
+     * 返回值 T - 值
+     * 异常 Exception - 传入参数错误
+     */
+    public override func get<T>(index: Int): T {
+        return getOrNull<T>(index) ?? throw NoneValueException()
+    }
+
+    /*
+     * 获取可以为null的数据
+     *
+     * 参数 index - 位置
+     * 返回值 ?T - 值
+     * 异常 Exception - 传入参数错误
+     */
+    public override func getOrNull<T>(index: Int): ?T {
+        checkResource()
+        if (index < 0) {
+            throw IllegalArgumentException("Index must be greater than or equal to 0")
+        }
+        return (resultSet[index] as ?T) ?? throw IllegalStateException()
     }
 
     /*
@@ -124,9 +149,407 @@ public class MysqlQueryResult <: QueryResult {
     public override func isClosed(): Bool {
         return closed.load()
     }
+
+    /*
+     * 向后移动一行，必须先调用一次next才能移动到第一行，第二次调用移动到第二行，依此类推。
+     * 当返回true时，驱动会在values中填入行数据；当返回false时结束，且不会修改values的内容。 - todo：废弃
+     *
+     * 参数 values - 需要填充返回的数据
+     * 返回值 Bool - 存在下一行则返回true，否则返回false
+     * 异常 SqlException - 传入参数错误
+     */
+    @Deprecated
+    public override func next(values: Array<SqlDbType>): Bool {
+        unsafe {
+            var bindsCPInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
+            var bindsCP: CPointer<Unit> = CPointer<Unit>(bindsCPInt8)
+            if (bindsCP.isNull()) {
+                throw SqlException("Native malloc Failed.")
+            }
+            if (values.size > 0) {
+                bindsCP = init_bind(values.size)
+            }
+            if (bindsCP.isNull()) {
+                // 初始化失败，有可能内存不足导致的malloc失败
+                throw SqlException("Init Bind Failed!")
+            }
+            for (i in 0..values.size) {
+                var isBool: Bool = cjTypeToMysqlOldTypeQuery(values[i], bindsCP, i, resultCount[i].length)
+                if (!isBool) {
+                    free_mysql_cj(bindsCP, i)
+                    throw SqlException("Malloc  Failed!")
+                }
+            }
+            let isBool: Bool = mysql_stmt_bind_result(stmt, bindsCP)
+            if (isBool) {
+                free_mysql_cj(bindsCP, values.size)
+                throw SqlException(mysql_stmt_error(stmt).toString())
+            }
+            var intFetch: Int32 = mysql_stmt_fetch(stmt)
+            if (intFetch == 1) {
+                // 发生错误。
+                free_mysql_cj(bindsCP, values.size)
+                throw SqlException(mysql_stmt_error(stmt).toString())
+            } else if (intFetch == 100) {
+                // 成功，不再存在数据。
+                free_mysql_cj(bindsCP, values.size)
+                return false
+            } else if (intFetch == 101) {
+                // 发生数据截断。
+            }
+
+            // 成功存在数据或有数据发生数据截断
+            for (i in 0..values.size) {
+                values[i] = mysqlTypeTocjOldType(bindsCP, values[i], i)
+            }
+            free_mysql_cj(bindsCP, values.size)
+
+            return true
+        }
+    }
+
+    private func checkResource() {
+        if (isClosed()) {
+            throw SqlException("The database Connection has been closed")
+        }
+    }
 }
 
-func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64): SqlDbType {
+func cjTypeToMysqlTypeQuery(sqlDbType: String, bindsCP: CPointer<Unit>, index: Int64, length: Int64): Bool {
+    unsafe {
+        return match (sqlDbType) {
+            case "SqlString" => get_string(bindsCP, index, length)
+            case "SqlArrayByte" => get_blob(bindsCP, index, length)
+            case "SqlInputStream" => get_blob(bindsCP, index, length)
+            case "SqlBool" => get_bool(bindsCP, index)
+            case "SqlInt8" => get_int8(bindsCP, index)
+            case "SqlInt16" => get_int16(bindsCP, index)
+            case "SqlInt32" => get_int32(bindsCP, index)
+            case "SqlInt64" => get_int64(bindsCP, index)
+            case "SqlFloat32" => get_float32(bindsCP, index)
+            case "SqlFloat64" => get_float64(bindsCP, index)
+            case "SqlDateTime" => get_date_time(bindsCP, index)
+            case "SqlMysqlTypeDate" => get_date(bindsCP, index)
+            case "SqlMysqlTypeTime" => get_time(bindsCP, index)
+            case "SqlMysqlTypeTimeTimestamp" => get_timestamp(bindsCP, index)
+            case "SqlDecimal" => get_decimal(bindsCP, index, length)
+            case _ => throw SqlException("Unsupported data type.")
+        }
+    }
+}
+
+func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: String, index: Int64): Any {
+    unsafe {
+        var bufferTypeCpInt8: CPointer<Int8> = LibC.malloc<Int8>(count: 8)
+        var bufferTypeCp: CPointer<Unit> = CPointer<Unit>(bufferTypeCpInt8)
+        if (bufferTypeCp.isNull()) {
+            throw SqlException("Native malloc Failed.")
+        }
+        var isNullCpCpInt8: CPointer<Int8> = LibC.malloc<Int8>(count: 8)
+        var isNullCp: CPointer<Unit> = CPointer<Unit>(isNullCpCpInt8)
+        if (isNullCp.isNull()) {
+            LibC.free(bufferTypeCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        var lengthCp: CPointer<Int64> = LibC.malloc<Int64>(count: 8)
+        if (lengthCp.isNull()) {
+            LibC.free(bufferTypeCp)
+            LibC.free(isNullCp)
+            throw SqlException("Native malloc Failed.")
+        }
+        var bufferCp: CPointer<Unit> = get_sql_buffer(bindsCP, index, bufferTypeCp, isNullCp, lengthCp)
+        let any: Any = match (value) {
+            case "SqlString" => getString(bufferCp, isNullCp)
+            case "SqlArrayByte" => getArrayByte(bufferCp, lengthCp.read(), isNullCp)
+            case "SqlBool" => getBool(bufferCp, isNullCp)
+            case "SqlInt8" => getInt8(bufferCp, isNullCp)
+            case "SqlInt16" => getInt16(bufferCp, isNullCp)
+            case "SqlInt32" => getInt32(bufferCp, isNullCp)
+            case "SqlInt64" => getInt64(bufferCp, isNullCp)
+            case "SqlFloat32" => getFloat32(bufferCp, isNullCp)
+            case "SqlFloat64" => getFloat64(bufferCp, isNullCp)
+            case "SqlDateTime" => getDateTime(bufferCp, isNullCp)
+            case "SqlMysqlTypeDate" => getDate(bufferCp, isNullCp)
+            case "SqlMysqlTypeTime" => getTime(bufferCp, isNullCp)
+            case "SqlMysqlTypeTimeTimestamp" => getTimestamp(bufferCp, isNullCp)
+            case "SqlDecimal" => getDecimal(bufferCp, isNullCp)
+            case _ => throw SqlException("Unsupported data type.")
+        }
+        return any
+    }
+}
+
+func getString(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?String {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<String>.None
+        } else {
+            let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
+            let cstirng: CString = CString(valueCPointer)
+            return cstirng.toString()
+        }
+    }
+}
+
+func getArrayByte(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): ?Array<Byte> {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Array<Byte>>.None
+        } else {
+            let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
+            var arr = Array<Byte>(length, repeat: 0)
+            for (i in 0..length) {
+                arr[i] = valueCPointer.read(i)
+            }
+            return arr
+        }
+    }
+}
+
+func getBool(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Bool {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Bool>.None
+        } else {
+            let valueCPointer: CPointer<Int8> = CPointer<Int8>(buffer)
+            let sqlValue: Bool = intToBool(valueCPointer.read())
+            return sqlValue
+        }
+    }
+}
+
+func intToBool(typeInt: Int8): Bool {
+    if (typeInt == 0) {
+        return false
+    } else if (typeInt == 1) {
+        return true
+    }
+    throw SqlException("Unsupported data type.")
+}
+
+func getInt8(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Int8 {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Int8>.None
+        } else {
+            let valueCPointer: CPointer<Int8> = CPointer<Int8>(buffer)
+            let sqlValue: Int8 = valueCPointer.read()
+            return sqlValue
+        }
+    }
+}
+
+func getInt16(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Int16 {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Int16>.None
+        } else {
+            let valueCPointer: CPointer<Int16> = CPointer<Int16>(buffer)
+            let sqlValue: Int16 = valueCPointer.read()
+            return sqlValue
+        }
+    }
+}
+
+func getInt32(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Int32 {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Int32>.None
+        } else {
+            let valueCPointer: CPointer<Int32> = CPointer<Int32>(buffer)
+            let sqlValue: Int32 = valueCPointer.read()
+            return sqlValue
+        }
+    }
+}
+
+func getInt64(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Int64 {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Int64>.None
+        } else {
+            let valueCPointer: CPointer<Int64> = CPointer<Int64>(buffer)
+            let sqlValue: Int64 = valueCPointer.read()
+            return sqlValue
+        }
+    }
+}
+
+func getFloat32(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Float32 {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Float32>.None
+        } else {
+            let valueCPointer: CPointer<Float32> = CPointer<Float32>(buffer)
+            let sqlValue: Float32 = valueCPointer.read()
+            return sqlValue
+        }
+    }
+}
+
+func getFloat64(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Float64 {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Float64>.None
+        } else {
+            let valueCPointer: CPointer<Float64> = CPointer<Float64>(buffer)
+            let sqlValue: Float64 = valueCPointer.read()
+            return sqlValue
+        }
+    }
+}
+
+func getDate(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?MysqlTypeDate {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<MysqlTypeDate>.None
+        } else {
+            var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var monthCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var dayCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp)
+            let dateTime: DateTime = DateTime.of(
+                year: Int64(yearCp.read()),
+                month: Int64(monthCp.read()),
+                dayOfMonth: Int64(dayCp.read())
+            )
+            let mysqlTypeDate: MysqlTypeDate = MysqlTypeDate(dateTime)
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            LibC.free<UInt32>(secondCp)
+            return mysqlTypeDate
+        }
+    }
+}
+
+func getTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?MysqlTypeTime {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<MysqlTypeTime>.None
+        } else {
+            var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var monthCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var dayCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp)
+            let dateTime: DateTime = DateTime.of(
+                year: 1970,
+                month: 1,
+                dayOfMonth: 1,
+                hour: Int64(hourCp.read()),
+                minute: Int64(minuteCp.read()),
+                second: Int64(secondCp.read())
+            )
+            let mysqlTypeTime: MysqlTypeTime = MysqlTypeTime(dateTime)
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            LibC.free<UInt32>(secondCp)
+            return mysqlTypeTime
+        }
+    }
+}
+
+func getTimestamp(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?MysqlTypeTimeTimestamp {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<MysqlTypeTimeTimestamp>.None
+        } else {
+            var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var monthCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var dayCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp)
+            let dateTime: DateTime = DateTime.of(
+                year: Int64(yearCp.read()),
+                month: Int64(monthCp.read()),
+                dayOfMonth: Int64(dayCp.read()),
+                hour: Int64(hourCp.read()),
+                minute: Int64(minuteCp.read()),
+                second: Int64(secondCp.read())
+            )
+            let mysqlTypeTimeTimestamp: MysqlTypeTimeTimestamp = MysqlTypeTimeTimestamp(dateTime)
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            LibC.free<UInt32>(secondCp)
+            return mysqlTypeTimeTimestamp
+        }
+    }
+}
+
+func getDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?DateTime {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<DateTime>.None
+        } else {
+            var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var monthCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var dayCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var hourCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var minuteCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            var secondCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
+            get_sql_time(buffer, yearCp, monthCp, dayCp, hourCp, minuteCp, secondCp)
+            let dateTime: DateTime = DateTime.of(
+                year: Int64(yearCp.read()),
+                month: Int64(monthCp.read()),
+                dayOfMonth: Int64(dayCp.read()),
+                hour: Int64(hourCp.read()),
+                minute: Int64(minuteCp.read()),
+                second: Int64(secondCp.read())
+            )
+            LibC.free<UInt32>(yearCp)
+            LibC.free<UInt32>(monthCp)
+            LibC.free<UInt32>(dayCp)
+            LibC.free<UInt32>(hourCp)
+            LibC.free<UInt32>(minuteCp)
+            LibC.free<UInt32>(secondCp)
+            return dateTime
+        }
+    }
+}
+
+func getDecimal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): ?Decimal {
+    unsafe {
+        let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
+        if (isNullCp.read()) {
+            return Option<Decimal>.None
+        } else {
+            let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
+            let cstirng: CString = CString(valueCPointer)
+            return Decimal.parse(cstirng.toString())
+        }
+    }
+}
+
+func mysqlTypeTocjOldType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64): SqlDbType {
     unsafe {
         var bufferTypeCpInt8: CPointer<Int8> = LibC.malloc<Int8>(count:8)
         var bufferTypeCp: CPointer<Unit> = CPointer<Unit>(bufferTypeCpInt8)
@@ -148,68 +571,68 @@ func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64):
         var bufferCp: CPointer<Unit> = get_sql_buffer(bindsCP, index, bufferTypeCp, isNullCp, lengthCp)
         let sqlDbType: SqlDbType = match (value) {
             // String----SqlChar----CHAR----CHAR----MYSQL_TYPE_STRING----char[]
-            case _: SqlChar => getSqlChar(bufferCp)
-            case _: SqlNullableChar => getSqlNullableChar(bufferCp, isNullCp)
+            case _: SqlChar => getOldSqlChar(bufferCp)
+            case _: SqlNullableChar => getOldSqlNullableChar(bufferCp, isNullCp)
 
             // String----SqlVarchar----VARCHAR----VARCHAR----MYSQL_TYPE_VAR_STRING----char[]
-            case _: SqlVarchar => getSqlVarchar(bufferCp)
-            case _: SqlNullableVarchar => getSqlNullableVarchar(bufferCp, isNullCp)
+            case _: SqlVarchar => getOldSqlVarchar(bufferCp)
+            case _: SqlNullableVarchar => getOldSqlNullableVarchar(bufferCp, isNullCp)
 
             // Array<Byte>----SqlBinary----BINARY----BINARY----MYSQL_TYPE_BLOB----char[]
-            case _: SqlBinary => getSqlBinary(bufferCp, lengthCp.read())
-            case _: SqlNullableBinary => getSqlNullableBinary(bufferCp, lengthCp.read(), isNullCp)
+            case _: SqlBinary => getOldSqlBinary(bufferCp, lengthCp.read())
+            case _: SqlNullableBinary => getOldSqlNullableBinary(bufferCp, lengthCp.read(), isNullCp)
 
             // Array<Byte>----SqlVarBinary----VARBINARY----VARBINARY----MYSQL_TYPE_BLOB----char[]
-            case _: SqlVarBinary => getSqlVarBinary(bufferCp, lengthCp.read())
-            case _: SqlNullableVarBinary => getSqlNullableVarBinary(bufferCp, lengthCp.read(), isNullCp)
+            case _: SqlVarBinary => getOldSqlVarBinary(bufferCp, lengthCp.read())
+            case _: SqlNullableVarBinary => getOldSqlNullableVarBinary(bufferCp, lengthCp.read(), isNullCp)
 
             // 长字符串，mysql输入对应表格没有给出，在输出表格有对应数据
             // Array<InputStream>----SqlClob----CLOB----LONGTEXT----MYSQL_TYPE_LONG_BLOB----char[]
-            case _: SqlClob => getSqlClob(bufferCp, lengthCp.read())
-            case _: SqlNullableClob => getSqlNullableClob(bufferCp, lengthCp.read(), isNullCp)
+            case _: SqlClob => getOldSqlClob(bufferCp, lengthCp.read())
+            case _: SqlNullableClob => getOldSqlNullableClob(bufferCp, lengthCp.read(), isNullCp)
 
             // Array<InputStream>----SqlBlob----BLOB----BLOB----MYSQL_TYPE_BLOB----char[]
-            case _: SqlBlob => getSqlBlob(bufferCp, lengthCp.read())
-            case _: SqlNullableBlob => getSqlNullableBlob(bufferCp, lengthCp.read(), isNullCp)
+            case _: SqlBlob => getOldSqlBlob(bufferCp, lengthCp.read())
+            case _: SqlNullableBlob => getOldSqlNullableBlob(bufferCp, lengthCp.read(), isNullCp)
 
             // 布尔类型在mysql数据库中表现形式是TINYINT
             // Bool----SqlBool----BOOLEAN----TINYINT----MYSQL_TYPE_TINY----signed char
-            case _: SqlBool => getSqlBool(bufferCp)
-            case _: SqlNullableBool => getSqlNullableBool(bufferCp, isNullCp)
+            case _: SqlBool => getOldSqlBool(bufferCp)
+            case _: SqlNullableBool => getOldSqlNullableBool(bufferCp, isNullCp)
 
             // Int8----SqlByte----TINYINT----TINYINT----MYSQL_TYPE_TINY----signed char
-            case _: SqlByte => getSqlByte(bufferCp)
-            case _: SqlNullableByte => getSqlNullableByte(bufferCp, isNullCp)
+            case _: SqlByte => getOldSqlByte(bufferCp)
+            case _: SqlNullableByte => getOldSqlNullableByte(bufferCp, isNullCp)
 
             // Int16----SqlSmallInt----SMALLINT----SMALLINT----MYSQL_TYPE_SHORT----short int
-            case _: SqlSmallInt => getSqlSmallInt(bufferCp)
-            case _: SqlNullableSmallInt => getSqlNullableSmallInt(bufferCp, isNullCp)
+            case _: SqlSmallInt => getOldSqlSmallInt(bufferCp)
+            case _: SqlNullableSmallInt => getOldSqlNullableSmallInt(bufferCp, isNullCp)
 
             // SQL类型不同，但是数据值相对应
             // Int32----SqlInteger----INTEGER----INT----MYSQL_TYPE_LONG----int
-            case _: SqlInteger => getSqlInteger(bufferCp)
-            case _: SqlNullableInteger => getSqlNullableInteger(bufferCp, isNullCp)
+            case _: SqlInteger => getOldSqlInteger(bufferCp)
+            case _: SqlNullableInteger => getOldSqlNullableInteger(bufferCp, isNullCp)
 
             // Int64----SqlBigInt----BIGINT----BIGINT----MYSQL_TYPE_LONGLONG----long long int
-            case _: SqlBigInt => getSqlBigInt(bufferCp)
-            case _: SqlNullableBigInt => getSqlNullableBigInt(bufferCp, isNullCp)
+            case _: SqlBigInt => getOldSqlBigInt(bufferCp)
+            case _: SqlNullableBigInt => getOldSqlNullableBigInt(bufferCp, isNullCp)
 
             // SQL类型不同，但是数据值相对应
             // Float32----SqlReal----REAL----FLOAT----MYSQL_TYPE_FLOAT----float
-            case _: SqlReal => getSqlReal(bufferCp)
-            case _: SqlNullableReal => getSqlNullableReal(bufferCp, isNullCp)
+            case _: SqlReal => getOldSqlReal(bufferCp)
+            case _: SqlNullableReal => getOldSqlNullableReal(bufferCp, isNullCp)
 
             // Float64----SqlDouble----DOUBLE----DOUBLE----MYSQL_TYPE_DOUBLE----double
-            case _: SqlDouble => getSqlDouble(bufferCp)
-            case _: SqlNullableDouble => getSqlNullableDouble(bufferCp, isNullCp)
+            case _: SqlDouble => getOldSqlDouble(bufferCp)
+            case _: SqlNullableDouble => getOldSqlNullableDouble(bufferCp, isNullCp)
 
             // DateTime----SqlDate----DATE----DATE----MYSQL_TYPE_DATE----MYSQL_TIME
-            case _: SqlDate => getSqlDate(bufferCp)
-            case _: SqlNullableDate => getSqlNullableDate(bufferCp, isNullCp)
+            case _: SqlDate => getOldSqlDate(bufferCp)
+            case _: SqlNullableDate => getOldSqlNullableDate(bufferCp, isNullCp)
 
             // DateTime----SqlTime----TIME----TIME----MYSQL_TYPE_TIME----MYSQL_TIME
-            case _: SqlTime => getSqlTime(bufferCp)
-            case _: SqlNullableTime => getSqlNullableTime(bufferCp, isNullCp)
+            case _: SqlTime => getOldSqlTime(bufferCp)
+            case _: SqlNullableTime => getOldSqlNullableTime(bufferCp, isNullCp)
 
             // DateTime----SqlTimeTz----TIMETZ----TIME----MYSQL_TYPE_TIME----MYSQL_TIME
             // mysql不支持
@@ -217,8 +640,8 @@ func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64):
             case _: SqlNullableTimeTz => throw SqlException("Unsupported data type.")
 
             // DateTime----SqlTimestamp----TIMESTAMP----TIMESTAMP----MYSQL_TYPE_TIMESTAMP----MYSQL_TIME
-            case _: SqlTimestamp => getSqlTimestamp(bufferCp)
-            case _: SqlNullableTimestamp => getSqlNullableTimestamp(bufferCp, isNullCp)
+            case _: SqlTimestamp => getOldSqlTimestamp(bufferCp)
+            case _: SqlNullableTimestamp => getOldSqlNullableTimestamp(bufferCp, isNullCp)
 
             // Duration----SqlInterval----INTERVAL----DATE----MYSQL_TYPE_DATE----MYSQL_TIME
             // mysql不支持
@@ -227,13 +650,13 @@ func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64):
 
             // 自定义类
             // DATETIME----MYSQL_TYPE_DATETIME----MYSQL_TIME
-            case _: SqlDateTime => getSqlDateTime(bufferCp)
-            case _: SqlNullableDateTime => getSqlNullableDateTime(bufferCp, isNullCp)
+            case _: SqlDateTime => getOldSqlDateTime(bufferCp)
+            case _: SqlNullableDateTime => getOldSqlNullableDateTime(bufferCp, isNullCp)
 
             // 自定义类
             // DECIMAL----MYSQL_TYPE_NEWDECIMAL
-            case _: SqlDecimal => getSqlDecimal(bufferCp)
-            case _: SqlNullableDecimal => getSqlNullableDecimal(bufferCp, isNullCp)
+            case _: SqlDecimal => getOldSqlDecimal(bufferCp)
+            case _: SqlNullableDecimal => getOldSqlNullableDecimal(bufferCp, isNullCp)
 
             case _ => throw SqlException("Unsupported data type.")
         }
@@ -241,7 +664,7 @@ func mysqlTypeTocjType(bindsCP: CPointer<Unit>, value: SqlDbType, index: Int64):
     }
 }
 
-func getSqlChar(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlChar(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         let cstirng: CString = CString(valueCPointer)
@@ -249,7 +672,7 @@ func getSqlChar(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableChar(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableChar(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -262,7 +685,7 @@ func getSqlNullableChar(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
     }
 }
 
-func getSqlVarchar(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlVarchar(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         let cstirng: CString = CString(valueCPointer)
@@ -270,7 +693,7 @@ func getSqlVarchar(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableVarchar(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableVarchar(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -283,7 +706,7 @@ func getSqlNullableVarchar(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlD
     }
 }
 
-func getSqlBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
+func getOldSqlBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         var arr = Array<Byte>(length, repeat: 0)
@@ -294,7 +717,7 @@ func getSqlBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     }
 }
 
-func getSqlNullableBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -310,7 +733,7 @@ func getSqlNullableBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPointe
     }
 }
 
-func getSqlVarBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
+func getOldSqlVarBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         var arr = Array<Byte>(length, repeat: 0)
@@ -321,7 +744,7 @@ func getSqlVarBinary(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     }
 }
 
-func getSqlNullableVarBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableVarBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -337,7 +760,7 @@ func getSqlNullableVarBinary(buffer: CPointer<Unit>, length: Int64, isNull: CPoi
     }
 }
 
-func getSqlClob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
+func getOldSqlClob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         var arr = Array<Byte>(length, repeat: 0)
@@ -350,7 +773,7 @@ func getSqlClob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     }
 }
 
-func getSqlNullableClob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableClob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -368,7 +791,7 @@ func getSqlNullableClob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<
     }
 }
 
-func getSqlBlob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
+func getOldSqlBlob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         var arr = Array<Byte>(length, repeat: 0)
@@ -381,7 +804,7 @@ func getSqlBlob(buffer: CPointer<Unit>, length: Int64): SqlDbType {
     }
 }
 
-func getSqlNullableBlob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableBlob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -399,7 +822,7 @@ func getSqlNullableBlob(buffer: CPointer<Unit>, length: Int64, isNull: CPointer<
     }
 }
 
-func getSqlBool(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlBool(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<Int8> = CPointer<Int8>(buffer)
         let sqlValue: Bool = intToBool(valueCPointer.read())
@@ -407,7 +830,7 @@ func getSqlBool(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableBool(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableBool(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -420,7 +843,7 @@ func getSqlNullableBool(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
     }
 }
 
-func intToBool(typeInt: Int8): Bool {
+func intToOldBool(typeInt: Int8): Bool {
     if (typeInt == 0) {
         return false
     } else if (typeInt == 1) {
@@ -429,7 +852,7 @@ func intToBool(typeInt: Int8): Bool {
     throw SqlException("Unsupported data type.")
 }
 
-func getSqlByte(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlByte(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<Int8> = CPointer<Int8>(buffer)
         let sqlValue: Int8 = valueCPointer.read()
@@ -437,7 +860,7 @@ func getSqlByte(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableByte(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableByte(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -450,7 +873,7 @@ func getSqlNullableByte(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
     }
 }
 
-func getSqlSmallInt(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlSmallInt(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<Int16> = CPointer<Int16>(buffer)
         let sqlValue: Int16 = valueCPointer.read()
@@ -458,7 +881,7 @@ func getSqlSmallInt(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableSmallInt(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableSmallInt(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -471,7 +894,7 @@ func getSqlNullableSmallInt(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sql
     }
 }
 
-func getSqlInteger(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlInteger(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<Int32> = CPointer<Int32>(buffer)
         let sqlValue: Int32 = valueCPointer.read()
@@ -479,7 +902,7 @@ func getSqlInteger(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableInteger(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableInteger(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -492,7 +915,7 @@ func getSqlNullableInteger(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlD
     }
 }
 
-func getSqlBigInt(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlBigInt(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<Int64> = CPointer<Int64>(buffer)
         let sqlValue: Int64 = valueCPointer.read()
@@ -500,7 +923,7 @@ func getSqlBigInt(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableBigInt(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableBigInt(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -513,7 +936,7 @@ func getSqlNullableBigInt(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDb
     }
 }
 
-func getSqlReal(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlReal(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<Float32> = CPointer<Float32>(buffer)
         let sqlValue: Float32 = valueCPointer.read()
@@ -521,7 +944,7 @@ func getSqlReal(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableReal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableReal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -534,7 +957,7 @@ func getSqlNullableReal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
     }
 }
 
-func getSqlDouble(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlDouble(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<Float64> = CPointer<Float64>(buffer)
         let sqlValue: Float64 = valueCPointer.read()
@@ -542,7 +965,7 @@ func getSqlDouble(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableDouble(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableDouble(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -555,7 +978,7 @@ func getSqlNullableDouble(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDb
     }
 }
 
-func getSqlDate(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlDate(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
         if (yearCp.isNull()) {
@@ -612,7 +1035,7 @@ func getSqlDate(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableDate(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableDate(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
             let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
             if (isNullCp.read()) {
@@ -675,7 +1098,7 @@ func getSqlNullableDate(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
     }
 }
 
-func getSqlTime(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlTime(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         
         var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
@@ -736,7 +1159,7 @@ func getSqlTime(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
             let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
             if (isNullCp.read()) {
@@ -802,7 +1225,7 @@ func getSqlNullableTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbTy
     }
 }
 
-func getSqlTimestamp(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlTimestamp(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         
         var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
@@ -863,7 +1286,7 @@ func getSqlTimestamp(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableTimestamp(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableTimestamp(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
             let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
             if (isNullCp.read()) {
@@ -929,7 +1352,7 @@ func getSqlNullableTimestamp(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sq
     }
 }
 
-func getSqlDateTime(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlDateTime(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         
         var yearCp: CPointer<UInt32> = LibC.malloc<UInt32>(count: 4)
@@ -990,7 +1413,7 @@ func getSqlDateTime(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
             let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
             if (isNullCp.read()) {
@@ -1056,7 +1479,7 @@ func getSqlNullableDateTime(buffer: CPointer<Unit>, isNull: CPointer<Unit>): Sql
     }
 }
 
-func getSqlDecimal(buffer: CPointer<Unit>): SqlDbType {
+func getOldSqlDecimal(buffer: CPointer<Unit>): SqlDbType {
     unsafe {
         let valueCPointer: CPointer<UInt8> = CPointer<UInt8>(buffer)
         let cstirng: CString = CString(valueCPointer)
@@ -1064,7 +1487,7 @@ func getSqlDecimal(buffer: CPointer<Unit>): SqlDbType {
     }
 }
 
-func getSqlNullableDecimal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
+func getOldSqlNullableDecimal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlDbType {
     unsafe {
         let isNullCp: CPointer<Bool> = CPointer<Bool>(isNull)
         if (isNullCp.read()) {
@@ -1077,7 +1500,7 @@ func getSqlNullableDecimal(buffer: CPointer<Unit>, isNull: CPointer<Unit>): SqlD
     }
 }
 
-func cjTypeToMysqlTypeQuery(sqlDbType: SqlDbType, bindsCP: CPointer<Unit>, index: Int64, length: Int64): Bool {
+func cjTypeToMysqlOldTypeQuery(sqlDbType: SqlDbType, bindsCP: CPointer<Unit>, index: Int64, length: Int64): Bool {
     unsafe {
         return match (sqlDbType) {
             // String----SqlChar----CHAR----CHAR----MYSQL_TYPE_STRING----char[]

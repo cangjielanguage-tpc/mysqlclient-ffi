@@ -58,48 +58,25 @@ public class MysqlIntTest {
             "insert into  t_test_blob(id,value1,value2)  VALUES(?,?,?)")
         @Assert(3, mysqlStatement3.parameterCount)
 
-        var id: SqlBigInt = SqlBigInt(1)
-
-        let stream = ByteBuffer()
-        stream.write(Array<Byte>(5, repeat: 89))
-        var data1: SqlBlob = SqlBlob(stream)
-
-        var data2: SqlNullableBlob = SqlNullableBlob(None)
-        var arrDb: Array<SqlDbType> = [id, data1, data2]
-
         // 执行插入语句插入数据
-        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 1)
+        mysqlStatement3.set<Array<Byte>>(1, Array<Byte>(5, repeat: 89))
+        mysqlStatement3.setNull(2)
+        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult1.rowCount)
 
-        id = SqlBigInt(2)
-
-        let stream11 = ByteBuffer()
-        stream11.write(Array<Byte>(5, repeat: 88))
-        var data11: SqlBlob = SqlBlob(stream11)
-
-        let stream22 = ByteBuffer()
-        stream22.write(Array<Byte>(5, repeat: 87))
-        var data22: SqlNullableBlob = SqlNullableBlob(stream22)
-        arrDb = [id, data11, data22]
-
         // 执行插入语句插入数据
-        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 2)
+        mysqlStatement3.set<Array<Byte>>(1, Array<Byte>(5, repeat: 88))
+        mysqlStatement3.set<Array<Byte>>(2, Array<Byte>(5, repeat: 87))
+        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult2.rowCount)
 
-        id = SqlBigInt(3)
-
-        let stream111 = ByteBuffer()
-        stream111.write(Array<Byte>(5, repeat: 86))
-        var data111: SqlBlob = SqlBlob(stream111)
-
-        let stream222 = ByteBuffer()
-        stream222.write(Array<Byte>(5, repeat: 85))
-        var data222: SqlNullableBlob = SqlNullableBlob(stream222)
-
-        arrDb = [id, data111, data222]
-
         // 执行插入语句插入数据
-        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 3)
+        mysqlStatement3.set<Array<Byte>>(1, Array<Byte>(5, repeat: 86))
+        mysqlStatement3.set<Array<Byte>>(2, Array<Byte>(5, repeat: 85))
+        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult3.rowCount)
         mysqlStatement3.close()
 
@@ -110,51 +87,33 @@ public class MysqlIntTest {
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlInt64", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(true, mysqlColumnInfos[0].nullable)
 
         @Assert("value1", mysqlColumnInfos[1].name)
-        @Assert("SqlBlob", mysqlColumnInfos[1].typeName)
+        @Assert("SqlArrayByte", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(65535, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("value2", mysqlColumnInfos[2].name)
-        @Assert("SqlNullableBlob", mysqlColumnInfos[2].typeName)
+        @Assert("SqlArrayByte", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(65535, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)
         @Assert(false, mysqlColumnInfos[2].nullable)
 
-        id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
-        arrDb = [id, data1, data2]
-
-        var isBool: Bool = mysqlQueryResult.next(arrDb)
+        var isBool: Bool = mysqlQueryResult.next()
         @Assert(true, isBool)
-        @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
+        @Assert(1, mysqlQueryResult.get<Int64>(0))
+        @Assert(Array<Byte>(5, repeat: 89), mysqlQueryResult.get<Array<Byte>>(1))
+        @Assert(None, mysqlQueryResult.getOrNull<Array<Byte>>(2))
 
-        var buf = Array<Byte>(5, repeat: 0)
-        (arrDb[1] as SqlBlob).getOrThrow().value.read(buf)
-
-        @Assert("YYYYY", String.fromUtf8(buf))
-
-        let sqlNullableData: SqlNullableBlob = (arrDb[2] as SqlNullableBlob).getOrThrow()
-        match (sqlNullableData.value) {
-            case Some(_) => @Assert(0, 1)
-            case None => @Assert(1, 1)
-        }
-
-        id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
-        arrDb = [id, data1, data2]
-        isBool = mysqlQueryResult.next(arrDb)
+        isBool = mysqlQueryResult.next()
         @Assert(false, isBool)
         mysqlStatement4.close()
 
@@ -162,11 +121,9 @@ public class MysqlIntTest {
         let mysqlStatement5: MysqlStatement = mysqlConnection.prepareStatement("delete from t_test_blob where id = ?")
         @Assert(1, mysqlStatement5.parameterCount)
 
-        id = SqlBigInt(1)
-        arrDb = [id]
-
         // 执行删除语句
-        let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update(arrDb)
+        mysqlStatement5.set<Int64>(0, 1)
+        let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update()
         @Assert(1, mysqlUpdateResult4.rowCount)
         mysqlStatement5.close()
 
@@ -176,13 +133,8 @@ public class MysqlIntTest {
         // 执行查询语句
         let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
 
-        id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
-        arrDb = [id, data1, data2]
-
         // 获取数据
-        isBool = mysqlQueryResult1.next(arrDb)
+        isBool = mysqlQueryResult1.next()
         @Assert(false, isBool)
         mysqlStatement6.close()
 
@@ -191,20 +143,11 @@ public class MysqlIntTest {
             "update t_test_blob set value1 = ?, value2 = ?  where id = ?")
         @Assert(3, mysqlStatement7.parameterCount)
 
-        id = SqlBigInt(2)
-
-        let stream1111 = ByteBuffer()
-        stream1111.write(Array<Byte>(5, repeat: 84))
-        data1 = SqlBlob(stream1111)
-
-        let stream2222 = ByteBuffer()
-        stream2222.write(Array<Byte>(5, repeat: 83))
-        data2 = SqlNullableBlob(stream2222)
-
-        arrDb = [data1, data2, id]
-
         // 执行更新语句
-        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb)
+        mysqlStatement7.set<Int64>(2, 2)
+        mysqlStatement7.set<Array<Byte>>(0, Array<Byte>(5, repeat: 84))
+        mysqlStatement7.set<Array<Byte>>(1, Array<Byte>(5, repeat: 83))
+        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update()
         @Assert(1, mysqlUpdateResult5.rowCount)
         mysqlStatement7.close()
 
@@ -214,25 +157,12 @@ public class MysqlIntTest {
         // 执行查询语句
         var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()
 
-        id = SqlBigInt(3)
-        data1 = SqlBlob(ByteBuffer())
-        data2 = SqlNullableBlob(ByteBuffer())
-        arrDb = [id, data1, data2]
-
         // 获取数据
-        isBool = mysqlQueryResult2.next(arrDb)
+        isBool = mysqlQueryResult2.next()
         @Assert(true, isBool)
-        @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
-
-        buf = Array<Byte>(5, repeat: 0)
-        (arrDb[1] as SqlBlob).getOrThrow().value.read(buf)
-        @Assert("TTTTT", String.fromUtf8(buf))
-
-        buf = Array<Byte>(5, repeat: 0)
-        (arrDb[2] as SqlNullableBlob).getOrThrow().value.getOrThrow().read(buf)
-
-        println(String.fromUtf8(buf))
-        @Assert("SSSSS", String.fromUtf8(buf))
+        @Assert(2, mysqlQueryResult2.get<Int64>(0))
+        @Assert(Array<Byte>(5, repeat: 84), mysqlQueryResult2.get<Array<Byte>>(1))
+        @Assert(Array<Byte>(5, repeat: 83), mysqlQueryResult2.get<Array<Byte>>(2))
         mysqlStatement8.close()
 
         // 删除t_test名称数据表

@@ -42,9 +42,8 @@ main(): Int64 {
     @Assert(1, mysqlStatement1.parameterCount)
 
     // 插入一条数据
-    var varcharValueOne1: SqlVarchar = SqlVarchar("lihao")
-    var arrDb1: Array<SqlDbType> = [varcharValueOne1]
-    var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement1.update(arrDb1)
+    mysqlStatement1.set<String>(0, "lihao")
+    var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement1.update()
     @Assert(1, mysqlUpdateResult1.rowCount)
     mysqlStatement1.close()
 
@@ -53,21 +52,19 @@ main(): Int64 {
         "select * from t_test_varchar_long where varcharValue1 like 'lihao'")
 
     var mysqlQueryResult1: MysqlQueryResult = mysqlStatement2.query()
-
     let mysqlColumnInfos1: Array<MysqlColumnInfo> = mysqlQueryResult1.mysqlColumnInfos
     @Assert(1, mysqlColumnInfos1.size)
 
     @Assert("varcharValue1", mysqlColumnInfos1[0].name)
-    @Assert("SqlVarchar", mysqlColumnInfos1[0].typeName)
+    @Assert("SqlString", mysqlColumnInfos1[0].typeName)
     @Assert(0, mysqlColumnInfos1[0].displaySize)
     @Assert(22000, mysqlColumnInfos1[0].length)
     @Assert(0, mysqlColumnInfos1[0].scale)
     @Assert(true, mysqlColumnInfos1[0].nullable)
 
-    var varcharValueOne5: SqlVarchar = SqlVarchar("")
-    var arrDb5: Array<SqlDbType> = [varcharValueOne5]
-    var isBool1: Bool = mysqlQueryResult1.next(arrDb5)
-    @Assert("lihao", (arrDb5[0] as SqlVarchar).getOrThrow().value)
+    var isBool1: Bool = mysqlQueryResult1.next()
+    @Assert(true, isBool1)
+    @Assert("lihao", mysqlQueryResult1.get<String>(0))
     mysqlStatement2.close()
 
     // 删除t_test名称数据表

@@ -90,23 +90,20 @@ public class MysqlVarcharLongTest {
         @Assert(1, mysqlStatement1.parameterCount)
 
         // 插入一条数据
-        var varcharValueOne1: SqlVarchar = SqlVarchar("lihao")
-        var arrDb1: Array<SqlDbType> = [varcharValueOne1]
-        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement1.update(arrDb1)
+        mysqlStatement1.set<String>(0, "lihao")
+        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement1.update()
         @Assert(1, mysqlUpdateResult1.rowCount)
 
         // 插入一条数据
         // 长度过长bug
         let longStr: String = "01234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789012345678901234567890123456789"
-        var varcharValueOne2: SqlVarchar = SqlVarchar(longStr)
-        var arrDb2: Array<SqlDbType> = [varcharValueOne2]
-        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement1.update(arrDb2)
+        mysqlStatement1.set<String>(0, longStr)
+        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement1.update()
         @Assert(1, mysqlUpdateResult2.rowCount)
 
         // 插入一条数据
-        var varcharValueOne3: SqlVarchar = SqlVarchar("菜鸟课程")
-        var arrDb3: Array<SqlDbType> = [varcharValueOne3]
-        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement1.update(arrDb3)
+        mysqlStatement1.set<String>(0, "菜鸟课程")
+        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement1.update()
         @Assert(1, mysqlUpdateResult3.rowCount)
         mysqlStatement1.close()
 
@@ -115,35 +112,31 @@ public class MysqlVarcharLongTest {
             "select * from t_test_varchar_long where varcharValue1 = ?")
         @Assert(1, mysqlStatement2.parameterCount)
 
-        var varcharValueOne4: SqlVarchar = SqlVarchar(longStr)
-        var arrDb4: Array<SqlDbType> = [varcharValueOne4]
-
-        var mysqlQueryResult1: MysqlQueryResult = mysqlStatement2.query(arrDb4)
+        mysqlStatement2.set<String>(0, longStr)
+        var mysqlQueryResult1: MysqlQueryResult = mysqlStatement2.query()
 
         let mysqlColumnInfos1: Array<MysqlColumnInfo> = mysqlQueryResult1.mysqlColumnInfos
         @Assert(1, mysqlColumnInfos1.size)
 
         @Assert("varcharValue1", mysqlColumnInfos1[0].name)
-        @Assert("SqlVarchar", mysqlColumnInfos1[0].typeName)
+        @Assert("SqlString", mysqlColumnInfos1[0].typeName)
         @Assert(0, mysqlColumnInfos1[0].displaySize)
         @Assert(22000, mysqlColumnInfos1[0].length)
         @Assert(0, mysqlColumnInfos1[0].scale)
         @Assert(true, mysqlColumnInfos1[0].nullable)
 
-        var varcharValueOne5: SqlVarchar = SqlVarchar("")
-        var arrDb5: Array<SqlDbType> = [varcharValueOne5]
-        var isBool1: Bool = mysqlQueryResult1.next(arrDb5)
+        var isBool1: Bool = mysqlQueryResult1.next()
         @Assert(true, isBool1)
-        @Assert(longStr, (arrDb5[0] as SqlVarchar).getOrThrow().value)
+        @Assert(longStr, mysqlQueryResult1.get<String>(0))
         mysqlStatement2.close()
 
         // 删除语句预执行语句
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
             "delete from t_test_varchar_long where varcharValue1 = ?")
         @Assert(1, mysqlStatement3.parameterCount)
-        var varcharValueOne6: SqlVarchar = SqlVarchar(longStr)
-        var arrDb6: Array<SqlDbType> = [varcharValueOne6]
-        var mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement3.update(arrDb6)
+
+        mysqlStatement3.set<String>(0, longStr)
+        var mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult4.rowCount)
         mysqlStatement3.close()
 
@@ -151,12 +144,10 @@ public class MysqlVarcharLongTest {
         var mysqlStatement4: MysqlStatement = mysqlConnection.prepareStatement(
             "select * from t_test_varchar_long where varcharValue1 = ?")
         @Assert(1, mysqlStatement4.parameterCount)
-        var varcharValueOne7: SqlVarchar = SqlVarchar(longStr)
-        var arrDb7: Array<SqlDbType> = [varcharValueOne7]
-        var mysqlQueryResult2: MysqlQueryResult = mysqlStatement4.query(arrDb7)
-        var varcharValueOne8: SqlVarchar = SqlVarchar("")
-        var arrDb8: Array<SqlDbType> = [varcharValueOne8]
-        var isBool2: Bool = mysqlQueryResult2.next(arrDb8)
+
+        mysqlStatement4.set<String>(0, longStr)
+        var mysqlQueryResult2: MysqlQueryResult = mysqlStatement4.query()
+        var isBool2: Bool = mysqlQueryResult2.next()
         @Assert(false, isBool2)
         mysqlStatement4.close()
 
@@ -165,31 +156,25 @@ public class MysqlVarcharLongTest {
             "update t_test_varchar_long set varcharValue1 = ?  where varcharValue1 = ?")
         @Assert(2, mysqlStatement7.parameterCount)
 
-        var varcharValueOne9: SqlVarchar = SqlVarchar("lihao")
-        var varcharValueOne90: SqlVarchar = SqlVarchar(
-            "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111"
-        )
-        var arrDb9: Array<SqlDbType> = [varcharValueOne90, varcharValueOne9]
-
         // 执行更新语句
-        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb9)
+        mysqlStatement7.set<String>(0,
+            "11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111")
+        mysqlStatement7.set<String>(1, "lihao")
+        let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update()
         @Assert(1, mysqlUpdateResult5.rowCount)
         mysqlStatement7.close()
 
         // 查询语句预执行语句
         let mysqlStatement8: MysqlStatement = mysqlConnection.prepareStatement(
-            "select * from t_test_varchar_long where varcharValue1 = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'"
-        )
+            "select * from t_test_varchar_long where varcharValue1 = '11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111'")
 
         // 执行查询语句
         var mysqlQueryResult3: MysqlQueryResult = mysqlStatement8.query()
 
-        var varcharValueOne10: SqlVarchar = SqlVarchar("")
-        var arrDb10: Array<SqlDbType> = [varcharValueOne10]
-
         // 获取数据
-        let isBool10: Bool = mysqlQueryResult3.next(arrDb10)
+        let isBool10: Bool = mysqlQueryResult3.next()
         @Assert(true, isBool10)
+        @Assert("11111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111111", mysqlQueryResult3.get<String>(0))
         mysqlStatement8.close()
 
         // 删除t_test名称数据表
