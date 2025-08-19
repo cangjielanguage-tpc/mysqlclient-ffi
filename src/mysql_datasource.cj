@@ -13,7 +13,7 @@ public class MysqlDatasource <: Datasource {
     /**
      * 全局锁
      */
-    private static let latexReentrantMutex: ReentrantMutex = ReentrantMutex()
+    private static let latexReentrantMutex: Mutex = Mutex()
 
     /*
      * 初始化数据源

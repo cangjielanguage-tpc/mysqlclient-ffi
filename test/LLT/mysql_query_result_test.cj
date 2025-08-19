@@ -52,21 +52,21 @@ public class MysqlQueryResultTest {
         let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
 
         @Assert("id", mysqlColumnInfos[0].name)
-        @Assert("SqlBigInt", mysqlColumnInfos[0].typeName)
+        @Assert("SqlInt64", mysqlColumnInfos[0].typeName)
         @Assert(0, mysqlColumnInfos[0].displaySize)
         @Assert(20, mysqlColumnInfos[0].length)
         @Assert(0, mysqlColumnInfos[0].scale)
         @Assert(true, mysqlColumnInfos[0].nullable)
 
         @Assert("timeValue1", mysqlColumnInfos[1].name)
-        @Assert("SqlTime", mysqlColumnInfos[1].typeName)
+        @Assert("SqlMysqlTypeTime", mysqlColumnInfos[1].typeName)
         @Assert(0, mysqlColumnInfos[1].displaySize)
         @Assert(10, mysqlColumnInfos[1].length)
         @Assert(0, mysqlColumnInfos[1].scale)
         @Assert(true, mysqlColumnInfos[1].nullable)
 
         @Assert("timeValue2", mysqlColumnInfos[2].name)
-        @Assert("SqlNullableTime", mysqlColumnInfos[2].typeName)
+        @Assert("SqlMysqlTypeTime", mysqlColumnInfos[2].typeName)
         @Assert(0, mysqlColumnInfos[2].displaySize)
         @Assert(10, mysqlColumnInfos[2].length)
         @Assert(0, mysqlColumnInfos[2].scale)

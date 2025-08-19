@@ -246,21 +246,56 @@ public class MysqlStatement <: Statement {
     public func setOption(option: MysqlStmtAttrType, arg: UInt64): Unit
 
     /**
+     * 设置预执行sql语句参数
+     *
+     * 参数 index - 位置
+     * 参数 value - 值
+     * 异常 Exception - 参数设置错误。
+     */
+    public override func set<T>(index: Int, value: T): Unit
+
+    /**
+     * 设置预执行sql语句null参数
+     *
+     * 参数 index - 位置
+     * 异常 Exception - 参数设置错误。
+     */
+    public override func setNull(index: Int): Unit
+
+    /**
      * 执行sql语句，得到更新结果
+     *
+     * 返回值 UpdateResult - 更新结果。
+     * 异常 Exception - 传入参数错误。
+     */
+    public override func update(): MysqlUpdateResult
+
+    /**
+     * 执行sql语句，得到查询结果
+     *
+     * 返回值 QueryResult - 查询结果。
+     * 异常 Exception - 传入参数错误。
+     */
+    public override func query(): MysqlQueryResult
+
+    /**
+     * 执行sql语句，得到更新结果 - todo：废弃
      *
      * 参数 params - 填充预执行语句中问号的数据。
      * 返回值 UpdateResult - 更新结果。
      * 异常 SqlException - 传入参数错误。
      */
+    @Deprecated
     public override func update(params: Array<SqlDbType>): MysqlUpdateResult
 
     /**
-     * 执行sql语句，得到查询结果
+     * 执行sql语句，得到查询结果 - todo：废弃
      *
      * 参数 params - 填充预执行语句中问号的数据。
      * 返回值 QueryResult - 查询结果。
      * 异常 SqlException - 传入参数错误。
      */
+    @Deprecated
     public override func query(params: Array<SqlDbType>): MysqlQueryResult
 
     /*
@@ -326,13 +361,40 @@ public class MysqlQueryResult <: QueryResult {
     public prop mysqlColumnInfos: Array<MysqlColumnInfo>
 
     /*
+     * 向后移动一行，必须先调用一次 next() 才能移动到第一行，第二次调用移动到第二行，依此类推。当返回 true 时，驱动会在结果集的当前行填入数据，当返回 false 时结束，且不会修改结果集当前行的内容。
+     *
+     * 返回值 Bool - 存在下一行则返回true，否则返回false
+     * 异常 Exception - 传入参数错误
+     */
+    public override func next(): Bool
+
+    /*
+     * 获取可以为null的数据
+     *
+     * 参数 index - 位置
+     * 返回值 ?T - 值
+     * 异常 Exception - 传入参数错误
+     */
+    public override func getOrNull<T>(index: Int): ?T
+
+    /*
+     * 获取数据
+     *
+     * 参数 index - 位置
+     * 返回值 T - 值
+     * 异常 Exception - 传入参数错误
+     */
+    public override func get<T>(index: Int): T
+
+    /*
      * 向后移动一行，必须先调用一次next才能移动到第一行，第二次调用移动到第二行，依此类推。
-     * 当返回true时，驱动会在values中填入行数据；当返回false时结束，且不会修改values的内容。
+     * 当返回true时，驱动会在values中填入行数据；当返回false时结束，且不会修改values的内容。 - todo：废弃
      *
      * 参数 values - 需要填充返回的数据
      * 返回值 Bool - 存在下一行则返回true，否则返回false
      * 异常 SqlException - 传入参数错误
      */
+    @Deprecated
     public override func next(values: Array<SqlDbType>): Bool
 
     /*

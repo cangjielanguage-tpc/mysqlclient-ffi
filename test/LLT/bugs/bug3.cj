@@ -40,31 +40,25 @@ main(): Int64 {
         "insert into  t_test_bool(id,value1,value2)  VALUES(?,?,?)")
     @Assert(3, mysqlStatement3.parameterCount)
 
-    var id: SqlBigInt = SqlBigInt(1)
-    var data1: SqlBool = SqlBool(false)
-    var data2: SqlNullableBool = SqlNullableBool(None)
-    var arrDb: Array<SqlDbType> = [id, data1, data2]
-
     // 执行插入语句插入数据
-    var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+    mysqlStatement3.set<Int64>(0, 1)
+    mysqlStatement3.set<Bool>(1, false)
+    mysqlStatement3.setNull(2)
+    var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update()
     @Assert(1, mysqlUpdateResult1.rowCount)
 
-    id = SqlBigInt(2)
-    data1 = SqlBool(false)
-    data2 = SqlNullableBool(false)
-    arrDb = [id, data1, data2]
-
     // 执行插入语句插入数据
-    var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+    mysqlStatement3.set<Int64>(0, 2)
+    mysqlStatement3.set<Bool>(1, false)
+    mysqlStatement3.set<Bool>(2, false)
+    var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update()
     @Assert(1, mysqlUpdateResult2.rowCount)
 
-    id = SqlBigInt(3)
-    data1 = SqlBool(true)
-    data2 = SqlNullableBool(true)
-    arrDb = [id, data1, data2]
-
     // 执行插入语句插入数据
-    var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+    mysqlStatement3.set<Int64>(0, 3)
+    mysqlStatement3.set<Bool>(1, true)
+    mysqlStatement3.set<Bool>(2, true)
+    var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update()
     @Assert(1, mysqlUpdateResult3.rowCount)
     mysqlStatement3.close()
 
@@ -73,27 +67,13 @@ main(): Int64 {
     @Assert(0, mysqlStatement4.parameterCount)
     var mysqlQueryResult: MysqlQueryResult = mysqlStatement4.query()
 
-    id = SqlBigInt(3)
-    data1 = SqlBool(false)
-    data2 = SqlNullableBool(false)
-    arrDb = [id, data1, data2]
-
-    var isBool: Bool = mysqlQueryResult.next(arrDb)
+    var isBool: Bool = mysqlQueryResult.next()
     @Assert(true, isBool)
-    @Assert(1, (arrDb[0] as SqlBigInt).getOrThrow().value)
-    @Assert(false, (arrDb[1] as SqlBool).getOrThrow().value)
+    @Assert(1, mysqlQueryResult.get<Int64>(0))
+    @Assert(0, mysqlQueryResult.get<Int8>(1))
+    @Assert(None, mysqlQueryResult.getOrNull<Int8>(2))
 
-    let sqlNullableData: SqlNullableBool = (arrDb[2] as SqlNullableBool).getOrThrow()
-    match (sqlNullableData.value) {
-        case Some(_) => @Assert(0, 1)
-        case None => @Assert(1, 1)
-    }
-
-    id = SqlBigInt(3)
-    data1 = SqlBool(false)
-    data2 = SqlNullableBool(false)
-    arrDb = [id, data1, data2]
-    isBool = mysqlQueryResult.next(arrDb)
+    isBool = mysqlQueryResult.next()
     @Assert(false, isBool)
     mysqlStatement4.close()
 
@@ -101,11 +81,9 @@ main(): Int64 {
     let mysqlStatement5: MysqlStatement = mysqlConnection.prepareStatement("delete from t_test_bool where id = ?")
     @Assert(1, mysqlStatement5.parameterCount)
 
-    id = SqlBigInt(1)
-    arrDb = [id]
-
     // 执行删除语句
-    let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update(arrDb)
+    mysqlStatement5.set<Int64>(0, 1)
+    let mysqlUpdateResult4: MysqlUpdateResult = mysqlStatement5.update()
     @Assert(1, mysqlUpdateResult4.rowCount)
     mysqlStatement5.close()
 
@@ -115,13 +93,8 @@ main(): Int64 {
     // 执行查询语句
     let mysqlQueryResult1: MysqlQueryResult = mysqlStatement6.query()
 
-    id = SqlBigInt(3)
-    data1 = SqlBool(false)
-    data2 = SqlNullableBool(false)
-    arrDb = [id, data1, data2]
-
     // 获取数据
-    isBool = mysqlQueryResult1.next(arrDb)
+    isBool = mysqlQueryResult1.next()
     @Assert(false, isBool)
     mysqlStatement6.close()
 
@@ -130,13 +103,11 @@ main(): Int64 {
         "update t_test_bool set value1 = ?, value2 = ?  where id = ?")
     @Assert(3, mysqlStatement7.parameterCount)
 
-    id = SqlBigInt(2)
-    data1 = SqlBool(true)
-    data2 = SqlNullableBool(true)
-    arrDb = [data1, data2, id]
-
     // 执行更新语句
-    let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update(arrDb)
+    mysqlStatement7.set<Int64>(2, 2)
+    mysqlStatement7.set<Bool>(0, true)
+    mysqlStatement7.set<Bool>(1, true)
+    let mysqlUpdateResult5: MysqlUpdateResult = mysqlStatement7.update()
     @Assert(1, mysqlUpdateResult5.rowCount)
     mysqlStatement7.close()
 
@@ -146,17 +117,12 @@ main(): Int64 {
     // 执行查询语句
     var mysqlQueryResult2: MysqlQueryResult = mysqlStatement8.query()
 
-    id = SqlBigInt(3)
-    data1 = SqlBool(false)
-    data2 = SqlNullableBool(false)
-    arrDb = [id, data1, data2]
-
     // 获取数据
-    isBool = mysqlQueryResult2.next(arrDb)
+    isBool = mysqlQueryResult2.next()
     @Assert(true, isBool)
-    @Assert(2, (arrDb[0] as SqlBigInt).getOrThrow().value)
-    @Assert(true, (arrDb[1] as SqlBool).getOrThrow().value)
-    @Assert(true, (arrDb[2] as SqlNullableBool).getOrThrow().value)
+    @Assert(2, mysqlQueryResult2.get<Int64>(0))
+    @Assert(1, mysqlQueryResult2.get<Int8>(1))
+    @Assert(1, mysqlQueryResult2.get<Int8>(2))
     mysqlStatement8.close()
 
     // 删除t_test名称数据表

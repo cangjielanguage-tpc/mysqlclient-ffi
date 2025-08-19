@@ -27,23 +27,19 @@ public class OdbcTest {
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
-        rowCount = prepareStatement.update([SqlInteger(1), SqlVarchar("abc")])
+        prepareStatement.set<Int32>(0, 1)
+        prepareStatement.set<String>(1, "abc")
+        rowCount = prepareStatement.update()
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test where id = ?")
-        var queryResult = prepareStatement.query(SqlInteger(1))
-        var arr: Array<SqlDbType> = [SqlInteger(3), SqlVarchar("1")]
-        queryResult.next(arr)
-        @Assert("SqlInteger", queryResult.columnInfos[0].typeName)
-        match (arr[0]) {
-            case v: SqlInteger => @Assert(1, v.value)
-            case _ => @Assert("abc", "123")
-        }
-        @Assert("SqlVarchar", queryResult.columnInfos[1].typeName)
-        match (arr[1]) {
-            case v: SqlVarchar => @Assert("abc", v.value)
-            case _ => @Assert("abc", "123")
-        }
+        prepareStatement.set<Int32>(0, 1)
+        var queryResult = prepareStatement.query()
+        queryResult.next()
+        @Assert("SqlInt32", queryResult.columnInfos[0].typeName)
+        @Assert("SqlString", queryResult.columnInfos[1].typeName)
+        @Assert(1, queryResult.get<Int32>(0))
+        @Assert("abc", queryResult.get<String>(1))
         prepareStatement.close()
 
         // 删除test名称数据表

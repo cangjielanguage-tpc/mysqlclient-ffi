@@ -5031,6 +5031,7 @@ public class blob_002 {
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
     }
+
     @TestCase
     public func blob_002(): Unit {
         var driver = MysqlDriver("mysql")
@@ -5050,32 +5051,17 @@ public class blob_002 {
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
         var str = ByteBuffer(5000)
         str.write(arr1)
-        rowCount = prepareStatement.update([SqlBlob(str), SqlNullableBlob(None)])
+        prepareStatement.set<ByteBuffer>(0, str)
+        prepareStatement.setNull(1)
+        rowCount = prepareStatement.update()
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlBlob(str), SqlNullableBlob(None)]
-        queryResult.next(arr)
-        @Assert("SqlBlob", queryResult.columnInfos[0].typeName)
-        match (arr[0]) {
-            case v: SqlBlob =>
-                var a = Array<UInt8>(5000, repeat: 0)
-                v.value.read(a)
-                @Assert(arr1.toString(), a.toString())
-            case _ => @Assert("abc", "123")
-        }
-        @Assert("SqlNullableBlob", queryResult.columnInfos[1].typeName)
-        match (arr[1]) {
-            case v: SqlNullableBlob => match (v.value) {
-                case Some(v) =>
-                    var a = Array<UInt8>(0, repeat: 0)
-                    v.read(a)
-                    @Assert(None<Array<UInt8>>, a)
-                case None => @Assert(None<String>, None<String>)
-            }
-            case _ => @Assert("abc", "123")
-        }
+        queryResult.next()
+        @Assert("SqlArrayByte", queryResult.columnInfos[0].typeName)
+        @Assert(arr1, queryResult.get<Array<Byte>>(0))
+        @Assert(None, queryResult.getOrNull<Array<Byte>>(1))
         prepareStatement.close()
 
         // 删除test名称数据表

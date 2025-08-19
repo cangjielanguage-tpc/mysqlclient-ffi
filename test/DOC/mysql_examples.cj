@@ -40,22 +40,18 @@ main(): Int64 {
         println("pass3")
     }
 
-    var id: SqlBigInt = SqlBigInt(1)
-    var name: SqlVarchar = SqlVarchar("lihao111")
-    var arrDb: Array<SqlDbType> = [id, name]
-
     // 执行插入语句插入数据
-    var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update(arrDb)
+    mysqlStatement.set<Int64>(0, 1)
+    mysqlStatement.set<String>(1, "lihao111")
+    var mysqlUpdateResult: MysqlUpdateResult = mysqlStatement.update()
     if (mysqlUpdateResult.rowCount == 1) {
         println("pass4")
     }
 
-    id = SqlBigInt(2)
-    name = SqlVarchar("lihao222")
-    arrDb = [id, name]
-
     // 执行插入语句插入数据
-    mysqlUpdateResult = mysqlStatement.update(arrDb)
+    mysqlStatement.set<Int64>(0, 2)
+    mysqlStatement.set<String>(1, "lihao222")
+    mysqlUpdateResult = mysqlStatement.update()
     if (mysqlUpdateResult.rowCount == 1) {
         println("pass5")
     }
@@ -67,11 +63,9 @@ main(): Int64 {
         println("pass6")
     }
 
-    id = SqlBigInt(2)
-    arrDb = [id]
-
     // 执行查询语句
-    var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query(arrDb)
+    mysqlStatement.set<Int64>(0, 2)
+    var mysqlQueryResult: MysqlQueryResult = mysqlStatement.query()
     let mysqlColumnInfos: Array<MysqlColumnInfo> = mysqlQueryResult.mysqlColumnInfos
     if (mysqlColumnInfos.size == 2) {
         println("pass7")
@@ -79,7 +73,7 @@ main(): Int64 {
     if (mysqlColumnInfos[0].name == "id") {
         println("pass8")
     }
-    if (mysqlColumnInfos[0].typeName == "SqlNullableBigInt") {
+    if (mysqlColumnInfos[0].typeName == "SqlInt64") {
         println("pass9")
     }
     if (mysqlColumnInfos[0].displaySize == 0) {
@@ -97,7 +91,7 @@ main(): Int64 {
     if (mysqlColumnInfos[1].name == "name") {
         println("pass14")
     }
-    if (mysqlColumnInfos[1].typeName == "SqlNullableVarchar") {
+    if (mysqlColumnInfos[1].typeName == "SqlString") {
         println("pass15")
     }
     if (mysqlColumnInfos[1].displaySize == 0) {
@@ -113,20 +107,16 @@ main(): Int64 {
         println("pass19")
     }
 
-    id = SqlBigInt(0)
-    name = SqlVarchar("")
-    arrDb = [id, name]
-
     // 获取数据
-    var isBool: Bool = mysqlQueryResult.next(arrDb)
+    var isBool: Bool = mysqlQueryResult.next()
 
     if (isBool) {
         println("pass20")
     }
-    if ((arrDb[0] as SqlBigInt).getOrThrow().value == 2) {
+    if (mysqlQueryResult.get<Int64>(0) == 2) {
         println("pass21")
     }
-    if ((arrDb[1] as SqlVarchar).getOrThrow().value == "lihao222") {
+    if (mysqlQueryResult.get<String>(1) == "lihao222") {
         println("pass22")
     }
     mysqlStatement.close()
@@ -137,11 +127,9 @@ main(): Int64 {
         println("pass23")
     }
 
-    name = SqlVarchar("lihao222")
-    arrDb = [name]
-
     // 执行删除语句
-    mysqlUpdateResult = mysqlStatement.update(arrDb)
+    mysqlStatement.set<String>(0, "lihao222")
+    mysqlUpdateResult = mysqlStatement.update()
     if (mysqlUpdateResult.rowCount == 1) {
         println("pass24")
     }
@@ -153,15 +141,12 @@ main(): Int64 {
         println("pass25")
     }
 
-    id = SqlBigInt(2)
-    arrDb = [id]
-
     // 执行查询语句
-    mysqlQueryResult = mysqlStatement.query(arrDb)
+    mysqlStatement.set<Int64>(0, 2)
+    mysqlQueryResult = mysqlStatement.query()
 
     // 获取数据
-    arrDb = [id, name]
-    isBool = mysqlQueryResult.next(arrDb)
+    isBool = mysqlQueryResult.next()
     if (!isBool) {
         println("pass26")
     }
@@ -173,12 +158,10 @@ main(): Int64 {
         println("pass27")
     }
 
-    name = SqlVarchar("lihao333")
-    id = SqlBigInt(1)
-    arrDb = [name, id]
-
     // 执行更新语句
-    mysqlUpdateResult = mysqlStatement.update(arrDb)
+    mysqlStatement.set<Int64>(1, 1)
+    mysqlStatement.set<String>(0, "lihao333")
+    mysqlUpdateResult = mysqlStatement.update()
     if (mysqlUpdateResult.rowCount == 1) {
         println("pass28")
     }
@@ -190,28 +173,22 @@ main(): Int64 {
         println("pass29")
     }
 
-    id = SqlBigInt(1)
-    arrDb = [id]
-
     // 执行查询语句
-    mysqlQueryResult = mysqlStatement.query(arrDb)
+    mysqlStatement.set<Int64>(0, 1)
+    mysqlQueryResult = mysqlStatement.query()
     if (mysqlColumnInfos.size == 2) {
         println("pass30")
     }
 
-    id = SqlBigInt(1)
-    name = SqlVarchar("")
-    arrDb = [id, name]
-
     // 获取数据
-    isBool = mysqlQueryResult.next(arrDb)
+    isBool = mysqlQueryResult.next()
     if (isBool) {
         println("pass31")
     }
-    if ((arrDb[0] as SqlBigInt).getOrThrow().value == 1) {
+    if (mysqlQueryResult.get<Int64>(0) == 1) {
         println("pass32")
     }
-    if ((arrDb[1] as SqlVarchar).getOrThrow().value == "lihao333") {
+    if (mysqlQueryResult.get<String>(1) == "lihao333") {
         println("pass33")
     }
     mysqlStatement.close()

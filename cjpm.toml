@@ -5,7 +5,7 @@
   mysqlclient_cj = { path = "./lib/"}
 
 [package]
-  cjc-version = "0.59.6"
+  cjc-version = "1.0.0"
   compile-option = "-O2"
   description = "mysqlclient_ffi"
   link-option = ""
@@ -13,6 +13,6 @@
   output-type = "dynamic"
   src-dir = "src"
   target-dir = ""
-  version = "0.0.1"
+  version = "1.0.0"
   package-configuration = {}
   scripts = {}

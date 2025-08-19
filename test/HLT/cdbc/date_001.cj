@@ -36,22 +36,23 @@ public class OdbcTest {
             second: 0,
             nanosecond: 0,
         )
-        rowCount = prepareStatement.update([SqlDate(date), SqlNullableDate(None)])
+        prepareStatement.set<MysqlTypeDate>(0, MysqlTypeDate(date))
+        prepareStatement.setNull(1)
+        rowCount = prepareStatement.update()
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlDate(date), SqlNullableDate(None)]
-        queryResult.next(arr)
-        @Assert("SqlDate", queryResult.columnInfos[0].typeName)
-        match (arr[0]) {
-            case v: SqlDate => @Assert(date, v.value)
-            case _ => @Assert("abc", "123")
-        }
-        @Assert("SqlNullableDate", queryResult.columnInfos[1].typeName)
-        match (arr[1]) {
-            case v: SqlNullableDate => @Assert(None, v.value)
-            case _ => @Assert("abc", "123")
+        queryResult.next()
+        @Assert("SqlMysqlTypeDate", queryResult.columnInfos[0].typeName)
+        let a:DateTime = queryResult.get<MysqlTypeDate>(0).value
+        @Assert(date.year, a.year)
+        @Assert(date.month, a.month)
+        @Assert(date.dayOfMonth, a.dayOfMonth)
+        let mysqlTypeDate: ?MysqlTypeDate = queryResult.getOrNull<MysqlTypeDate>(1)
+        match (mysqlTypeDate) {
+            case Some(_) => @Assert(0, 1)
+            case None => @Assert(1, 1)
         }
         prepareStatement.close()
 

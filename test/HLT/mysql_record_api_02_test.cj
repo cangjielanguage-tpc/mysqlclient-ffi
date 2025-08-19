@@ -37,14 +37,13 @@ public class MysqlRecordApi02Test {
         var mysqlStatement3: MysqlStatement = mysqlConnection.prepareStatement(
             "insert into  t_test_time(id,timeValue1,timeValue2)  VALUES(?,?,?)")
         @Assert(3, mysqlStatement3.parameterCount)
-        let dateTime1: DateTime = DateTime.of(year: 1, month: 1, dayOfMonth: 1, hour: 8, minute: 10, second: 30)
-        var id: SqlBigInt = SqlBigInt(1)
-        var time1: SqlTime = SqlTime(dateTime1)
-        var time2: SqlNullableTime = SqlNullableTime(None)
-        var arrDb: Array<SqlDbType> = [id, time1, time2]
 
         // 执行插入语句插入数据
-        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        let dateTime1: DateTime = DateTime.of(year: 1, month: 1, dayOfMonth: 1, hour: 8, minute: 10, second: 30)
+        mysqlStatement3.set<Int64>(0, 1)
+        mysqlStatement3.set<MysqlTypeTime>(1, MysqlTypeTime(dateTime1))
+        mysqlStatement3.setNull(2)
+        var mysqlUpdateResult1: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult1.rowCount)
         @Assert(0, mysqlUpdateResult1.lastInsertId)
         var rowUint64: UInt64 = mysqlRecordApi.mysqlAffectedRows()
@@ -52,30 +51,26 @@ public class MysqlRecordApi02Test {
         var idUint64: UInt64 = mysqlRecordApi.mysqlInsertId()
         @Assert(0, idUint64)
 
+        // 执行插入语句插入数据
         let dateTime2: DateTime = DateTime.of(year: 1, month: 1, dayOfMonth: 1, hour: 8, minute: 10, second: 30)
         let dateTime3: DateTime = DateTime.of(year: 1, month: 1, dayOfMonth: 1, hour: 12, minute: 5, second: 3)
-        id = SqlBigInt(2)
-        time1 = SqlTime(dateTime2)
-        time2 = SqlNullableTime(dateTime3)
-        arrDb = [id, time1, time2]
-
-        // 执行插入语句插入数据
-        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 2)
+        mysqlStatement3.set<MysqlTypeTime>(1, MysqlTypeTime(dateTime2))
+        mysqlStatement3.set<MysqlTypeTime>(2, MysqlTypeTime(dateTime3))
+        var mysqlUpdateResult2: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult2.rowCount)
         rowUint64 = mysqlRecordApi.mysqlAffectedRows()
         @Assert(1, rowUint64)
         idUint64 = mysqlRecordApi.mysqlInsertId()
         @Assert(0, idUint64)
 
+        // 执行插入语句插入数据
         let dateTime4: DateTime = DateTime.of(year: 1, month: 1, dayOfMonth: 1, hour: 18, minute: 20, second: 40)
         let dateTime5: DateTime = DateTime.of(year: 1, month: 1, dayOfMonth: 1, hour: 22, minute: 35, second: 53)
-        id = SqlBigInt(3)
-        time1 = SqlTime(dateTime4)
-        time2 = SqlNullableTime(dateTime5)
-        arrDb = [id, time1, time2]
-
-        // 执行插入语句插入数据
-        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update(arrDb)
+        mysqlStatement3.set<Int64>(0, 3)
+        mysqlStatement3.set<MysqlTypeTime>(1, MysqlTypeTime(dateTime4))
+        mysqlStatement3.set<MysqlTypeTime>(2, MysqlTypeTime(dateTime5))
+        var mysqlUpdateResult3: MysqlUpdateResult = mysqlStatement3.update()
         @Assert(1, mysqlUpdateResult3.rowCount)
         rowUint64 = mysqlRecordApi.mysqlAffectedRows()
         @Assert(1, rowUint64)

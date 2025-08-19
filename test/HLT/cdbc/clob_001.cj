@@ -27,36 +27,20 @@ public class OdbcTest {
         @Assert(0, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("insert into test values(?,?)")
+        let a: Array<Byte> = "上了飞机".toArray()
         var str = ByteBuffer(20)
-        str.write("上了飞机".toArray())
-        rowCount = prepareStatement.update([SqlClob(str), SqlNullableClob(None)])
+        str.write(a)
+        prepareStatement.set<ByteBuffer>(0, str)
+        prepareStatement.setNull(1)
+        rowCount = prepareStatement.update()
         @Assert(1, rowCount.rowCount)
         prepareStatement.close()
         prepareStatement = conn.prepareStatement("select * from test")
         var queryResult = prepareStatement.query()
-        var arr: Array<SqlDbType> = [SqlClob(str), SqlNullableClob(None)]
-        queryResult.next(arr)
-
-        // @Assert("SqlClob", queryResult.columnInfos[0].typeName)
-        match (arr[0]) {
-            case v: SqlClob =>
-                var a = Array<UInt8>(12, repeat: 0)
-                v.value.read(a)
-                @Assert("上了飞机".toArray().toString(), a.toString())
-            case _ => @Assert("abc", "123")
-        }
-
-        // @Assert("SqlNullableClob", queryResult.columnInfos[1].typeName)
-        match (arr[1]) {
-            case v: SqlNullableClob => match (v.value) {
-                case Some(v) =>
-                    var a = Array<UInt8>(0, repeat: 0)
-                    v.read(a)
-                    @Assert(None<Array<UInt8>>, a)
-                case None => @Assert(None<String>, None<String>)
-            }
-            case _ => @Assert("abc", "123")
-        }
+        queryResult.next()
+        @Assert("SqlArrayByte", queryResult.columnInfos[0].typeName)
+        @Assert(a, queryResult.get<Array<Byte>>(0))
+        @Assert(None, queryResult.getOrNull<Array<Byte>>(1))
         prepareStatement.close()
 
         // 删除test名称数据表
