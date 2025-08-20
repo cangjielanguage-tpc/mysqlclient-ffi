@@ -116,7 +116,10 @@ public class MysqlStatement <: Statement {
     public override func set<T>(index: Int, value: T): Unit {
         checkResource()
         if (index < 0) {
-            throw IllegalArgumentException("The parameter index must be greater than 0")
+            throw SqlException("IllegalArgumentException: The parameter index must be greater than 0")
+        }
+        if (index > parameterCount -1) {
+            throw SqlException("IllegalArgumentException: parameter index error")
         }
         func unwrap<T>(value: ?T) {
             if (let Some(v) <- value) {
@@ -158,7 +161,10 @@ public class MysqlStatement <: Statement {
     public override func setNull(index: Int): Unit {
         checkResource()
         if (index < 0) {
-            throw IllegalArgumentException("The parameter index must be greater than 0")
+            throw SqlException("IllegalArgumentException: The parameter index must be greater than 0")
+        }
+        if (index > parameterCount -1) {
+            throw SqlException("IllegalArgumentException: parameter index error")
         }
         params[index] = Option<Any>.None
     }
