@@ -105,7 +105,7 @@ public class MysqlQueryResult <: QueryResult {
      * 异常 Exception - 传入参数错误
      */
     public override func get<T>(index: Int): T {
-        return getOrNull<T>(index) ?? throw SqlException("NoneValueException: data is null")
+        return getOrNull<T>(index) ?? throw SqlException("data is null")
     }
 
     /*
@@ -118,12 +118,12 @@ public class MysqlQueryResult <: QueryResult {
     public override func getOrNull<T>(index: Int): ?T {
         checkResource()
         if (index < 0) {
-            throw SqlException("IllegalArgumentException: Index must be greater than or equal to 0")
+            throw SqlException("Index must be greater than or equal to 0")
         }
         if (index > resultCount.size) {
-            throw SqlException("IllegalArgumentException: parameter index error")
+            throw SqlException("parameter index error")
         }
-        return (resultSet[index] as ?T) ?? throw SqlException("IllegalStateException: data type error")
+        return (resultSet[index] as ?T) ?? throw SqlException("data type error")
     }
 
     /*
