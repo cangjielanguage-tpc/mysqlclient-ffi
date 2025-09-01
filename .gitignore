@@ -60,3 +60,4 @@ test_temp/
 *.so.*
 main
 *.bchir2
+log.txt
