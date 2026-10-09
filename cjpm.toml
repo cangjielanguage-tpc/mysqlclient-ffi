@@ -1,11 +1,25 @@
 [dependencies]
 
-[ffi.c]
-  mysqlclient = { path = "./lib/"}
-  mysqlclient_cj = { path = "./lib/"}
+[target]
+  [target.x86_64-unknown-windows-gnu]
+    [target.x86_64-unknown-windows-gnu.ffi.c]
+      mysql = { path = "./lib/"}
+      mysqlclient_cj = { path = "./lib/"}
+  [target.aarch64-unknown-linux-gnu]
+    [target.aarch64-unknown-linux-gnu.ffi.c]
+      mysqlclient = { path = "./lib/"}
+      mysqlclient_cj = { path = "./lib/"}
+  [target.x86_64-unknown-linux-gnu]
+    [target.x86_64-unknown-linux-gnu.ffi.c]
+      mysqlclient = { path = "./lib/"}
+      mysqlclient_cj = { path = "./lib/"}
+  [target.x86_64-w64-mingw32]
+    [target.x86_64-w64-mingw32.ffi.c]
+      mysql = { path = "./lib/"}
+      mysqlclient_cj = { path = "./lib/"}
 
 [package]
-  cjc-version = "1.0.0"
+  cjc-version = "1.2.0"
   compile-option = "-O2"
   description = "mysqlclient_ffi"
   link-option = ""
@@ -13,6 +27,6 @@
   output-type = "dynamic"
   src-dir = "src"
   target-dir = ""
-  version = "1.0.0"
+  version = "1.0.1"
   package-configuration = {}
   scripts = {}
