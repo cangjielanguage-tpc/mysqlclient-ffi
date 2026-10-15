@@ -61,3 +61,4 @@ test_temp/
 main
 *.bchir2
 log.txt
+.VSCodeCounter
